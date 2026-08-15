@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 1387e33da47c14b5b94f3871ab0f698f
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_DemoScene_Panels/TownMessage_02.prefab
+  uploadId: 730505

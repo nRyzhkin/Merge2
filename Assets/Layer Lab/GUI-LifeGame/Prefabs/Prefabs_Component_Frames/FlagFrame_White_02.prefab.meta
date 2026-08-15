@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 86940424f74474aa6be26efa91f069cf
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Frames/FlagFrame_White_02.prefab
+  uploadId: 730505

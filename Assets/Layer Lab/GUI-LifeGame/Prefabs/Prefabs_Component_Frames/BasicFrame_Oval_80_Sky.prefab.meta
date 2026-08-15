@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: a401623e4ef9d4423a355acf2c835432
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Frames/BasicFrame_Oval_80_Sky.prefab
+  uploadId: 730505

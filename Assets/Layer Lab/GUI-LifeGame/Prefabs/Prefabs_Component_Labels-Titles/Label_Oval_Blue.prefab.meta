@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 8c4e07870860340e2ae08f7911dde001
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Labels-Titles/Label_Oval_Blue.prefab
+  uploadId: 730505

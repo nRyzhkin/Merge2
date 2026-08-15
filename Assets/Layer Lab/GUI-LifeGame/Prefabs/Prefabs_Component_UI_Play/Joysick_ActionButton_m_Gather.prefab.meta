@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: a531ed70908b44a5ba07440158b73dee
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_UI_Play/Joysick_ActionButton_m_Gather.prefab
+  uploadId: 730505

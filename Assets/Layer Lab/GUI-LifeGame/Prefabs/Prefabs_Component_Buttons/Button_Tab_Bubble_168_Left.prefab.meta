@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 2d3ebffc5aa2f491d92a49b7f7c0fab6
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Buttons/Button_Tab_Bubble_168_Left.prefab
+  uploadId: 730505

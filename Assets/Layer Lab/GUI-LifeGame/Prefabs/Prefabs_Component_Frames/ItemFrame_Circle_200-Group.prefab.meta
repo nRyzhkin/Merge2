@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: bb4e8f1a3c1c740119775d6733f4219c
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Frames/ItemFrame_Circle_200-Group.prefab
+  uploadId: 730505

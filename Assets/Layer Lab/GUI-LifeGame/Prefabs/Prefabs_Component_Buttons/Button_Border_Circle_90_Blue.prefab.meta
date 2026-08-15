@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 9a2b0b3cc6e5e4d3da0128bde7be186b
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Buttons/Button_Border_Circle_90_Blue.prefab
+  uploadId: 730505

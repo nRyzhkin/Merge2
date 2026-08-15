@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 721e9f9f81ce247db9889fac1d78c1b4
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_UI_Etc/_PrefabsPanel_UI_Etc.prefab
+  uploadId: 730505

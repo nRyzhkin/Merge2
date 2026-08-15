@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 72a63ffadd4ed43a4b68217773233f09
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Frames/CardFrame_03_Group.prefab
+  uploadId: 730505

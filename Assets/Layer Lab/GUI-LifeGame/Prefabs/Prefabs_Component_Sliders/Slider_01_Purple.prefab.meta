@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: d3c2f63eac6e14069990e2529022f063
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Sliders/Slider_01_Purple.prefab
+  uploadId: 730505

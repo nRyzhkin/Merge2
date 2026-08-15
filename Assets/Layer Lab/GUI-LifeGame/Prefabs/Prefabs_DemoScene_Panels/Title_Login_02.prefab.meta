@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 963827b6a5d6345b58b8f2bc719a8349
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_DemoScene_Panels/Title_Login_02.prefab
+  uploadId: 730505

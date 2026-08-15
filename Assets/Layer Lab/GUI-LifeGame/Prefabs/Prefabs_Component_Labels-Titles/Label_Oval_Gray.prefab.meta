@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 7028ad2e4b1724b4ba572d436671440e
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Labels-Titles/Label_Oval_Gray.prefab
+  uploadId: 730505

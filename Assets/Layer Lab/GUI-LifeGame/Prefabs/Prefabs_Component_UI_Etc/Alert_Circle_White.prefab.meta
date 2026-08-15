@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 11ff5eec4764b41aea5f522824765aa1
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_UI_Etc/Alert_Circle_White.prefab
+  uploadId: 730505

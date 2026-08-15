@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 06724770840564773b2cc7e1ff312e7e
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Labels-Titles/Title_Ribbon01_Single_Purple.prefab
+  uploadId: 730505

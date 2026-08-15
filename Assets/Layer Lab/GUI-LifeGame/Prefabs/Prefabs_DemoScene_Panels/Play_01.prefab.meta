@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 3187ddab8708b47909dbd754bda69d6a
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_DemoScene_Panels/Play_01.prefab
+  uploadId: 730505

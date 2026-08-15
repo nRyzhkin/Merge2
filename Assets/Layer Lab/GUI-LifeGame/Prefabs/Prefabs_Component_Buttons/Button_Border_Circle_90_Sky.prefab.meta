@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: f0f32bb0bf1d24c23ad9bfa3f577a888
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Buttons/Button_Border_Circle_90_Sky.prefab
+  uploadId: 730505

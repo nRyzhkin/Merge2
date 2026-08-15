@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: cf8d9e13ed73f4455b21a1ee09b12344
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_DemoScene_Panels/FriendsInvite_02.prefab
+  uploadId: 730505

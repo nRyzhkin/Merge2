@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 2ad3295111bac44dda0941d32dfdc011
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Buttons/Button_Border_Circle_94_Translucent.prefab
+  uploadId: 730505

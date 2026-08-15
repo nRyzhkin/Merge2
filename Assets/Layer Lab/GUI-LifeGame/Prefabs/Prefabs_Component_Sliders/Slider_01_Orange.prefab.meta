@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 989958df779004c37b87e7b4bdbd4e0e
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Sliders/Slider_01_Orange.prefab
+  uploadId: 730505

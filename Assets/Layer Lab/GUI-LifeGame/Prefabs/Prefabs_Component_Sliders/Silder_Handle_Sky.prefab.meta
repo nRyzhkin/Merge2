@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: fd48bb3557e2d4f079caa5c015dd662a
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Sliders/Silder_Handle_Sky.prefab
+  uploadId: 730505

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 2b47900058969409bbdf955933f7fdf4
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Popups/Popup_03_Divided_Topbar.prefab
+  uploadId: 730505

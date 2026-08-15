@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 53fc372f02e7847cca79b52c48fc27d2
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_DemoScene_Panels/CharacterSelectFace.prefab
+  uploadId: 730505

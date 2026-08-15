@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 0c626ebddc48b4df2812131925d49e15
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_UI_Play/StatusBubble_Seat.prefab
+  uploadId: 730505

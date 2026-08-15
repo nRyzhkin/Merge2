@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: ef6207ccba4154468b1a1e9c9bbc0c09
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_DemoScene_Panels/TownLocationInfo.prefab
+  uploadId: 730505

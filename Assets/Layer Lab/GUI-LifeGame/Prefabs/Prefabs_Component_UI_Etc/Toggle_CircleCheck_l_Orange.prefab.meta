@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: dc41e96cbf0e34dc9a96e972ad1c2f00
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_UI_Etc/Toggle_CircleCheck_l_Orange.prefab
+  uploadId: 730505

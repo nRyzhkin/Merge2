@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: f9f2490d642c04ed98c4f7f4e857cd4c
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_UI_Etc/InputField_Border_s.prefab
+  uploadId: 730505

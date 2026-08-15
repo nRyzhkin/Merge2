@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 642b736e34cbf498fae986bc392f90f1
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Buttons/Button_Basic_Circle_120_White.prefab
+  uploadId: 730505

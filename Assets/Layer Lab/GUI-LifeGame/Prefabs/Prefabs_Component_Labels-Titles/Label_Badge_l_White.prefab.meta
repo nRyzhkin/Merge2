@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 35ef67cd8485e408fa6fc95ac28f5b0e
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Labels-Titles/Label_Badge_l_White.prefab
+  uploadId: 730505

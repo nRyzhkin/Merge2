@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: cfc0819f4bf6449c2a278e2660a71fea
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Frames/ListFrame_02_VerticalLayoutGroup.prefab
+  uploadId: 730505

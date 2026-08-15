@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 823428a4f38e740ce8ea1a51a7ee10fa
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Labels-Titles/Title_Ribbon01_Single_TealLight.prefab
+  uploadId: 730505

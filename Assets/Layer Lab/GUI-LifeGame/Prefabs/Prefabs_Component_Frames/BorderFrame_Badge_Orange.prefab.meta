@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: d8f17b51938324d8dbf53a82ac4fe5e7
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Frames/BorderFrame_Badge_Orange.prefab
+  uploadId: 730505

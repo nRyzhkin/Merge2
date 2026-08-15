@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 50d2e1f9c01494a4390f47ea8ca1cef8
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Labels-Titles/Title_Ribbon02_White.prefab
+  uploadId: 730505

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 9a4fc2f600b674238b104ead53cfda4e
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Popups/Popup_FlushLeft.prefab
+  uploadId: 730505

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 71cd2b974c05e45aca9cc1a77f4fd495
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Buttons/Button_Basic_Square_58_Gray.prefab
+  uploadId: 730505

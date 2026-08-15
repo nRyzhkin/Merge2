@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 68ed5c0fc72ad4a469e7f40f9af658ab
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Sliders/Slider_03_White.prefab
+  uploadId: 730505

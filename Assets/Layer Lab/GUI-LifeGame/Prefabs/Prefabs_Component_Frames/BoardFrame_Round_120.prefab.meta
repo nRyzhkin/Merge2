@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 39aeda8dac22b4890943984b37ec78b3
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Frames/BoardFrame_Round_120.prefab
+  uploadId: 730505

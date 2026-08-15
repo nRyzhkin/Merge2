@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 57298f9fa6e514c02b4613c03c33efba
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_UI_Play/Joysick_ActionButton_m_Hit.prefab
+  uploadId: 730505

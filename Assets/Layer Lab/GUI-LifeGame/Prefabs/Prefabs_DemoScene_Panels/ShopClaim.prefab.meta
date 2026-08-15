@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 3c754afcfe4594c669b11b5f8ee9d961
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_DemoScene_Panels/ShopClaim.prefab
+  uploadId: 730505

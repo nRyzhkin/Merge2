@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 46cf8f77f16ac43d8a6bd17315164571
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Labels-Titles/Label_Badge_s_Red.prefab
+  uploadId: 730505

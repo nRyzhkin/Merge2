@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: d76d85c7a1aaa4ed88b33d676a8d1dee
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Buttons/Button_Basic_Round_160_White.prefab
+  uploadId: 730505

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: c59958451175f40058033d172eb99fd4
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Frames/ItemFrame_Round_BasicGrade_256-Gorup.prefab
+  uploadId: 730505

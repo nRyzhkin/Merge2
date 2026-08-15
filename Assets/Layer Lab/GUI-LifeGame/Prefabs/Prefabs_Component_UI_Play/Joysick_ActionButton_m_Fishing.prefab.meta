@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 1baee870d184644d5857c55b1e44c63b
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_UI_Play/Joysick_ActionButton_m_Fishing.prefab
+  uploadId: 730505

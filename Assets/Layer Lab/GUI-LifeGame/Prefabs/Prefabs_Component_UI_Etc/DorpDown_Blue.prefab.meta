@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 572c3f0ad34d341e2ba8c3ef393e449e
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_UI_Etc/DorpDown_Blue.prefab
+  uploadId: 730505

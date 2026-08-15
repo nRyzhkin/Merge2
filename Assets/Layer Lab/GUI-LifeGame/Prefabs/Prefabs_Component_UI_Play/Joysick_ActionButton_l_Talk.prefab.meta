@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 9c47b16dd592f485980d460f3992f35c
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_UI_Play/Joysick_ActionButton_l_Talk.prefab
+  uploadId: 730505

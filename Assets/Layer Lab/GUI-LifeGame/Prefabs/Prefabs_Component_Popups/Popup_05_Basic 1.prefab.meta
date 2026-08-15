@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d09c90dcec873405a8f43f2fe52dea3e
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Popups/Popup_05_Basic
+    1.prefab
+  uploadId: 730505

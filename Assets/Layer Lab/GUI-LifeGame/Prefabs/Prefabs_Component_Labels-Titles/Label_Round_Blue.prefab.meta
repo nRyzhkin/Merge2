@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 8a2c5bb790b3d43e6a6cc833223050c7
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Labels-Titles/Label_Round_Blue.prefab
+  uploadId: 730505

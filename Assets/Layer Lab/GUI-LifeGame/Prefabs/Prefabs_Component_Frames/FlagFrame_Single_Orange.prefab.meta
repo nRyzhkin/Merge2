@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: b1661fe1caa13492aa37d0886aba68a6
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Frames/FlagFrame_Single_Orange.prefab
+  uploadId: 730505

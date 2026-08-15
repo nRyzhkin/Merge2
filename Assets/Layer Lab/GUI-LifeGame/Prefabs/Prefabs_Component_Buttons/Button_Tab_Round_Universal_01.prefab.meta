@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 8162ba93728744bcab09b2ef5011ec1d
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Buttons/Button_Tab_Round_Universal_01.prefab
+  uploadId: 730505

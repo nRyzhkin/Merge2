@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: f9ca1fb82755043e9b0b090b4a9f7ac3
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_DemoScene_Panels/Quest_02.prefab
+  uploadId: 730505

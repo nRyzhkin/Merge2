@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 5dcf1bff7fad0480395c31af82a1bc20
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_UI_Play/StatusBubble_Talk.prefab
+  uploadId: 730505

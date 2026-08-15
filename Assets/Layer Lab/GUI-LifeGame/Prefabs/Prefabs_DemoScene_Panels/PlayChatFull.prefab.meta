@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 74ac385faf3794cd384011125117571d
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_DemoScene_Panels/PlayChatFull.prefab
+  uploadId: 730505

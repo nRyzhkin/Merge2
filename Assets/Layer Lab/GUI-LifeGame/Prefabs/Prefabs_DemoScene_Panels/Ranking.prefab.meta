@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 97304f90cbf1c4cf3b2d5474ac5a4645
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_DemoScene_Panels/Ranking.prefab
+  uploadId: 730505

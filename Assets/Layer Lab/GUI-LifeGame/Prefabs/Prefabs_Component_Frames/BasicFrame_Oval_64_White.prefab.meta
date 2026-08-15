@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 9ce5c2aa93fb7404d9f6b601bfe68949
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Frames/BasicFrame_Oval_64_White.prefab
+  uploadId: 730505

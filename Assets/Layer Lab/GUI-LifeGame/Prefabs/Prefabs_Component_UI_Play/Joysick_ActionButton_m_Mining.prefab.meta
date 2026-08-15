@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: cc138cb01b6b34a21b9dcd25de3813e1
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_UI_Play/Joysick_ActionButton_m_Mining.prefab
+  uploadId: 730505

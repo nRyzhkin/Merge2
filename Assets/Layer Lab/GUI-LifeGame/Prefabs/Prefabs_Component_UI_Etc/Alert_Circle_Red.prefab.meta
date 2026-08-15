@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 2c77d55605c3f45689f3e71a9389eb0b
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_UI_Etc/Alert_Circle_Red.prefab
+  uploadId: 730505

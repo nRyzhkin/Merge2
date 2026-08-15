@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 8da8531abd5354b338118ec09cf4f183
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Popups/Popup_Chat.prefab
+  uploadId: 730505

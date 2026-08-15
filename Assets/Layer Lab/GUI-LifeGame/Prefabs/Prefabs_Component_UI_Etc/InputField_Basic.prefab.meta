@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 0e934ea08391d495faca783087c2a7b6
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_UI_Etc/InputField_Basic.prefab
+  uploadId: 730505

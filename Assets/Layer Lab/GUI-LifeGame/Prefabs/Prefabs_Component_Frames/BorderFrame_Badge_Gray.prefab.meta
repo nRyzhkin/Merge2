@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 6c58abd3f238a4dbaab4423ff750561f
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Frames/BorderFrame_Badge_Gray.prefab
+  uploadId: 730505

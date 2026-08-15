@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 5f312530e30d74eedbc46853e8d38038
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Frames/FlagFrame_Single_Green.prefab
+  uploadId: 730505

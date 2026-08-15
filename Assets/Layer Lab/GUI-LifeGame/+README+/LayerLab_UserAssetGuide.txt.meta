@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 4cd1d5f040b654e18a21c79a535c5a59
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/+README+/LayerLab_UserAssetGuide.txt
+  uploadId: 730505

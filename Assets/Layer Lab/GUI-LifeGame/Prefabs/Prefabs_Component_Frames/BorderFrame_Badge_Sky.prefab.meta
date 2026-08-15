@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 4bd5b6e2b20ae402b9642c0beea951fd
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Frames/BorderFrame_Badge_Sky.prefab
+  uploadId: 730505

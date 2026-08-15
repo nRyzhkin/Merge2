@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 4b1e9243512984cb4b2a37d52da8c871
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Labels-Titles/Label_Corner_LeftTop_Orange.prefab
+  uploadId: 730505

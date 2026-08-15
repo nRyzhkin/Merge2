@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: dfb8070d84b294a848bf63b07cb72b54
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Sliders/Slider_02_Red.prefab
+  uploadId: 730505

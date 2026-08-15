@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 428ab224984a4406f8c38f03f6bee345
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_DemoScene_Panels/PopupSingle_01.prefab
+  uploadId: 730505

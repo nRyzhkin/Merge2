@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: f7ec70f1eac4045ae8f9a41ab6de2b5c
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Buttons/Button_Convex_Round_162_Single_OffWhite.prefab
+  uploadId: 730505

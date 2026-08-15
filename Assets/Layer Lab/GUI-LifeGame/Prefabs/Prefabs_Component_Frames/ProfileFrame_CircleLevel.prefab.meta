@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 2754cb696851b4ded955a79026695859
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Frames/ProfileFrame_CircleLevel.prefab
+  uploadId: 730505

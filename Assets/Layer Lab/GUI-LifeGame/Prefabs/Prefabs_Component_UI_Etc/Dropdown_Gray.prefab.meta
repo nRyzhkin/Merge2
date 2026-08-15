@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: d09b021f0603a4418a03e30fbf40eb3e
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_UI_Etc/Dropdown_Gray.prefab
+  uploadId: 730505

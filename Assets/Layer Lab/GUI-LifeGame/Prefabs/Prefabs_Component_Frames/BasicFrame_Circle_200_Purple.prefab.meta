@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: d84bc1879b8af4cc5a07a29982f3e24a
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Frames/BasicFrame_Circle_200_Purple.prefab
+  uploadId: 730505

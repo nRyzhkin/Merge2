@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 81c4cc9a238f949f893e2b9d2a4d3a2a
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Sliders/Slider_03_Sky.prefab
+  uploadId: 730505

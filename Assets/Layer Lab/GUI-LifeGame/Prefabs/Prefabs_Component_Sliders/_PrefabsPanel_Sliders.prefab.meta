@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 0de26e47e90bc43cb96eb60ab9c8e11a
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Sliders/_PrefabsPanel_Sliders.prefab
+  uploadId: 730505

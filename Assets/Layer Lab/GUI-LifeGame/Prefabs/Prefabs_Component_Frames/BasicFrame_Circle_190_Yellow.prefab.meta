@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: e22798ad259fc4f5c82d7a96940985ff
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Frames/BasicFrame_Circle_190_Yellow.prefab
+  uploadId: 730505

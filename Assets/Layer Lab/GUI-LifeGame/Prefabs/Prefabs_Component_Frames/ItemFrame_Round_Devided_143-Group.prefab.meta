@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 8cc708c0e27e641f0847f01c7b5671ea
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Frames/ItemFrame_Round_Devided_143-Group.prefab
+  uploadId: 730505

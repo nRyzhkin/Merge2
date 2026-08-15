@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 0c5bc998a1bcb44e580a1ea556d0da7e
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Buttons/Button_Border_Round_115_White.prefab
+  uploadId: 730505

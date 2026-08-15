@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 16283a7db138a4fbfae7c8895f8b0e63
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Buttons/Button_Basic_Round_110_Dark.prefab
+  uploadId: 730505

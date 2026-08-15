@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 5da39b3ec91524bf8a1a83a74a40f7ce
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Popups/Popup_08_Divided_TopMiddleBottom.prefab
+  uploadId: 730505

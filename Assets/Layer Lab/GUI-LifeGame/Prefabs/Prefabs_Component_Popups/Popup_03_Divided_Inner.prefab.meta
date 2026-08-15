@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 969172f59d80a4ce28483c3c37b100de
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Popups/Popup_03_Divided_Inner.prefab
+  uploadId: 730505

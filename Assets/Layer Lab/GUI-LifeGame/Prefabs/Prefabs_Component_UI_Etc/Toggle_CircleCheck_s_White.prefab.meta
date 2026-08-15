@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 275300ea3d8614f3682f4283db849493
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_UI_Etc/Toggle_CircleCheck_s_White.prefab
+  uploadId: 730505

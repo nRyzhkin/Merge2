@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 35ab2b97dda1d480c99ed06eff5cbc29
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Buttons/Button_Basic_Circle_120_Sky.prefab
+  uploadId: 730505

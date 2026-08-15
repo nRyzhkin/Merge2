@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: b3afef1e92217410f8f3d069e9400157
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Frames/_PrefabsPanel_Frames.prefab
+  uploadId: 730505

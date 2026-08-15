@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: bcd37f03b0f7f4b669bcac28bf2323c5
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Frames/BasicFrame_Oval_80_Purple.prefab
+  uploadId: 730505

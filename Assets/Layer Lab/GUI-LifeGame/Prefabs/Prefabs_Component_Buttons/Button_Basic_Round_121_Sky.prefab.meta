@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: f3da1f7d0109b4882b1d67c2fea3f685
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Buttons/Button_Basic_Round_121_Sky.prefab
+  uploadId: 730505

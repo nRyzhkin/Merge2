@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 17ca90f1bc9864cedae4257a7a4f5c8a
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Buttons/Button_Basic_Round_121_OffWhite.prefab
+  uploadId: 730505

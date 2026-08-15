@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: fcea62fcb6af646f898dcaa4d5ebbc40
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Sliders/Slider_01_Plum.prefab
+  uploadId: 730505

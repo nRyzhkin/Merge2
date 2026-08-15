@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 7f3f9d916b8ad49f4bfa7d9f345e7834
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_DemoScene_Panels/CharacterSelectPopup.prefab
+  uploadId: 730505

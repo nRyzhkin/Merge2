@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 4ed9abb92c87d460aaa6d3de4a5ad634
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285495
+  packageName: GUI - Life Game
+  packageVersion: 1.0.4
+  assetPath: Assets/Layer Lab/GUI-LifeGame/Prefabs/Prefabs_Component_Buttons/Button_Basic_Round_90_White.prefab
+  uploadId: 730505
