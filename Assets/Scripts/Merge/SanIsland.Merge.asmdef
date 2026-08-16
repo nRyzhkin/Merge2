@@ -2,7 +2,10 @@
     "name": "SanIsland.Merge",
     "rootNamespace": "SanIsland.Merge",
     "references": [
-        "Unity.Localization"
+        "Unity.Localization",
+        "UnityEngine.UI",
+        "Unity.TextMeshPro",
+        "Unity.InputSystem"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

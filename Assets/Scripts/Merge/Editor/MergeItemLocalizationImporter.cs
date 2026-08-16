@@ -79,6 +79,82 @@ namespace SanIsland.Merge.Editor
             }
         }
 
+        public static void EnsureUiStringTable()
+        {
+            EnsureProjectSetup();
+            var collection = LocalizationEditorSettings.GetStringTableCollection(MergeUiLocalization.TableName);
+            if (collection == null)
+            {
+                collection = LocalizationEditorSettings.CreateStringTableCollection(MergeUiLocalization.TableName, TablesFolder);
+            }
+
+            if (collection == null)
+            {
+                Debug.LogError("[MergeItemImporter] Failed to create UI String Table Collection.");
+                return;
+            }
+
+            var locales = LocalizationEditorSettings.GetLocales();
+            for (var i = 0; i < locales.Count; i++)
+            {
+                var locale = locales[i];
+                if (collection.GetTable(locale.Identifier) == null)
+                {
+                    collection.AddNewTable(locale.Identifier);
+                }
+            }
+
+            UpsertUiKey(collection, "en", "Lvl {0}");
+            UpsertUiKey(collection, "ru", "Ур. {0}");
+            UpsertUiKey(collection, "de", "St. {0}");
+            UpsertUiKey(collection, "es", "Niv. {0}");
+            UpsertUiKey(collection, "fr", "Niv. {0}");
+            UpsertUiKey(collection, "pt", "Nv. {0}");
+            UpsertUiKey(collection, "tr", "Sv. {0}");
+            AssetDatabase.SaveAssets();
+        }
+
+        static void UpsertUiKey(StringTableCollection collection, string localeCode, string value)
+        {
+            var table = collection.GetTable(localeCode) as StringTable;
+            if (table == null)
+            {
+                Debug.LogWarning($"[MergeItemImporter] UI String Table for '{localeCode}' is missing.");
+                return;
+            }
+
+            var key = MergeUiLocalization.LevelShortKey;
+            var shared = collection.SharedData.GetEntry(key);
+            if (shared == null)
+            {
+                var entry = table.AddEntry(key, value);
+                if (entry != null)
+                {
+                    entry.IsSmart = true;
+                }
+            }
+            else
+            {
+                var entry = table.GetEntry(shared.Id);
+                if (entry == null)
+                {
+                    entry = table.AddEntry(shared.Id, value);
+                }
+                else if (string.IsNullOrEmpty(entry.Value))
+                {
+                    entry.Value = value;
+                }
+
+                if (entry != null)
+                {
+                    entry.IsSmart = true;
+                }
+            }
+
+            EditorUtility.SetDirty(table);
+            EditorUtility.SetDirty(table.SharedData);
+        }
+
         static void EnsureAddressables()
         {
             AddressableAssetSettingsDefaultObject.GetSettings(true);

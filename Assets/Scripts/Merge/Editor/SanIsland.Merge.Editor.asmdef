@@ -6,7 +6,9 @@
         "Unity.Localization",
         "Unity.Localization.Editor",
         "Unity.Addressables.Editor",
-        "Unity.Addressables"
+        "Unity.Addressables",
+        "UnityEngine.UI",
+        "Unity.TextMeshPro"
     ],
     "includePlatforms": [
         "Editor"
