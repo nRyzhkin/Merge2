@@ -1,0 +1,192 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: MergeItems Shared Data
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.SharedTableData
+  m_TableCollectionName: MergeItems
+  m_TableCollectionNameGuidString: 35d77b881f98c4982b8f591b0cca154a
+  m_Entries:
+  - m_Id: 3249528832
+    m_Key: item.cleaning.g01.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3278888960
+    m_Key: item.cleaning.g02.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083264
+    m_Key: item.cleaning.g03.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083265
+    m_Key: item.cleaning.g04.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083266
+    m_Key: item.cleaning.l01.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083267
+    m_Key: item.cleaning.l02.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083268
+    m_Key: item.cleaning.l03.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083269
+    m_Key: item.cleaning.l04.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083270
+    m_Key: item.cleaning.l05.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083271
+    m_Key: item.cleaning.l06.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083272
+    m_Key: item.cleaning.l07.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083273
+    m_Key: item.cleaning.l08.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083274
+    m_Key: item.coffee.g01.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083275
+    m_Key: item.coffee.g02.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083276
+    m_Key: item.coffee.g03.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083277
+    m_Key: item.coffee.g04.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083278
+    m_Key: item.coffee.l01.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083279
+    m_Key: item.coffee.l02.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083280
+    m_Key: item.coffee.l03.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083281
+    m_Key: item.coffee.l04.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083282
+    m_Key: item.coffee.l05.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083283
+    m_Key: item.coffee.l06.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083284
+    m_Key: item.coffee.l07.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083285
+    m_Key: item.coffee.l08.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083286
+    m_Key: item.coffee.l09.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083287
+    m_Key: item.coffee.l10.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083288
+    m_Key: item.coffee.l11.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083289
+    m_Key: item.coffee.l12.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083290
+    m_Key: item.tools.g01.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083291
+    m_Key: item.tools.g02.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083292
+    m_Key: item.tools.g03.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083293
+    m_Key: item.tools.g04.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083294
+    m_Key: item.tools.g05.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083295
+    m_Key: item.tools.l01.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083296
+    m_Key: item.tools.l02.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083297
+    m_Key: item.tools.l03.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083298
+    m_Key: item.tools.l04.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083299
+    m_Key: item.tools.l05.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083300
+    m_Key: item.tools.l06.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083301
+    m_Key: item.tools.l07.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083302
+    m_Key: item.tools.l08.name
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 8013459914571120896
+  references:
+    version: 2
+    RefIds:
+    - rid: 8013459914571120896
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1786870421465

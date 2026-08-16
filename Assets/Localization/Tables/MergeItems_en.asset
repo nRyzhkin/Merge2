@@ -1,0 +1,187 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: MergeItems_en
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: 35d77b881f98c4982b8f591b0cca154a, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 3249528832
+    m_Localized: Old Bucket
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3278888960
+    m_Localized: Caddy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083264
+    m_Localized: Janitor Cart
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083265
+    m_Localized: Cleaning Station
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083266
+    m_Localized: Cloth
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083267
+    m_Localized: Sponge
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083268
+    m_Localized: Scrub Brush
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083269
+    m_Localized: Spray Cleaner
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083270
+    m_Localized: Squeegee
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083271
+    m_Localized: Mop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083272
+    m_Localized: Vacuum
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083273
+    m_Localized: Floor Cleaner
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083274
+    m_Localized: Old Moka Pot
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083275
+    m_Localized: Home Coffee Maker
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083276
+    m_Localized: Cafe Espresso Machine
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083277
+    m_Localized: San Island Coffee Station
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083278
+    m_Localized: Espresso
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083279
+    m_Localized: Americano
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083280
+    m_Localized: Cappuccino
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083281
+    m_Localized: Latte
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083282
+    m_Localized: Iced Coffee
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083283
+    m_Localized: Caramel Frappe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083284
+    m_Localized: Mocha
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083285
+    m_Localized: Boba Coffee
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083286
+    m_Localized: Iced Mint Coffee
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083287
+    m_Localized: Boba Latte
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083288
+    m_Localized: Tropical Coffee Frappe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083289
+    m_Localized: San Island Signature
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083290
+    m_Localized: Old Wooden Toolbox
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083291
+    m_Localized: Dads Metal Toolbox
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083292
+    m_Localized: Professional Toolbox
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083293
+    m_Localized: Rolling Tool Chest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083294
+    m_Localized: Workshop Bench
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083295
+    m_Localized: Screwdriver
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083296
+    m_Localized: Pliers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083297
+    m_Localized: Hammer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083298
+    m_Localized: Adjustable Wrench
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083299
+    m_Localized: Hand Saw
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083300
+    m_Localized: Cordless Screwdriver
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083301
+    m_Localized: Power Drill
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083302
+    m_Localized: Circular Saw
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

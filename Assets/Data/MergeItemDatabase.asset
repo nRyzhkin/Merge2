@@ -1,0 +1,343 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0509c3c4ab84e461d9836630ed504c87, type: 3}
+  m_Name: MergeItemDatabase
+  m_EditorClassIdentifier: SanIsland.Merge::SanIsland.Merge.MergeItemDatabase
+  items:
+  - id: 1001
+    internalKey: tools_l01
+    localizationKey: item.tools.l01.name
+    family: 1
+    kind: 0
+    level: 1
+    icon: {fileID: 21300000, guid: f2149ebd059064b6bb501badfd72a542, type: 3}
+    nextItemId: 1002
+  - id: 1002
+    internalKey: tools_l02
+    localizationKey: item.tools.l02.name
+    family: 1
+    kind: 0
+    level: 2
+    icon: {fileID: 21300000, guid: 4be484a4de041481d9e58019654d6d6c, type: 3}
+    nextItemId: 1003
+  - id: 1003
+    internalKey: tools_l03
+    localizationKey: item.tools.l03.name
+    family: 1
+    kind: 0
+    level: 3
+    icon: {fileID: 21300000, guid: bee6366bc122744648744b411ffa634b, type: 3}
+    nextItemId: 1004
+  - id: 1004
+    internalKey: tools_l04
+    localizationKey: item.tools.l04.name
+    family: 1
+    kind: 0
+    level: 4
+    icon: {fileID: 21300000, guid: 1caa4e1d999d04d37b974ae748e09393, type: 3}
+    nextItemId: 1005
+  - id: 1005
+    internalKey: tools_l05
+    localizationKey: item.tools.l05.name
+    family: 1
+    kind: 0
+    level: 5
+    icon: {fileID: 21300000, guid: 44b85c97eae0346b6a8c69bc2f545134, type: 3}
+    nextItemId: 1006
+  - id: 1006
+    internalKey: tools_l06
+    localizationKey: item.tools.l06.name
+    family: 1
+    kind: 0
+    level: 6
+    icon: {fileID: 21300000, guid: 98b450b340db145f69f70c2e1460b1ed, type: 3}
+    nextItemId: 1007
+  - id: 1007
+    internalKey: tools_l07
+    localizationKey: item.tools.l07.name
+    family: 1
+    kind: 0
+    level: 7
+    icon: {fileID: 21300000, guid: 0598242becf8a4c2ab69466e219a8181, type: 3}
+    nextItemId: 1008
+  - id: 1008
+    internalKey: tools_l08
+    localizationKey: item.tools.l08.name
+    family: 1
+    kind: 0
+    level: 8
+    icon: {fileID: 21300000, guid: 9e2fc3d3efb0d44a28db789fcd29af37, type: 3}
+    nextItemId: -1
+  - id: 1101
+    internalKey: tools_g01
+    localizationKey: item.tools.g01.name
+    family: 1
+    kind: 1
+    level: 1
+    icon: {fileID: 21300000, guid: e57964f7410064c9a8b127a920b45a37, type: 3}
+    nextItemId: 1102
+  - id: 1102
+    internalKey: tools_g02
+    localizationKey: item.tools.g02.name
+    family: 1
+    kind: 1
+    level: 2
+    icon: {fileID: 21300000, guid: cdbba670f8e134df8bda03e7d2fbafd6, type: 3}
+    nextItemId: 1103
+  - id: 1103
+    internalKey: tools_g03
+    localizationKey: item.tools.g03.name
+    family: 1
+    kind: 1
+    level: 3
+    icon: {fileID: 21300000, guid: 95e8b20a5a13e4447aa75882f3b3dd91, type: 3}
+    nextItemId: 1104
+  - id: 1104
+    internalKey: tools_g04
+    localizationKey: item.tools.g04.name
+    family: 1
+    kind: 1
+    level: 4
+    icon: {fileID: 21300000, guid: 7b3e5f435883d447aac028acb0b7ec91, type: 3}
+    nextItemId: 1105
+  - id: 1105
+    internalKey: tools_g05
+    localizationKey: item.tools.g05.name
+    family: 1
+    kind: 1
+    level: 5
+    icon: {fileID: 21300000, guid: edcd347eb15b44dd3a80f284edad29b2, type: 3}
+    nextItemId: -1
+  - id: 2001
+    internalKey: cleaning_l01
+    localizationKey: item.cleaning.l01.name
+    family: 2
+    kind: 0
+    level: 1
+    icon: {fileID: 21300000, guid: 6881b55b5253e4bbca44d5c0e5056679, type: 3}
+    nextItemId: 2002
+  - id: 2002
+    internalKey: cleaning_l02
+    localizationKey: item.cleaning.l02.name
+    family: 2
+    kind: 0
+    level: 2
+    icon: {fileID: 21300000, guid: cbfda006ba951447dbf31a7c54b0dba5, type: 3}
+    nextItemId: 2003
+  - id: 2003
+    internalKey: cleaning_l03
+    localizationKey: item.cleaning.l03.name
+    family: 2
+    kind: 0
+    level: 3
+    icon: {fileID: 21300000, guid: 49ec4219574d94963aea77a52a904d9d, type: 3}
+    nextItemId: 2004
+  - id: 2004
+    internalKey: cleaning_l04
+    localizationKey: item.cleaning.l04.name
+    family: 2
+    kind: 0
+    level: 4
+    icon: {fileID: 21300000, guid: 980e30abaaaed44e6865cd224c0512da, type: 3}
+    nextItemId: 2005
+  - id: 2005
+    internalKey: cleaning_l05
+    localizationKey: item.cleaning.l05.name
+    family: 2
+    kind: 0
+    level: 5
+    icon: {fileID: 21300000, guid: 1373ca2b6741e422881be9ad0100f2b4, type: 3}
+    nextItemId: 2006
+  - id: 2006
+    internalKey: cleaning_l06
+    localizationKey: item.cleaning.l06.name
+    family: 2
+    kind: 0
+    level: 6
+    icon: {fileID: 21300000, guid: 0c31ad8ed61a540a8959633acb633ced, type: 3}
+    nextItemId: 2007
+  - id: 2007
+    internalKey: cleaning_l07
+    localizationKey: item.cleaning.l07.name
+    family: 2
+    kind: 0
+    level: 7
+    icon: {fileID: 21300000, guid: 650a4c67a2c0d4dcb8bff728a7c69f20, type: 3}
+    nextItemId: 2008
+  - id: 2008
+    internalKey: cleaning_l08
+    localizationKey: item.cleaning.l08.name
+    family: 2
+    kind: 0
+    level: 8
+    icon: {fileID: 21300000, guid: f0d68a9a7c0844311bb43bb9097a773c, type: 3}
+    nextItemId: -1
+  - id: 2101
+    internalKey: cleaning_g01
+    localizationKey: item.cleaning.g01.name
+    family: 2
+    kind: 1
+    level: 1
+    icon: {fileID: 21300000, guid: 3370def6f8b4f4cd0b62c8338d8b6532, type: 3}
+    nextItemId: 2102
+  - id: 2102
+    internalKey: cleaning_g02
+    localizationKey: item.cleaning.g02.name
+    family: 2
+    kind: 1
+    level: 2
+    icon: {fileID: 21300000, guid: 882d005d419a04a35b7fd61949b2316f, type: 3}
+    nextItemId: 2103
+  - id: 2103
+    internalKey: cleaning_g03
+    localizationKey: item.cleaning.g03.name
+    family: 2
+    kind: 1
+    level: 3
+    icon: {fileID: 21300000, guid: 9382f70bb7f9444389419c9c5cd6ee86, type: 3}
+    nextItemId: 2104
+  - id: 2104
+    internalKey: cleaning_g04
+    localizationKey: item.cleaning.g04.name
+    family: 2
+    kind: 1
+    level: 4
+    icon: {fileID: 21300000, guid: b61fac1e41ece487d80e5c41045339a9, type: 3}
+    nextItemId: -1
+  - id: 3001
+    internalKey: coffee_l01
+    localizationKey: item.coffee.l01.name
+    family: 3
+    kind: 0
+    level: 1
+    icon: {fileID: 21300000, guid: abb06f299767d4cd587b5ed172699f58, type: 3}
+    nextItemId: 3002
+  - id: 3002
+    internalKey: coffee_l02
+    localizationKey: item.coffee.l02.name
+    family: 3
+    kind: 0
+    level: 2
+    icon: {fileID: 21300000, guid: 04fe69a14d02d44e68368d19fa1e0702, type: 3}
+    nextItemId: 3003
+  - id: 3003
+    internalKey: coffee_l03
+    localizationKey: item.coffee.l03.name
+    family: 3
+    kind: 0
+    level: 3
+    icon: {fileID: 21300000, guid: 79d1f2f9d0f974d7aa1a887282c880fd, type: 3}
+    nextItemId: 3004
+  - id: 3004
+    internalKey: coffee_l04
+    localizationKey: item.coffee.l04.name
+    family: 3
+    kind: 0
+    level: 4
+    icon: {fileID: 21300000, guid: 85a4f320fff9b418e973aa8c747a0097, type: 3}
+    nextItemId: 3005
+  - id: 3005
+    internalKey: coffee_l05
+    localizationKey: item.coffee.l05.name
+    family: 3
+    kind: 0
+    level: 5
+    icon: {fileID: 21300000, guid: 2c8a1b3d657454f6dbc6bbfac87dbd99, type: 3}
+    nextItemId: 3006
+  - id: 3006
+    internalKey: coffee_l06
+    localizationKey: item.coffee.l06.name
+    family: 3
+    kind: 0
+    level: 6
+    icon: {fileID: 21300000, guid: f57042a7ca08940bda306e5dd09bbbd1, type: 3}
+    nextItemId: 3007
+  - id: 3007
+    internalKey: coffee_l07
+    localizationKey: item.coffee.l07.name
+    family: 3
+    kind: 0
+    level: 7
+    icon: {fileID: 21300000, guid: 9dee92172eba84980bfe5d68babbca6b, type: 3}
+    nextItemId: 3008
+  - id: 3008
+    internalKey: coffee_l08
+    localizationKey: item.coffee.l08.name
+    family: 3
+    kind: 0
+    level: 8
+    icon: {fileID: 21300000, guid: b62f83959b81a4e6798b543ac2683dd8, type: 3}
+    nextItemId: 3009
+  - id: 3009
+    internalKey: coffee_l09
+    localizationKey: item.coffee.l09.name
+    family: 3
+    kind: 0
+    level: 9
+    icon: {fileID: 21300000, guid: c6fd1827e086d476f8ab4e1f63fdcdf6, type: 3}
+    nextItemId: 3010
+  - id: 3010
+    internalKey: coffee_l10
+    localizationKey: item.coffee.l10.name
+    family: 3
+    kind: 0
+    level: 10
+    icon: {fileID: 21300000, guid: 1bed7170274ad494faedb202f1a816ff, type: 3}
+    nextItemId: 3011
+  - id: 3011
+    internalKey: coffee_l11
+    localizationKey: item.coffee.l11.name
+    family: 3
+    kind: 0
+    level: 11
+    icon: {fileID: 21300000, guid: 00ed5d24fdf1e4d10a7c2fe8e46c37e1, type: 3}
+    nextItemId: 3012
+  - id: 3012
+    internalKey: coffee_l12
+    localizationKey: item.coffee.l12.name
+    family: 3
+    kind: 0
+    level: 12
+    icon: {fileID: 21300000, guid: 105df6b73879f4989af546775045f14e, type: 3}
+    nextItemId: -1
+  - id: 3101
+    internalKey: coffee_g01
+    localizationKey: item.coffee.g01.name
+    family: 3
+    kind: 1
+    level: 1
+    icon: {fileID: 21300000, guid: 5606ae4e5613b43ea8fd11d55815a223, type: 3}
+    nextItemId: 3102
+  - id: 3102
+    internalKey: coffee_g02
+    localizationKey: item.coffee.g02.name
+    family: 3
+    kind: 1
+    level: 2
+    icon: {fileID: 21300000, guid: c73daac76ea5b4540bff544f10823e27, type: 3}
+    nextItemId: 3103
+  - id: 3103
+    internalKey: coffee_g03
+    localizationKey: item.coffee.g03.name
+    family: 3
+    kind: 1
+    level: 3
+    icon: {fileID: 21300000, guid: 74f60e5c002484c928bccd9d337cee8f, type: 3}
+    nextItemId: 3104
+  - id: 3104
+    internalKey: coffee_g04
+    localizationKey: item.coffee.g04.name
+    family: 3
+    kind: 1
+    level: 4
+    icon: {fileID: 21300000, guid: 841c81ff4b7724849b68697b47b11532, type: 3}
+    nextItemId: -1
