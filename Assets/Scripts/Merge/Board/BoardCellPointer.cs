@@ -85,6 +85,11 @@ namespace SanIsland.Merge
                 return;
             }
 
+            if (cellView != null && boardController != null && boardController.IsCellInteractionLocked(cellView.Index))
+            {
+                return;
+            }
+
             if (cellView != null && cellView.IsTransientAnimationRunning())
             {
                 if (boardController != null && boardController.DragController != null)
@@ -95,11 +100,6 @@ namespace SanIsland.Merge
                 {
                     cellView.CancelTransientPresentationForPickup();
                 }
-            }
-
-            if (cellView != null && boardController != null && boardController.IsCellInteractionLocked(cellView.Index))
-            {
-                return;
             }
 
             if (boardController != null && boardController.DragController != null &&

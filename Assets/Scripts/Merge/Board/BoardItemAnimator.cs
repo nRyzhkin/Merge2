@@ -384,6 +384,29 @@ namespace SanIsland.Merge
             ApplyPose();
         }
 
+        public void PlayBoxItemReveal(BoardBoxAnimationConfig boxConfig)
+        {
+            if (itemRect == null || boxConfig == null)
+            {
+                return;
+            }
+
+            BeginTransientPresentation();
+            ClearMergePreviewImmediate();
+            SetHovered(false);
+            CaptureIdleIfNeeded();
+            _resultReboundScale = boxConfig.RevealedItemReboundScale;
+            _resultDuration = boxConfig.RevealedItemDuration;
+            var start = Vector2.one * boxConfig.RevealedItemStartScale;
+            var grow = Mathf.Max(0.04f, boxConfig.RevealedItemDuration * 0.45f);
+            var up = CellHeight() * boxConfig.RevealedItemOffsetY;
+            _actionScale = start;
+            _currentDown = 0f;
+            BeginPhase(Phase.ResultGrow, grow, boxConfig.RevealedItemCurve, Vector2.one * boxConfig.RevealedItemOvershootScale, -up);
+            _fromScale = start;
+            ApplyPose();
+        }
+
         public void Drop()
         {
             SnapActionToIdle();

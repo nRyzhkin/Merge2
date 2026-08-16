@@ -96,12 +96,12 @@ namespace SanIsland.Merge
                 return false;
             }
 
-            PrepareCellForPossiblePickup(cell);
-
             if (boardController.IsCellInteractionLocked(cell.Index))
             {
                 return false;
             }
+
+            PrepareCellForPossiblePickup(cell);
 
             var state = boardController.State.GetCell(cell.Index);
             if (state == null || !state.HasItem || state.IsBox)
@@ -382,7 +382,12 @@ namespace SanIsland.Merge
                 boardController.CobwebPresenter.ReleaseCellVisualOwnership(cell.Index);
             }
 
-            if (cell.IsTransientAnimationRunning() || cell.IsCobwebBreakPlaying)
+            if (boardController.BoxRevealPresenter != null)
+            {
+                boardController.BoxRevealPresenter.ReleaseCellVisualOwnership(cell.Index);
+            }
+
+            if (cell.IsTransientAnimationRunning() || cell.IsCobwebBreakPlaying || cell.IsBoxRevealPlaying)
             {
                 cell.CancelTransientPresentationForPickup();
             }

@@ -42,6 +42,11 @@ namespace SanIsland.Merge.Editor
                 {
                     controller.ResetDevelopmentBoard();
                 }
+
+                if (GUILayout.Button("Validate Board Layout"))
+                {
+                    BoardLayoutValidator.Validate(controller.State, controller.ItemDatabase);
+                }
             }
 
             if (!Application.isPlaying)

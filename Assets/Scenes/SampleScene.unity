@@ -41851,9 +41851,11 @@ MonoBehaviour:
   dragAnimationConfig: {fileID: 11400000, guid: 1a502fa3d88e462aba4f1b046a359bb5, type: 2}
   mergeAnimationConfig: {fileID: 11400000, guid: e52c308b1f638924ca7b35e0c9f81d46, type: 2}
   cobwebAnimationConfig: {fileID: 11400000, guid: a8b9c0d1e2f3456789abcdef01234567, type: 2}
+  boxAnimationConfig: {fileID: 11400000, guid: c2d3e4f5061728394a5b6c7d8e9f0123, type: 2}
   dragView: {fileID: 961391718}
   mergePresenter: {fileID: 0}
   cobwebPresenter: {fileID: 0}
+  boxRevealPresenter: {fileID: 0}
   selectionView: {fileID: 5193127447459430516}
   itemInfoView: {fileID: 48922685}
   useDevelopmentBoardState: 1

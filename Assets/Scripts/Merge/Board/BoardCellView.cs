@@ -37,7 +37,31 @@ namespace SanIsland.Merge
         AnimationCurve _cobwebCurve;
         BoardCobwebAnimationConfig _cobwebConfig;
 
+        bool _boxRevealing;
+        BoardBoxAnimationConfig _boxConfig;
+        Vector3 _boxBaseScale = Vector3.one;
+        Quaternion _boxBaseRotation = Quaternion.identity;
+        Color _boxBaseColor = Color.white;
+        Vector2 _boxBaseOffsetMin;
+        Vector2 _boxBaseOffsetMax;
+        bool _boxBaseCaptured;
+        float _boxElapsed;
+        float _boxDuration = 0.08f;
+        float _boxScaleFrom = 1f;
+        float _boxScaleTo = 1f;
+        float _boxScaleYFrom = 1f;
+        float _boxScaleYTo = 1f;
+        float _boxOffsetYFrom;
+        float _boxOffsetYTo;
+        float _boxAlphaFrom = 1f;
+        float _boxAlphaTo = 1f;
+        float _boxRotationFrom;
+        float _boxRotationTo;
+        AnimationCurve _boxCurve;
+        bool _boxBreaking;
+
         public int Index => index;
+        public bool IsBoxRevealPlaying => _boxRevealing;
         public Image ItemImage => itemImage;
         public Image BlockerImage => blockerImage;
         public Image LockOverlayImage => lockOverlayImage;
@@ -119,6 +143,11 @@ namespace SanIsland.Merge
             }
 
             HideCobwebOverlayImmediate();
+            if (_boxRevealing)
+            {
+                ClearBoxRevealPresentation();
+            }
+
             if (!_itemPresentationSuppressed && !_hideItemForDrag)
             {
                 return;
@@ -194,8 +223,79 @@ namespace SanIsland.Merge
             SetActiveSafe(lockOverlayImage, false);
         }
 
+        public void BeginBoxRevealPresentation(BoardBoxAnimationConfig config)
+        {
+            _boxConfig = config;
+            _boxRevealing = true;
+            CaptureBoxBase();
+            SetActiveSafe(lockOverlayImage, false);
+            SetActiveSafe(blockerImage, true);
+        }
+
+        public void PlayBoxAnticipation(BoardBoxAnimationConfig config)
+        {
+            if (blockerImage == null)
+            {
+                return;
+            }
+
+            BeginBoxRevealPresentation(config);
+            _boxBreaking = false;
+            _boxElapsed = 0f;
+            _boxDuration = config != null ? Mathf.Max(0.01f, config.AnticipationDuration) : 0.08f;
+            _boxCurve = config != null ? config.AnticipationCurve : null;
+            _boxScaleFrom = 1f;
+            _boxScaleYFrom = 1f;
+            _boxScaleTo = config != null ? config.AnticipationScale.x : 1.04f;
+            _boxScaleYTo = config != null ? config.AnticipationScale.y : 0.96f;
+            _boxOffsetYFrom = 0f;
+            var cellHeight = ((RectTransform)transform).rect.height;
+            _boxOffsetYTo = cellHeight * (config != null ? config.AnticipationOffsetY : 0.03f);
+            _boxAlphaFrom = _boxBaseColor.a;
+            _boxAlphaTo = _boxBaseColor.a;
+            _boxRotationFrom = 0f;
+            _boxRotationTo = 0f;
+            ApplyBoxVisual();
+        }
+
+        public void PlayBoxBreak(BoardBoxAnimationConfig config)
+        {
+            if (blockerImage == null)
+            {
+                return;
+            }
+
+            _boxConfig = config;
+            _boxBreaking = true;
+            _boxElapsed = 0f;
+            _boxDuration = config != null ? Mathf.Max(0.01f, config.BreakDuration) : 0.16f;
+            _boxCurve = config != null ? config.BreakCurve : null;
+            _boxScaleFrom = _boxScaleTo;
+            _boxScaleYFrom = _boxScaleYTo;
+            var peak = config != null ? config.BreakScale : 1.1f;
+            _boxScaleTo = peak;
+            _boxScaleYTo = peak;
+            _boxOffsetYFrom = _boxOffsetYTo;
+            _boxOffsetYTo = _boxOffsetYFrom;
+            _boxAlphaFrom = blockerImage.color.a;
+            _boxAlphaTo = 0f;
+            _boxRotationFrom = 0f;
+            _boxRotationTo = (config != null ? config.BreakRotationDegrees : 3f) * (index % 2 == 0 ? 1f : -1f);
+            ApplyBoxVisual();
+        }
+
+        public void ClearBoxRevealPresentation()
+        {
+            _boxRevealing = false;
+            _boxBreaking = false;
+            _boxElapsed = 0f;
+            RestoreBoxBasePose();
+            SetActiveSafe(blockerImage, false);
+        }
+
         void Update()
         {
+            TickBoxReveal();
             if (!_cobwebHover && !_cobwebBreaking)
             {
                 return;
@@ -250,6 +350,86 @@ namespace SanIsland.Merge
             lockOverlayImage.color = color;
         }
 
+        void CaptureBoxBase()
+        {
+            if (_boxBaseCaptured || blockerImage == null)
+            {
+                return;
+            }
+
+            var rect = blockerImage.rectTransform;
+            _boxBaseScale = rect.localScale;
+            _boxBaseRotation = rect.localRotation;
+            _boxBaseColor = blockerImage.color;
+            _boxBaseOffsetMin = rect.offsetMin;
+            _boxBaseOffsetMax = rect.offsetMax;
+            _boxBaseCaptured = true;
+        }
+
+        void RestoreBoxBasePose()
+        {
+            if (!_boxBaseCaptured || blockerImage == null)
+            {
+                return;
+            }
+
+            var rect = blockerImage.rectTransform;
+            rect.localScale = _boxBaseScale;
+            rect.localRotation = _boxBaseRotation;
+            rect.offsetMin = _boxBaseOffsetMin;
+            rect.offsetMax = _boxBaseOffsetMax;
+            blockerImage.color = _boxBaseColor;
+        }
+
+        void TickBoxReveal()
+        {
+            if (!_boxRevealing)
+            {
+                return;
+            }
+
+            var dt = _boxConfig != null ? _boxConfig.GetDeltaTime() : Time.unscaledDeltaTime;
+            _boxElapsed += dt;
+            var t = _boxDuration <= 0f ? 1f : Mathf.Clamp01(_boxElapsed / _boxDuration);
+            var curved = _boxCurve != null ? _boxCurve.Evaluate(t) : EaseInOut(t);
+            ApplyBoxVisual(curved);
+            if (t < 1f || !_boxBreaking)
+            {
+                return;
+            }
+
+            RestoreBoxBasePose();
+            SetActiveSafe(blockerImage, false);
+        }
+
+        void ApplyBoxVisual()
+        {
+            ApplyBoxVisual(0f);
+        }
+
+        void ApplyBoxVisual(float curved)
+        {
+            if (blockerImage == null)
+            {
+                return;
+            }
+
+            CaptureBoxBase();
+            var sx = Mathf.LerpUnclamped(_boxScaleFrom, _boxScaleTo, curved);
+            var sy = Mathf.LerpUnclamped(_boxScaleYFrom, _boxScaleYTo, curved);
+            var offsetY = Mathf.LerpUnclamped(_boxOffsetYFrom, _boxOffsetYTo, curved);
+            var rotation = Mathf.LerpUnclamped(_boxRotationFrom, _boxRotationTo, curved);
+            var alpha = Mathf.LerpUnclamped(_boxAlphaFrom, _boxAlphaTo, curved);
+            var rect = blockerImage.rectTransform;
+            rect.localScale = new Vector3(_boxBaseScale.x * sx, _boxBaseScale.y * sy, 1f);
+            rect.localRotation = _boxBaseRotation * Quaternion.Euler(0f, 0f, rotation);
+            rect.offsetMin = new Vector2(_boxBaseOffsetMin.x, _boxBaseOffsetMin.y + offsetY);
+            rect.offsetMax = new Vector2(_boxBaseOffsetMax.x, _boxBaseOffsetMax.y + offsetY);
+            var color = _boxBaseColor;
+            color.a = alpha;
+            blockerImage.color = color;
+        }
+
         static float EaseInOut(float t)
         {
             return t * t * (3f - 2f * t);
@@ -271,6 +451,14 @@ namespace SanIsland.Merge
             if (state == null)
             {
                 SetEmpty();
+                return;
+            }
+
+            if (_boxRevealing)
+            {
+                SetActiveSafe(blockerImage, true);
+                SetActiveSafe(lockOverlayImage, false);
+                SetActiveSafe(itemImage, false);
                 return;
             }
 

@@ -16,6 +16,7 @@ namespace SanIsland.Merge.Editor
         public const string DragAnimationConfigPath = "Assets/Data/BoardDragAnimationConfig.asset";
         public const string MergeAnimationConfigPath = "Assets/Data/BoardMergeAnimationConfig.asset";
         public const string CobwebAnimationConfigPath = "Assets/Data/BoardCobwebAnimationConfig.asset";
+        public const string BoxAnimationConfigPath = "Assets/Data/BoardBoxAnimationConfig.asset";
         public const string BaseSpritesFolder = "Assets/Sprites/Base";
 
         [MenuItem("Tools/San Island/Setup Merge Board")]
@@ -121,6 +122,7 @@ namespace SanIsland.Merge.Editor
             controller.SetDragAnimationConfig(EnsureDragAnimationConfig());
             controller.SetMergeAnimationConfig(EnsureMergeAnimationConfig());
             controller.SetCobwebAnimationConfig(EnsureCobwebAnimationConfig());
+            controller.SetBoxAnimationConfig(EnsureBoxAnimationConfig());
             WireCellInteraction(cellViews, controller);
             WireHud(controller);
             WireDrag(controller);
@@ -446,6 +448,7 @@ namespace SanIsland.Merge.Editor
             controller.SetDragAnimationConfig(EnsureDragAnimationConfig());
             controller.SetMergeAnimationConfig(EnsureMergeAnimationConfig());
             controller.SetCobwebAnimationConfig(EnsureCobwebAnimationConfig());
+            controller.SetBoxAnimationConfig(EnsureBoxAnimationConfig());
 
             var presenter = controller.GetComponent<BoardMergePresenter>();
             if (presenter == null)
@@ -467,6 +470,14 @@ namespace SanIsland.Merge.Editor
                 controller.CobwebAnimationConfig,
                 controller.DragAnimationConfig);
 
+            var boxRevealPresenter = controller.GetComponent<BoardBoxRevealPresenter>();
+            if (boxRevealPresenter == null)
+            {
+                boxRevealPresenter = Undo.AddComponent<BoardBoxRevealPresenter>(controller.gameObject);
+            }
+
+            boxRevealPresenter.Configure(controller, controller.BoxAnimationConfig);
+
             var dragController = controller.GetComponent<BoardDragController>();
             if (dragController == null)
             {
@@ -478,6 +489,7 @@ namespace SanIsland.Merge.Editor
             EditorUtility.SetDirty(dragController);
             EditorUtility.SetDirty(presenter);
             EditorUtility.SetDirty(cobwebPresenter);
+            EditorUtility.SetDirty(boxRevealPresenter);
             EditorUtility.SetDirty(controller);
         }
 
@@ -551,6 +563,20 @@ namespace SanIsland.Merge.Editor
             {
                 config = ScriptableObject.CreateInstance<BoardCobwebAnimationConfig>();
                 AssetDatabase.CreateAsset(config, CobwebAnimationConfigPath);
+                AssetDatabase.SaveAssets();
+            }
+
+            return config;
+        }
+
+        static BoardBoxAnimationConfig EnsureBoxAnimationConfig()
+        {
+            EnsureFolder("Assets/Data");
+            var config = AssetDatabase.LoadAssetAtPath<BoardBoxAnimationConfig>(BoxAnimationConfigPath);
+            if (config == null)
+            {
+                config = ScriptableObject.CreateInstance<BoardBoxAnimationConfig>();
+                AssetDatabase.CreateAsset(config, BoxAnimationConfigPath);
                 AssetDatabase.SaveAssets();
             }
 

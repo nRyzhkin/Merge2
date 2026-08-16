@@ -79,6 +79,43 @@ namespace SanIsland.Merge
                 _cells[i].Index = i;
             }
         }
+
+        public int GetOrthogonalNeighborIndices(int index, List<int> results)
+        {
+            if (results == null)
+            {
+                throw new ArgumentNullException(nameof(results));
+            }
+
+            results.Clear();
+            if (!IsValidIndex(index))
+            {
+                return 0;
+            }
+
+            GetCoordinates(index, out var row, out var column);
+            if (column > 0)
+            {
+                results.Add(GetIndex(row, column - 1));
+            }
+
+            if (column < Columns - 1)
+            {
+                results.Add(GetIndex(row, column + 1));
+            }
+
+            if (row > 0)
+            {
+                results.Add(GetIndex(row - 1, column));
+            }
+
+            if (row < Rows - 1)
+            {
+                results.Add(GetIndex(row + 1, column));
+            }
+
+            return results.Count;
+        }
     }
 }
 

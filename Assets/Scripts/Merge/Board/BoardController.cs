@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace SanIsland.Merge
@@ -16,9 +17,11 @@ namespace SanIsland.Merge
         [SerializeField] BoardDragAnimationConfig dragAnimationConfig;
         [SerializeField] BoardMergeAnimationConfig mergeAnimationConfig;
         [SerializeField] BoardCobwebAnimationConfig cobwebAnimationConfig;
+        [SerializeField] BoardBoxAnimationConfig boxAnimationConfig;
         [SerializeField] BoardDragView dragView;
         [SerializeField] BoardMergePresenter mergePresenter;
         [SerializeField] BoardCobwebPresenter cobwebPresenter;
+        [SerializeField] BoardBoxRevealPresenter boxRevealPresenter;
         [SerializeField] BoardSelectionView selectionView;
         [SerializeField] ItemInfoView itemInfoView;
         [SerializeField] bool useDevelopmentBoardState = true;
@@ -32,6 +35,8 @@ namespace SanIsland.Merge
         BoardState _state;
         MergeDiscoveryState _discovery;
         readonly BoardInteractionLockService _interactionLocks = new BoardInteractionLockService();
+        readonly List<int> _orthogonalScratch = new List<int>(4);
+        readonly List<BoxRevealResult> _boxRevealScratch = new List<BoxRevealResult>(4);
         int _selectedCellIndex = NoSelectionIndex;
         int _selectionRevision;
         BoardDragController _dragController;
@@ -45,9 +50,11 @@ namespace SanIsland.Merge
         public BoardDragAnimationConfig DragAnimationConfig => dragAnimationConfig;
         public BoardMergeAnimationConfig MergeAnimationConfig => mergeAnimationConfig;
         public BoardCobwebAnimationConfig CobwebAnimationConfig => cobwebAnimationConfig;
+        public BoardBoxAnimationConfig BoxAnimationConfig => boxAnimationConfig;
         public BoardDragView DragView => dragView;
         public BoardMergePresenter MergePresenter => mergePresenter;
         public BoardCobwebPresenter CobwebPresenter => cobwebPresenter;
+        public BoardBoxRevealPresenter BoxRevealPresenter => boxRevealPresenter;
         public BoardDragController DragController => _dragController;
         public BoardSelectionView SelectionView => selectionView;
         public ItemInfoView ItemInfoView => itemInfoView;
@@ -67,6 +74,9 @@ namespace SanIsland.Merge
         public event Action<int> ItemDiscovered;
         public event Action MergeImpact;
         public event Action NewItemAppeared;
+        public event Action<int, int> MergeCommitted;
+        public event Action BoxBreak;
+        public event Action BoxItemRevealed;
 
         void Awake()
         {
@@ -129,6 +139,11 @@ namespace SanIsland.Merge
                 cobwebPresenter.AbortAll();
             }
 
+            if (boxRevealPresenter != null)
+            {
+                boxRevealPresenter.AbortAll();
+            }
+
             _interactionLocks.ReleaseAll();
 
             if (boardView != null)
@@ -143,6 +158,7 @@ namespace SanIsland.Merge
             BindAndRefresh();
             UpdateDebug();
             LogLockedCellsForDebug();
+            BoardLayoutValidator.Validate(_state, itemDatabase);
         }
 
         void LogLockedCellsForDebug()
@@ -620,7 +636,51 @@ namespace SanIsland.Merge
             }
 
             UpdateDebug();
+            MergeCommitted?.Invoke(toIndex, nextItemId);
+            RevealAdjacentBoxes(toIndex);
             return result;
+        }
+
+        public IReadOnlyList<BoxRevealResult> RevealAdjacentBoxes(int mergeResultIndex)
+        {
+            _boxRevealScratch.Clear();
+            if (_state == null || !_state.IsValidIndex(mergeResultIndex))
+            {
+                return _boxRevealScratch;
+            }
+
+            _state.GetOrthogonalNeighborIndices(mergeResultIndex, _orthogonalScratch);
+            for (var i = 0; i < _orthogonalScratch.Count; i++)
+            {
+                var index = _orthogonalScratch[i];
+                var cell = _state.GetCell(index);
+                if (cell == null || !cell.IsBox)
+                {
+                    continue;
+                }
+
+                var revealedId = cell.RevealBox();
+                if (revealedId != BoardCellState.EmptyItemId &&
+                    _discovery != null &&
+                    _discovery.Discover(revealedId))
+                {
+                    ItemDiscovered?.Invoke(revealedId);
+                }
+
+                _boxRevealScratch.Add(new BoxRevealResult
+                {
+                    CellIndex = index,
+                    RevealedItemId = revealedId
+                });
+            }
+
+            if (_boxRevealScratch.Count > 0)
+            {
+                EnsureBoxReady();
+                boxRevealPresenter?.Play(_boxRevealScratch);
+            }
+
+            return _boxRevealScratch;
         }
 
         public void ShowMergedItemInfo(MergeItemData data)
@@ -642,6 +702,16 @@ namespace SanIsland.Merge
         public void NotifyNewItemAppeared()
         {
             NewItemAppeared?.Invoke();
+        }
+
+        public void NotifyBoxBreak()
+        {
+            BoxBreak?.Invoke();
+        }
+
+        public void NotifyBoxItemRevealed()
+        {
+            BoxItemRevealed?.Invoke();
         }
 
         public void PrepareDragPresentation(int sourceIndex)
@@ -686,6 +756,11 @@ namespace SanIsland.Merge
         public void SetCobwebAnimationConfig(BoardCobwebAnimationConfig animation)
         {
             cobwebAnimationConfig = animation;
+        }
+
+        public void SetBoxAnimationConfig(BoardBoxAnimationConfig animation)
+        {
+            boxAnimationConfig = animation;
         }
 
         public void SetDragView(BoardDragView view)
@@ -781,6 +856,7 @@ namespace SanIsland.Merge
             _dragController.Configure(this, dragAnimationConfig, dragView);
             EnsureMerge();
             EnsureCobweb();
+            EnsureBox();
         }
 
         void EnsureMerge()
@@ -818,6 +894,27 @@ namespace SanIsland.Merge
             }
 
             cobwebPresenter.Configure(this, dragView, cobwebAnimationConfig, dragAnimationConfig);
+        }
+
+        public void EnsureBoxReady()
+        {
+            EnsureBox();
+        }
+
+        void EnsureBox()
+        {
+            if (boxAnimationConfig == null)
+            {
+                boxAnimationConfig = ScriptableObject.CreateInstance<BoardBoxAnimationConfig>();
+            }
+
+            boxRevealPresenter = GetComponent<BoardBoxRevealPresenter>();
+            if (boxRevealPresenter == null)
+            {
+                boxRevealPresenter = gameObject.AddComponent<BoardBoxRevealPresenter>();
+            }
+
+            boxRevealPresenter.Configure(this, boxAnimationConfig);
         }
 
         bool ValidateDependencies()
