@@ -42,18 +42,20 @@ namespace SanIsland.Merge
             SetItem(state, database, 1, 7, "coffee_l01");
             SetBox(state, 1, 8);
 
-            // Row 2 — L2 anchors + locked tools + box
+            // Row 2 — L2 anchors + locked tools with adjacent free twin + box
             SetItem(state, database, 2, 2, "tools_l02");
             SetItem(state, database, 2, 3, "tools_l02");
             SetItem(state, database, 2, 4, "cleaning_l02");
+            SetItem(state, database, 2, 5, "tools_l01");
             SetLockedItem(state, database, 2, 6, "tools_l01");
             SetBox(state, 2, 8);
 
-            // Row 3 — more L1 pairs + locked cleaning
+            // Row 3 — more L1 pairs + locked cleaning with adjacent free twin
             SetItem(state, database, 3, 1, "coffee_l01");
             SetItem(state, database, 3, 2, "coffee_l01");
             SetItem(state, database, 3, 4, "tools_l01");
             SetItem(state, database, 3, 5, "tools_l01");
+            SetItem(state, database, 3, 6, "cleaning_l01");
             SetLockedItem(state, database, 3, 7, "cleaning_l01");
 
             // Row 4 — sparse boxes, mostly empty for drag targets

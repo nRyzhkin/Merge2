@@ -15,6 +15,7 @@ namespace SanIsland.Merge.Editor
         public const string AnimationConfigPath = "Assets/Data/BoardItemAnimationConfig.asset";
         public const string DragAnimationConfigPath = "Assets/Data/BoardDragAnimationConfig.asset";
         public const string MergeAnimationConfigPath = "Assets/Data/BoardMergeAnimationConfig.asset";
+        public const string CobwebAnimationConfigPath = "Assets/Data/BoardCobwebAnimationConfig.asset";
         public const string BaseSpritesFolder = "Assets/Sprites/Base";
 
         [MenuItem("Tools/San Island/Setup Merge Board")]
@@ -119,6 +120,7 @@ namespace SanIsland.Merge.Editor
             controller.SetUiFeedbackConfig(UiInteractionFeedbackSetupTool.EnsureConfig());
             controller.SetDragAnimationConfig(EnsureDragAnimationConfig());
             controller.SetMergeAnimationConfig(EnsureMergeAnimationConfig());
+            controller.SetCobwebAnimationConfig(EnsureCobwebAnimationConfig());
             WireCellInteraction(cellViews, controller);
             WireHud(controller);
             WireDrag(controller);
@@ -443,6 +445,7 @@ namespace SanIsland.Merge.Editor
             controller.SetDragView(dragView);
             controller.SetDragAnimationConfig(EnsureDragAnimationConfig());
             controller.SetMergeAnimationConfig(EnsureMergeAnimationConfig());
+            controller.SetCobwebAnimationConfig(EnsureCobwebAnimationConfig());
 
             var presenter = controller.GetComponent<BoardMergePresenter>();
             if (presenter == null)
@@ -451,6 +454,18 @@ namespace SanIsland.Merge.Editor
             }
 
             presenter.Configure(controller, dragView, controller.MergeAnimationConfig);
+
+            var cobwebPresenter = controller.GetComponent<BoardCobwebPresenter>();
+            if (cobwebPresenter == null)
+            {
+                cobwebPresenter = Undo.AddComponent<BoardCobwebPresenter>(controller.gameObject);
+            }
+
+            cobwebPresenter.Configure(
+                controller,
+                dragView,
+                controller.CobwebAnimationConfig,
+                controller.DragAnimationConfig);
 
             var dragController = controller.GetComponent<BoardDragController>();
             if (dragController == null)
@@ -462,6 +477,7 @@ namespace SanIsland.Merge.Editor
             EditorUtility.SetDirty(dragView);
             EditorUtility.SetDirty(dragController);
             EditorUtility.SetDirty(presenter);
+            EditorUtility.SetDirty(cobwebPresenter);
             EditorUtility.SetDirty(controller);
         }
 
@@ -521,6 +537,20 @@ namespace SanIsland.Merge.Editor
             {
                 config = ScriptableObject.CreateInstance<BoardMergeAnimationConfig>();
                 AssetDatabase.CreateAsset(config, MergeAnimationConfigPath);
+                AssetDatabase.SaveAssets();
+            }
+
+            return config;
+        }
+
+        static BoardCobwebAnimationConfig EnsureCobwebAnimationConfig()
+        {
+            EnsureFolder("Assets/Data");
+            var config = AssetDatabase.LoadAssetAtPath<BoardCobwebAnimationConfig>(CobwebAnimationConfigPath);
+            if (config == null)
+            {
+                config = ScriptableObject.CreateInstance<BoardCobwebAnimationConfig>();
+                AssetDatabase.CreateAsset(config, CobwebAnimationConfigPath);
                 AssetDatabase.SaveAssets();
             }
 

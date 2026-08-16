@@ -28,6 +28,9 @@ namespace SanIsland.Merge
             public int SelectionRevision;
             public int LockToken;
             public bool Mutated;
+            public bool TargetWasLocked;
+            public bool VisualOwnershipReleased;
+            public int PresentationRevision;
             public bool SourceUnlocked;
             public bool TargetUnlocked;
             public BoardCellView TargetView;
@@ -89,12 +92,21 @@ namespace SanIsland.Merge
             sequence.SelectionRevision = selectionRevision;
             sequence.OnComplete = onComplete;
             sequence.Mutated = false;
+            sequence.TargetWasLocked = false;
+            sequence.VisualOwnershipReleased = false;
+            sequence.PresentationRevision = 0;
             sequence.SourceUnlocked = false;
             sequence.TargetUnlocked = false;
             sequence.Elapsed = 0f;
             sequence.Phase = Phase.Collision;
             sequence.TargetView = boardController.BoardView.GetCellView(targetIndex);
             sequence.TargetAnimator = sequence.TargetView != null ? sequence.TargetView.ItemAnimator : null;
+            if (boardController.State != null && boardController.State.IsValidIndex(targetIndex))
+            {
+                var targetState = boardController.State.GetCell(targetIndex);
+                sequence.TargetWasLocked = targetState != null && targetState.ItemLocked;
+            }
+
             sequence.LockToken = boardController.InteractionLocks.Acquire(sourceIndex, targetIndex);
             sequence.Flight = RentFlight();
             sequence.Fx = null;
@@ -146,6 +158,64 @@ namespace SanIsland.Merge
             _scratch.Clear();
             _abortingAll = false;
             enabled = false;
+        }
+
+        /// <summary>
+        /// Hands visual ownership of a cell from merge presentation back to BoardCell / drag.
+        /// Late Finish/Abort must not re-show ItemImage.
+        /// </summary>
+        public void ReleaseCellVisualOwnership(int cellIndex)
+        {
+            if (cellIndex == BoardController.NoSelectionIndex)
+            {
+                return;
+            }
+
+            for (var i = 0; i < _active.Count; i++)
+            {
+                var sequence = _active[i];
+                if (sequence == null)
+                {
+                    continue;
+                }
+
+                if (sequence.TargetIndex != cellIndex && sequence.SourceIndex != cellIndex)
+                {
+                    continue;
+                }
+
+                sequence.VisualOwnershipReleased = true;
+                if (sequence.TargetAnimator != null)
+                {
+                    sequence.PresentationRevision = sequence.TargetAnimator.PresentationRevision;
+                }
+
+                if (sequence.TargetWasLocked && sequence.TargetView != null &&
+                    sequence.TargetIndex == cellIndex)
+                {
+                    sequence.TargetView.HideCobwebOverlayImmediate();
+                }
+            }
+        }
+
+        public bool IsPresentingCell(int cellIndex)
+        {
+            if (cellIndex == BoardController.NoSelectionIndex)
+            {
+                return false;
+            }
+
+            for (var i = 0; i < _active.Count; i++)
+            {
+                var sequence = _active[i];
+                if (sequence != null && !sequence.VisualOwnershipReleased &&
+                    (sequence.TargetIndex == cellIndex || sequence.SourceIndex == cellIndex))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         void Update()
@@ -203,12 +273,15 @@ namespace SanIsland.Merge
                     return;
                 }
 
-                BeginAbsorb(sequence);
+                // Commit + unlock at impact so the result is interactable during spawn/FX.
+                // Do not keep gameplay locks through Absorb.
+                CommitAndBurst(sequence);
                 return;
             }
 
             if (sequence.Phase == Phase.Absorb)
             {
+                // Legacy phase: if any sequence is still here, finish visuals then commit.
                 if (sequence.Elapsed < config.AbsorbDuration)
                 {
                     return;
@@ -228,6 +301,13 @@ namespace SanIsland.Merge
         {
             sequence.Elapsed = 0f;
             sequence.Phase = Phase.Absorb;
+            if (sequence.TargetWasLocked && sequence.TargetView != null)
+            {
+                sequence.TargetView.PlayCobwebBreak(boardController != null
+                    ? boardController.CobwebAnimationConfig
+                    : null);
+            }
+
             if (sequence.Flight != null)
             {
                 sequence.Flight.BeginAbsorb(config.AbsorbFinalScale, config.AbsorbDuration, config.AbsorbCurve);
@@ -241,6 +321,18 @@ namespace SanIsland.Merge
 
         void CommitAndBurst(MergeSequence sequence)
         {
+            if (sequence.Mutated)
+            {
+                return;
+            }
+
+            if (sequence.TargetWasLocked && sequence.TargetView != null)
+            {
+                sequence.TargetView.PlayCobwebBreak(boardController != null
+                    ? boardController.CobwebAnimationConfig
+                    : null);
+            }
+
             if (sequence.Flight != null)
             {
                 sequence.Flight.HideImmediate();
@@ -273,7 +365,9 @@ namespace SanIsland.Merge
                 sequence.ResultItemId = merge.ResultingItemId;
             }
 
+            // Gameplay ownership ends here — spawn/FX are presentation-only.
             UnlockSource(sequence);
+            UnlockTarget(sequence);
 
             MergeImpact?.Invoke();
             boardController?.NotifyMergeImpact();
@@ -302,15 +396,25 @@ namespace SanIsland.Merge
 
             if (sequence.TargetView != null)
             {
-                sequence.TargetView.RevealItemAfterMerge();
+                if (!sequence.TargetView.IsItemPresentationSuppressed)
+                {
+                    sequence.TargetView.RevealItemAfterMerge();
+                }
             }
 
-            if (sequence.TargetAnimator != null)
+            if (!sequence.VisualOwnershipReleased && sequence.TargetView != null &&
+                !sequence.TargetView.IsItemPresentationSuppressed)
             {
-                sequence.TargetAnimator.PlayResultSpawn(config);
+                if (sequence.TargetAnimator != null)
+                {
+                    sequence.TargetAnimator.PlayResultSpawn(config);
+                    sequence.PresentationRevision = sequence.TargetAnimator.PresentationRevision;
+                }
             }
-
-            UnlockTarget(sequence);
+            else if (sequence.TargetView != null)
+            {
+                sequence.TargetView.HideCobwebOverlayImmediate();
+            }
 
             if (boardController != null &&
                 boardController.SelectionRevision == sequence.SelectionRevision &&
@@ -332,14 +436,20 @@ namespace SanIsland.Merge
             var complete = sequence.OnComplete;
             var target = sequence.TargetIndex;
             var mutated = sequence.Mutated;
-            if (sequence.TargetView != null)
+            var canTouchTargetVisual = !sequence.VisualOwnershipReleased
+                                       && sequence.TargetView != null
+                                       && !sequence.TargetView.IsItemPresentationSuppressed
+                                       && (sequence.TargetAnimator == null
+                                           || sequence.TargetAnimator.IsPresentationRevisionCurrent(sequence.PresentationRevision)
+                                           || sequence.PresentationRevision == 0);
+
+            if (canTouchTargetVisual)
             {
                 sequence.TargetView.SetHideItemForDrag(false);
-            }
-
-            if (boardController != null && boardController.BoardView != null)
-            {
-                boardController.BoardView.RefreshCell(target);
+                if (boardController != null && boardController.BoardView != null)
+                {
+                    boardController.BoardView.RefreshCell(target);
+                }
             }
 
             ReleaseSequence(sequence);
@@ -357,6 +467,9 @@ namespace SanIsland.Merge
             var mutated = sequence.Mutated;
             var source = sequence.SourceIndex;
             var target = sequence.TargetIndex;
+            var canTouchTargetVisual = !sequence.VisualOwnershipReleased
+                                       && (sequence.TargetView == null
+                                           || !sequence.TargetView.IsItemPresentationSuppressed);
 
             if (sequence.Fx != null)
             {
@@ -372,7 +485,7 @@ namespace SanIsland.Merge
                 sequence.Flight = null;
             }
 
-            if (sequence.TargetAnimator != null)
+            if (canTouchTargetVisual && sequence.TargetAnimator != null)
             {
                 sequence.TargetAnimator.ClearMergeTargetImmediate();
                 sequence.TargetAnimator.CancelTransientAnimationAndAdoptCurrentVisualState();
@@ -381,18 +494,25 @@ namespace SanIsland.Merge
             if (boardController != null && boardController.BoardView != null)
             {
                 var sourceView = boardController.BoardView.GetCellView(source);
-                if (sourceView != null)
+                if (sourceView != null && !sourceView.IsItemPresentationSuppressed)
                 {
                     sourceView.SetHideItemForDrag(false);
                 }
 
-                if (sequence.TargetView != null)
+                if (canTouchTargetVisual && sequence.TargetView != null)
                 {
                     sequence.TargetView.SetHideItemForDrag(false);
                 }
 
-                boardController.BoardView.RefreshCell(source);
-                boardController.BoardView.RefreshCell(target);
+                if (sourceView == null || !sourceView.IsItemPresentationSuppressed)
+                {
+                    boardController.BoardView.RefreshCell(source);
+                }
+
+                if (canTouchTargetVisual)
+                {
+                    boardController.BoardView.RefreshCell(target);
+                }
             }
 
             ReleaseLocks(sequence);
@@ -452,6 +572,9 @@ namespace SanIsland.Merge
             sequence.Fx = null;
             sequence.Elapsed = 0f;
             sequence.LockToken = 0;
+            sequence.VisualOwnershipReleased = false;
+            sequence.PresentationRevision = 0;
+            sequence.TargetWasLocked = false;
             _pool.Add(sequence);
         }
 

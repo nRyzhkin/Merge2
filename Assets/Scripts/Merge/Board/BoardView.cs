@@ -121,6 +121,7 @@ namespace SanIsland.Merge
             {
                 if (cells[i] != null)
                 {
+                    cells[i].SetItemPresentationSuppressed(false);
                     cells[i].SetHideItemForDrag(false);
                 }
             }

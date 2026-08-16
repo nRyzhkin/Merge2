@@ -18,12 +18,22 @@ namespace SanIsland.Merge
 
         public int Acquire(int cellA, int cellB)
         {
+            return Acquire(cellA, cellB, BoardController.NoSelectionIndex);
+        }
+
+        public int Acquire(int cellA, int cellB, int cellC)
+        {
             var token = ++_nextToken;
-            var cells = new List<int>(2);
+            var cells = new List<int>(3);
             AddCell(token, cells, cellA);
             if (cellB != cellA)
             {
                 AddCell(token, cells, cellB);
+            }
+
+            if (cellC != cellA && cellC != cellB)
+            {
+                AddCell(token, cells, cellC);
             }
 
             _tokenCells[token] = cells;

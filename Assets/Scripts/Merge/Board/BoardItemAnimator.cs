@@ -15,7 +15,9 @@ namespace SanIsland.Merge
             MergeAbsorb,
             ResultGrow,
             ResultRebound,
-            ResultSettle
+            ResultSettle,
+            FreedGrow,
+            FreedSettle
         }
 
         enum MergePreviewPhase
@@ -74,10 +76,31 @@ namespace SanIsland.Merge
         bool _absorbThroughPeak;
         float _resultReboundScale = 0.97f;
         float _resultDuration = 0.22f;
+        float _cobwebMultiplier = 1f;
+        float _cobwebFrom = 1f;
+        float _cobwebTo = 1f;
+        float _cobwebElapsed;
+        float _cobwebDuration = 0.1f;
+        bool _cobwebTransitioning;
+        bool _cobwebActive;
+        int _presentationRevision;
+        int _actionRevision;
 
         public bool IsPlaying => _phase != Phase.Idle;
         public bool IsHovered => _hovered;
         public bool IsMergeTarget => _mergePreviewPhase == MergePreviewPhase.Accept || _mergePreviewPhase == MergePreviewPhase.Hold;
+        public int PresentationRevision => _presentationRevision;
+
+        public bool IsTransientAnimationRunning()
+        {
+            return _phase == Phase.MergeCollision
+                   || _phase == Phase.MergeAbsorb
+                   || _phase == Phase.ResultGrow
+                   || _phase == Phase.ResultRebound
+                   || _phase == Phase.ResultSettle
+                   || _phase == Phase.FreedGrow
+                   || _phase == Phase.FreedSettle;
+        }
 
         public void Configure(
             BoardItemAnimationConfig animationConfig,
@@ -91,6 +114,7 @@ namespace SanIsland.Merge
             cellRect = cell;
             CaptureIdle();
             ClearMergePreviewImmediate();
+            ClearCobwebPreviewImmediate();
             _hovered = false;
             _hoverMultiplier = 1f;
             _hoverTransitioning = false;
@@ -127,6 +151,11 @@ namespace SanIsland.Merge
 
         public void PlayPressAnticipation()
         {
+            if (IsTransientAnimationRunning())
+            {
+                CancelTransientAnimationAndAdoptCurrentVisualState();
+            }
+
             if (!CanAnimate())
             {
                 return;
@@ -154,21 +183,30 @@ namespace SanIsland.Merge
 
         public void CancelTransientAnimationAndAdoptCurrentVisualState()
         {
-            var mergeMultiplier = _mergeTargetMultiplier * _mergeBreathWave;
-            var visual = new Vector2(
-                _actionScale.x * _hoverMultiplier * mergeMultiplier,
-                _actionScale.y * _hoverMultiplier * mergeMultiplier);
+            _presentationRevision++;
             ClearMergePreviewImmediate();
+            ClearCobwebPreviewImmediate();
             _hovered = false;
             _hoverTransitioning = false;
             _hoverMultiplier = 1f;
+            _absorbThroughPeak = false;
             _phase = Phase.Idle;
             _elapsed = 0f;
-            _actionScale = visual;
+            _actionScale = Vector2.one;
             _currentDown = 0f;
-            _absorbThroughPeak = false;
             ApplyPose();
             RefreshEnabled();
+        }
+
+        public int BeginTransientPresentation()
+        {
+            _presentationRevision++;
+            return _presentationRevision;
+        }
+
+        public bool IsPresentationRevisionCurrent(int revision)
+        {
+            return revision == _presentationRevision;
         }
 
         public void SetMergeTarget(bool active, BoardMergeAnimationConfig mergeConfig = null)
@@ -249,8 +287,53 @@ namespace SanIsland.Merge
         public void ClearMergeTargetImmediate()
         {
             ClearMergePreviewImmediate();
+            ClearCobwebPreviewImmediate();
             ApplyPose();
             RefreshEnabled();
+        }
+
+        public void SetCobwebUnlockTarget(bool active, BoardCobwebAnimationConfig cobwebConfig = null)
+        {
+            SetMergeTarget(false);
+            SetHovered(false);
+            var target = active
+                ? (cobwebConfig != null ? cobwebConfig.ItemHoverScale : 1.04f)
+                : 1f;
+            if (_cobwebActive == active && !_cobwebTransitioning && Mathf.Approximately(_cobwebMultiplier, target))
+            {
+                return;
+            }
+
+            _cobwebActive = active;
+            _cobwebFrom = _cobwebMultiplier;
+            _cobwebTo = target;
+            _cobwebElapsed = 0f;
+            _cobwebDuration = cobwebConfig != null ? Mathf.Max(0.01f, cobwebConfig.WebHoverDuration) : 0.10f;
+            _cobwebTransitioning = true;
+            enabled = true;
+        }
+
+        public void PlayFreedBounce(BoardCobwebAnimationConfig cobwebConfig)
+        {
+            if (itemRect == null || cobwebConfig == null)
+            {
+                return;
+            }
+
+            ClearCobwebPreviewImmediate();
+            ClearMergePreviewImmediate();
+            SetHovered(false);
+            BeginTransientPresentation();
+            CaptureIdleIfNeeded();
+            _resultDuration = cobwebConfig.FreedItemDuration;
+            var start = Vector2.one * 0.95f;
+            var grow = Mathf.Max(0.04f, cobwebConfig.FreedItemDuration * 0.55f);
+            var up = CellHeight() * cobwebConfig.FreedItemOffsetY;
+            _actionScale = start;
+            _currentDown = 0f;
+            BeginPhase(Phase.FreedGrow, grow, cobwebConfig.FreedItemCurve, Vector2.one * cobwebConfig.FreedItemOvershootScale, -up);
+            _fromScale = start;
+            ApplyPose();
         }
 
         public void PlayMergeCollision(BoardMergeAnimationConfig mergeConfig)
@@ -285,6 +368,7 @@ namespace SanIsland.Merge
                 return;
             }
 
+            BeginTransientPresentation();
             ClearMergePreviewImmediate();
             SetHovered(false);
             CaptureIdleIfNeeded();
@@ -321,6 +405,7 @@ namespace SanIsland.Merge
             _hoverTransitioning = false;
             _hoverMultiplier = 1f;
             ClearMergePreviewImmediate();
+            ClearCobwebPreviewImmediate();
             _phase = Phase.Idle;
             _actionScale = Vector2.one;
             _currentDown = 0f;
@@ -333,9 +418,11 @@ namespace SanIsland.Merge
             var actionRunning = TickAction(dt);
             var hoverRunning = TickHover(dt);
             var mergeRunning = TickMergePreview(dt);
+            var cobwebRunning = TickCobwebPreview(dt);
             ApplyPose();
 
-            if (!actionRunning && !hoverRunning && !mergeRunning && !_hovered && _mergePreviewPhase == MergePreviewPhase.Off)
+            if (!actionRunning && !hoverRunning && !mergeRunning && !cobwebRunning && !_hovered &&
+                _mergePreviewPhase == MergePreviewPhase.Off && !_cobwebActive)
             {
                 enabled = false;
             }
@@ -345,6 +432,15 @@ namespace SanIsland.Merge
         {
             if (_phase == Phase.Idle)
             {
+                return false;
+            }
+
+            if (_actionRevision != _presentationRevision)
+            {
+                _phase = Phase.Idle;
+                _elapsed = 0f;
+                _actionScale = Vector2.one;
+                _currentDown = 0f;
                 return false;
             }
 
@@ -402,6 +498,12 @@ namespace SanIsland.Merge
             if (_phase == Phase.ResultRebound)
             {
                 BeginPhase(Phase.ResultSettle, Mathf.Max(0.04f, _resultDuration * 0.25f), _curve, Vector2.one, 0f);
+                return true;
+            }
+
+            if (_phase == Phase.FreedGrow)
+            {
+                BeginPhase(Phase.FreedSettle, Mathf.Max(0.04f, _resultDuration * 0.45f), _curve, Vector2.one, 0f);
                 return true;
             }
 
@@ -485,6 +587,35 @@ namespace SanIsland.Merge
             _attractionTarget = Vector2.zero;
         }
 
+        void ClearCobwebPreviewImmediate()
+        {
+            _cobwebActive = false;
+            _cobwebTransitioning = false;
+            _cobwebMultiplier = 1f;
+            _cobwebFrom = 1f;
+            _cobwebTo = 1f;
+        }
+
+        bool TickCobwebPreview(float dt)
+        {
+            if (!_cobwebTransitioning)
+            {
+                return _cobwebActive;
+            }
+
+            _cobwebElapsed += dt;
+            var t = _cobwebDuration <= 0f ? 1f : Mathf.Clamp01(_cobwebElapsed / _cobwebDuration);
+            _cobwebMultiplier = Mathf.LerpUnclamped(_cobwebFrom, _cobwebTo, EaseInOut(t));
+            if (t < 1f)
+            {
+                return true;
+            }
+
+            _cobwebMultiplier = _cobwebTo;
+            _cobwebTransitioning = false;
+            return _cobwebActive;
+        }
+
         void ApplyMergeConfig(BoardMergeAnimationConfig mergeConfig)
         {
             if (mergeConfig == null)
@@ -554,6 +685,7 @@ namespace SanIsland.Merge
             _toScale = toScale;
             _fromDown = _currentDown;
             _toDown = toDown;
+            _actionRevision = _presentationRevision;
             enabled = true;
         }
 
@@ -587,7 +719,9 @@ namespace SanIsland.Merge
             enabled = _phase != Phase.Idle ||
                       _hoverTransitioning ||
                       _hovered ||
-                      _mergePreviewPhase != MergePreviewPhase.Off;
+                      _mergePreviewPhase != MergePreviewPhase.Off ||
+                      _cobwebActive ||
+                      _cobwebTransitioning;
         }
 
         float CellHeight()
@@ -625,8 +759,8 @@ namespace SanIsland.Merge
 
             var mergeMultiplier = _mergeTargetMultiplier * _mergeBreathWave;
             itemRect.localScale = new Vector3(
-                _actionScale.x * _hoverMultiplier * mergeMultiplier,
-                _actionScale.y * _hoverMultiplier * mergeMultiplier,
+                _actionScale.x * _hoverMultiplier * mergeMultiplier * _cobwebMultiplier,
+                _actionScale.y * _hoverMultiplier * mergeMultiplier * _cobwebMultiplier,
                 1f);
             itemRect.offsetMin = new Vector2(
                 _idleOffsetMin.x + _attractionOffset.x,

@@ -13,7 +13,11 @@ namespace SanIsland.Merge
         {
             Hidden,
             Collision,
-            Absorb
+            Absorb,
+            LandingMove,
+            LandingSquash,
+            LandingRebound,
+            LandingSettle
         }
 
         [SerializeField] DragItemView item;
@@ -32,8 +36,14 @@ namespace SanIsland.Merge
         float _toFlight;
         AnimationCurve _curve;
         RectTransform _layer;
+        BoardDragAnimationConfig _dragConfig;
 
         public bool IsActive => _phase != Phase.Hidden;
+        public bool IsLanding =>
+            _phase == Phase.LandingMove ||
+            _phase == Phase.LandingSquash ||
+            _phase == Phase.LandingRebound ||
+            _phase == Phase.LandingSettle;
         public DragItemView Item => item;
 
         public void Bind(DragItemView dragItem, RectTransform layer)
@@ -128,20 +138,102 @@ namespace SanIsland.Merge
             _phase = Phase.Absorb;
         }
 
-        public void Tick(float dt)
+        public void BeginLanding(Vector2 landPos, BoardDragAnimationConfig dragConfig, float flightHeight)
+        {
+            if (item == null)
+            {
+                return;
+            }
+
+            _dragConfig = dragConfig;
+            _fromPlanar = _planarPos;
+            _toPlanar = landPos;
+            _fromFlight = Mathf.Max(_flightHeight, flightHeight);
+            _toFlight = 0f;
+            _fromScale = _currentScale;
+            _toScale = dragConfig != null ? dragConfig.DropApproachScale : Vector2.one;
+            _elapsed = 0f;
+            _duration = Mathf.Max(0.01f, dragConfig != null ? dragConfig.LandingMoveDuration : 0.12f);
+            _curve = dragConfig != null ? dragConfig.LandingMoveCurve : null;
+            _phase = Phase.LandingMove;
+            gameObject.SetActive(true);
+        }
+
+        public bool Tick(float dt)
         {
             if (_phase == Phase.Hidden)
             {
-                return;
+                return false;
             }
 
             _elapsed += dt;
             var t = _duration <= 0f ? 1f : Mathf.Clamp01(_elapsed / _duration);
             var curved = _curve != null ? _curve.Evaluate(t) : t;
-            _planarPos = Vector2.LerpUnclamped(_fromPlanar, _toPlanar, curved);
-            _flightHeight = Mathf.LerpUnclamped(_fromFlight, _toFlight, curved);
-            _currentScale = Vector2.LerpUnclamped(_fromScale, _toScale, curved);
+
+            if (_phase == Phase.Collision || _phase == Phase.Absorb || _phase == Phase.LandingMove)
+            {
+                _planarPos = Vector2.LerpUnclamped(_fromPlanar, _toPlanar, curved);
+                _flightHeight = Mathf.LerpUnclamped(_fromFlight, _toFlight, curved);
+                _currentScale = Vector2.LerpUnclamped(_fromScale, _toScale, curved);
+            }
+            else
+            {
+                _planarPos = _toPlanar;
+                _flightHeight = 0f;
+                _currentScale = Vector2.LerpUnclamped(_fromScale, _toScale, curved);
+            }
+
             ApplyPose();
+            if (t < 1f)
+            {
+                return true;
+            }
+
+            if (_phase == Phase.LandingMove)
+            {
+                BeginLandingScale(Phase.LandingSquash,
+                    _dragConfig != null ? _dragConfig.LandingImpactScale : new Vector2(1.055f, 0.94f),
+                    _dragConfig != null ? _dragConfig.LandingSquashDuration : 0.06f);
+                return true;
+            }
+
+            if (_phase == Phase.LandingSquash)
+            {
+                BeginLandingScale(Phase.LandingRebound,
+                    _dragConfig != null ? _dragConfig.LandingReboundScale : new Vector2(0.98f, 1.03f),
+                    _dragConfig != null ? _dragConfig.LandingReboundDuration : 0.06f);
+                return true;
+            }
+
+            if (_phase == Phase.LandingRebound)
+            {
+                BeginLandingScale(Phase.LandingSettle, Vector2.one,
+                    _dragConfig != null ? _dragConfig.LandingSettleDuration : 0.05f);
+                return true;
+            }
+
+            if (_phase == Phase.LandingSettle)
+            {
+                HideImmediate();
+                return false;
+            }
+
+            return _phase != Phase.Hidden;
+        }
+
+        void BeginLandingScale(Phase phase, Vector2 toScale, float duration)
+        {
+            _phase = phase;
+            _elapsed = 0f;
+            _duration = Mathf.Max(0.01f, duration);
+            _curve = _dragConfig != null ? _dragConfig.LandingCurve : null;
+            _fromScale = _currentScale;
+            _toScale = toScale;
+            _fromPlanar = _planarPos;
+            _toPlanar = _planarPos;
+            _fromFlight = 0f;
+            _toFlight = 0f;
+            _flightHeight = 0f;
         }
 
         public void HideImmediate()
@@ -153,6 +245,7 @@ namespace SanIsland.Merge
 
             _phase = Phase.Hidden;
             _flightHeight = 0f;
+            _dragConfig = null;
             if (gameObject.activeSelf)
             {
                 gameObject.SetActive(false);

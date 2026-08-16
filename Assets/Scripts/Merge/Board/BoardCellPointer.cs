@@ -80,12 +80,24 @@ namespace SanIsland.Merge
                 return;
             }
 
-            if (cellView != null && boardController != null && boardController.IsCellInteractionLocked(cellView.Index))
+            if (!TryGetItemCell(out _))
             {
                 return;
             }
 
-            if (!TryGetItemCell(out _))
+            if (cellView != null && cellView.IsTransientAnimationRunning())
+            {
+                if (boardController != null && boardController.DragController != null)
+                {
+                    boardController.DragController.PrepareCellForPossiblePickup(cellView);
+                }
+                else
+                {
+                    cellView.CancelTransientPresentationForPickup();
+                }
+            }
+
+            if (cellView != null && boardController != null && boardController.IsCellInteractionLocked(cellView.Index))
             {
                 return;
             }

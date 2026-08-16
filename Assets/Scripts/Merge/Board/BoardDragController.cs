@@ -32,6 +32,7 @@ namespace SanIsland.Merge
         int _touchId;
         Sprite _highlightSprite;
         int _previewMergeIndex = BoardController.NoSelectionIndex;
+        int _previewCobwebIndex = BoardController.NoSelectionIndex;
         float _magnetBlend;
         Vector2 _magnetPos;
 
@@ -88,6 +89,8 @@ namespace SanIsland.Merge
             {
                 return false;
             }
+
+            PrepareCellForPossiblePickup(cell);
 
             if (boardController.IsCellInteractionLocked(cell.Index))
             {
@@ -203,7 +206,7 @@ namespace SanIsland.Merge
 
         public void AbortImmediate()
         {
-            ClearMergePreview();
+            ClearInteractionPreviews();
             var restoreIndex = _phase == BoardDragPhase.Dropping && _dropIndex != BoardController.NoSelectionIndex
                 ? _dropIndex
                 : _sourceIndex;
@@ -265,7 +268,10 @@ namespace SanIsland.Merge
                 }
 
                 UpdateDropTarget();
-                TickMagnet(dt, _previewMergeIndex);
+                var magnetIndex = _previewMergeIndex != BoardController.NoSelectionIndex
+                    ? _previewMergeIndex
+                    : _previewCobwebIndex;
+                TickMagnet(dt, magnetIndex);
                 dragView.TickFollowOrPickup(dt, GetFollowTarget());
                 return;
             }
@@ -326,12 +332,18 @@ namespace SanIsland.Merge
             var startPos = dragView.WorldToLayer(itemRect.TransformPoint(itemRect.rect.center));
             var startScale = new Vector2(itemRect.localScale.x, itemRect.localScale.y);
             var size = itemRect.rect.size;
+            var sprite = item.sprite;
+            var preserveAspect = item.preserveAspect;
+            var color = item.color;
 
+            // Capture first, then interrupt presenters — DragItemView owns the only visible copy.
+            PrepareCellForPossiblePickup(sourceView);
             if (sourceView.ItemAnimator != null)
             {
                 sourceView.ItemAnimator.BeginDrag();
             }
 
+            sourceView.SetItemPresentationSuppressed(true);
             sourceView.SetHideItemForDrag(true);
             if (boardController != null)
             {
@@ -339,9 +351,32 @@ namespace SanIsland.Merge
             }
 
             dragView.EnsureChildren();
-            dragView.BeginPickup(item.sprite, size, item.preserveAspect, item.color, startPos, startScale);
+            dragView.BeginPickup(sprite, size, preserveAspect, color, startPos, startScale);
             _phase = BoardDragPhase.Dragging;
             _dropIndex = BoardController.NoSelectionIndex;
+        }
+
+        public void PrepareCellForPossiblePickup(BoardCellView cell)
+        {
+            if (cell == null || boardController == null)
+            {
+                return;
+            }
+
+            if (boardController.MergePresenter != null)
+            {
+                boardController.MergePresenter.ReleaseCellVisualOwnership(cell.Index);
+            }
+
+            if (boardController.CobwebPresenter != null)
+            {
+                boardController.CobwebPresenter.ReleaseCellVisualOwnership(cell.Index);
+            }
+
+            if (cell.IsTransientAnimationRunning() || cell.IsCobwebBreakPlaying)
+            {
+                cell.CancelTransientPresentationForPickup();
+            }
         }
 
         void BeginDropping()
@@ -356,15 +391,40 @@ namespace SanIsland.Merge
                 dragView.HideDropTargetImmediate();
             }
 
-            ClearMergePreview();
-            var mergeIndex = FindCellIndexUnderPointer();
-            if (boardController != null && boardController.CanMerge(_sourceIndex, mergeIndex))
+            // Keep last valid preview — pointer often leaves the cell by a few px on release.
+            var stickyMergeIndex = _previewMergeIndex;
+            var stickyCobwebIndex = _previewCobwebIndex;
+            ClearInteractionPreviews();
+            var underIndex = FindCellIndexUnderPointer();
+            var intentTarget = stickyMergeIndex != BoardController.NoSelectionIndex
+                ? stickyMergeIndex
+                : stickyCobwebIndex != BoardController.NoSelectionIndex
+                    ? stickyCobwebIndex
+                    : underIndex;
+            var canMerge = boardController != null && boardController.CanMerge(_sourceIndex, intentTarget);
+            var canUnlock = !canMerge && boardController != null &&
+                            boardController.CanUnlockCobweb(_sourceIndex, intentTarget);
+            Debug.Log(
+                $"[Cobweb] BeginDropping source={FormatCell(_sourceIndex)} under={FormatCell(underIndex)} " +
+                $"stickyMerge={FormatCell(stickyMergeIndex)} stickyCobweb={FormatCell(stickyCobwebIndex)} " +
+                $"intent={FormatCell(intentTarget)} canMerge={canMerge} canUnlock={canUnlock} " +
+                $"presenter={(boardController != null && boardController.CobwebPresenter != null)} " +
+                $"config={(boardController != null && boardController.CobwebAnimationConfig != null)}");
+
+            if (canMerge)
             {
-                BeginMerging(mergeIndex);
+                BeginMerging(intentTarget);
+                return;
+            }
+
+            if (canUnlock)
+            {
+                BeginUnlocking(intentTarget);
                 return;
             }
 
             var targetIndex = ResolveDropIndex();
+            Debug.Log($"[Cobweb] fallback drop ResolveDropIndex={FormatCell(targetIndex)} (under was {FormatCell(underIndex)})");
             var landingIndex = targetIndex;
             var moved = false;
             if (targetIndex != _sourceIndex && IsEmptyOpenCell(targetIndex))
@@ -438,13 +498,22 @@ namespace SanIsland.Merge
             var index = FindCellIndexUnderPointer();
             if (index == BoardController.NoSelectionIndex)
             {
-                ClearMergePreviewSoft();
+                ClearInteractionPreviewsSoft();
                 dragView.HideDropTarget();
                 return;
             }
 
             if (boardController != null && boardController.CanMerge(_sourceIndex, index))
             {
+                if (IsLockedItemCell(index))
+                {
+                    ClearMergePreviewSoft();
+                    SetCobwebPreview(index);
+                    dragView.HideDropTarget();
+                    return;
+                }
+
+                ClearCobwebPreviewSoft();
                 SetMergePreview(index);
                 var cell = boardController.BoardView != null ? boardController.BoardView.GetCellView(index) : null;
                 var mergeConfig = boardController.MergeAnimationConfig;
@@ -453,7 +522,15 @@ namespace SanIsland.Merge
                 return;
             }
 
-            ClearMergePreviewSoft();
+            if (boardController != null && boardController.CanUnlockCobweb(_sourceIndex, index))
+            {
+                ClearMergePreviewSoft();
+                SetCobwebPreview(index);
+                dragView.HideDropTarget();
+                return;
+            }
+
+            ClearInteractionPreviewsSoft();
             if (index == _sourceIndex || IsEmptyOpenCell(index))
             {
                 var cell = boardController.BoardView.GetCellView(index);
@@ -468,6 +545,11 @@ namespace SanIsland.Merge
         {
             var index = FindCellIndexUnderPointer();
             if (boardController != null && boardController.CanMerge(_sourceIndex, index))
+            {
+                return index;
+            }
+
+            if (boardController != null && boardController.CanUnlockCobweb(_sourceIndex, index))
             {
                 return index;
             }
@@ -571,6 +653,35 @@ namespace SanIsland.Merge
             return found;
         }
 
+        string FormatCell(int index)
+        {
+            if (boardController == null || boardController.State == null ||
+                index == BoardController.NoSelectionIndex || !boardController.State.IsValidIndex(index))
+            {
+                return $"{index}(invalid)";
+            }
+
+            boardController.State.GetCoordinates(index, out var row, out var col);
+            var cell = boardController.State.GetCell(index);
+            if (cell == null)
+            {
+                return $"{index}[{row},{col}](null)";
+            }
+
+            return $"{index}[{row},{col}] id={cell.ItemId} locked={cell.ItemLocked} box={cell.IsBox} empty={cell.IsEmpty}";
+        }
+
+        bool IsLockedItemCell(int index)
+        {
+            if (boardController == null || boardController.State == null || !boardController.State.IsValidIndex(index))
+            {
+                return false;
+            }
+
+            var cell = boardController.State.GetCell(index);
+            return cell != null && cell.HasItem && cell.ItemLocked;
+        }
+
         bool IsEmptyOpenCell(int index)
         {
             if (boardController == null || boardController.State == null || !boardController.State.IsValidIndex(index))
@@ -617,9 +728,18 @@ namespace SanIsland.Merge
                 return local;
             }
 
-            var strength = boardController != null && boardController.MergeAnimationConfig != null
-                ? boardController.MergeAnimationConfig.MergeMagnetStrength
-                : 0.26f;
+            var strength = 0.26f;
+            if (_previewCobwebIndex != BoardController.NoSelectionIndex)
+            {
+                strength = boardController != null && boardController.CobwebAnimationConfig != null
+                    ? boardController.CobwebAnimationConfig.UnlockMagnetStrength
+                    : 0.18f;
+            }
+            else if (boardController != null && boardController.MergeAnimationConfig != null)
+            {
+                strength = boardController.MergeAnimationConfig.MergeMagnetStrength;
+            }
+
             return Vector2.Lerp(local, _magnetPos, strength * _magnetBlend);
         }
 
@@ -656,6 +776,7 @@ namespace SanIsland.Merge
             var cell = boardController.BoardView.GetCellView(index);
             if (cell != null)
             {
+                cell.SetItemPresentationSuppressed(false);
                 cell.SetHideItemForDrag(false);
             }
 
@@ -694,6 +815,7 @@ namespace SanIsland.Merge
             _touch = false;
             _touchId = 0;
             _previewMergeIndex = BoardController.NoSelectionIndex;
+            _previewCobwebIndex = BoardController.NoSelectionIndex;
             _magnetBlend = 0f;
         }
 
@@ -731,7 +853,7 @@ namespace SanIsland.Merge
                 return;
             }
 
-            ClearMergePreview();
+            ClearInteractionPreviews();
             dragView.HideDropTargetImmediate();
 
             var selectionRevision = boardController.SelectionRevision;
@@ -749,6 +871,83 @@ namespace SanIsland.Merge
                 startScale);
 
             // Hand off to independent merge presentation; free the shared drag view immediately.
+            dragView.HideImmediate();
+            ResetToIdle();
+        }
+
+        void BeginUnlocking(int lockedTargetIndex)
+        {
+            if (boardController != null)
+            {
+                boardController.EnsureCobwebReady();
+            }
+
+            if (boardController == null || boardController.CobwebPresenter == null || dragView == null)
+            {
+                Debug.LogError(
+                    $"[Cobweb] BeginUnlocking abort: controller={boardController != null} " +
+                    $"presenter={(boardController != null && boardController.CobwebPresenter != null)} " +
+                    $"dragView={dragView != null}");
+                _dropIndex = _sourceIndex;
+                _phase = BoardDragPhase.Dropping;
+                dragView?.BeginDrop(GetCellItemLayerPosition(_sourceIndex), true);
+                return;
+            }
+
+            if (!boardController.CanUnlockCobweb(_sourceIndex, lockedTargetIndex))
+            {
+                Debug.LogWarning($"[Cobweb] BeginUnlocking CanUnlock became false source={_sourceIndex} target={lockedTargetIndex}");
+                _dropIndex = _sourceIndex;
+                _phase = BoardDragPhase.Dropping;
+                dragView.BeginDrop(GetCellItemLayerPosition(_sourceIndex), true);
+                return;
+            }
+
+            var destination = boardController.FindUnlockDestination(_sourceIndex, lockedTargetIndex);
+            Debug.Log(
+                $"[Cobweb] BeginUnlocking OK source={_sourceIndex} locked={lockedTargetIndex} dest={destination}");
+
+            if (!dragView.TryCaptureVisualSnapshot(
+                    out var sprite,
+                    out var size,
+                    out var preserveAspect,
+                    out var color,
+                    out var startPos,
+                    out var startScale))
+            {
+                Debug.LogError("[Cobweb] BeginUnlocking snapshot failed — returning to source");
+                _dropIndex = _sourceIndex;
+                _phase = BoardDragPhase.Dropping;
+                dragView.BeginDrop(GetCellItemLayerPosition(_sourceIndex), true);
+                return;
+            }
+
+            ClearInteractionPreviews();
+            dragView.HideDropTargetImmediate();
+
+            var selectionRevision = boardController.SelectionRevision;
+            var presenter = boardController.CobwebPresenter;
+            presenter.Play(
+                _sourceIndex,
+                lockedTargetIndex,
+                destination,
+                selectionRevision,
+                sprite,
+                size,
+                preserveAspect,
+                color,
+                startPos,
+                startScale);
+
+            if (!presenter.HasActiveSequences)
+            {
+                Debug.LogError("[Cobweb] Presenter.Play did not start a sequence — returning to source");
+                _dropIndex = _sourceIndex;
+                _phase = BoardDragPhase.Dropping;
+                dragView.BeginDrop(GetCellItemLayerPosition(_sourceIndex), true);
+                return;
+            }
+
             dragView.HideImmediate();
             ResetToIdle();
         }
@@ -831,16 +1030,102 @@ namespace SanIsland.Merge
             cell.ItemAnimator.UpdateMergeAttraction(dragView.CurrentDragPosition, cellCenter);
         }
 
-        void TickMagnet(float dt, int mergeIndex)
+        void TickMagnet(float dt, int magnetIndex)
         {
-            var targetBlend = mergeIndex != BoardController.NoSelectionIndex ? 1f : 0f;
-            if (mergeIndex != BoardController.NoSelectionIndex)
+            var targetBlend = magnetIndex != BoardController.NoSelectionIndex ? 1f : 0f;
+            if (magnetIndex != BoardController.NoSelectionIndex)
             {
-                _magnetPos = GetCellItemLayerPosition(mergeIndex);
-                UpdateMergeTargetAttraction(mergeIndex);
+                _magnetPos = GetCellItemLayerPosition(magnetIndex);
+                if (_previewMergeIndex == magnetIndex)
+                {
+                    UpdateMergeTargetAttraction(magnetIndex);
+                }
             }
 
             _magnetBlend = Mathf.MoveTowards(_magnetBlend, targetBlend, dt / 0.08f);
+        }
+
+        void SetCobwebPreview(int index)
+        {
+            if (_previewCobwebIndex == index)
+            {
+                return;
+            }
+
+            ClearCobwebPreviewSoft();
+            _previewCobwebIndex = index;
+            Debug.Log($"[Cobweb] hover enter locked target={index} from source={_sourceIndex}");
+            var cobwebConfig = boardController != null ? boardController.CobwebAnimationConfig : null;
+            var cell = boardController != null && boardController.BoardView != null
+                ? boardController.BoardView.GetCellView(index)
+                : null;
+            if (cell != null)
+            {
+                if (cell.ItemAnimator != null)
+                {
+                    cell.ItemAnimator.SetCobwebUnlockTarget(true, cobwebConfig);
+                }
+
+                cell.SetCobwebUnlockHover(true, cobwebConfig);
+            }
+        }
+
+        void ClearCobwebPreviewSoft()
+        {
+            if (_previewCobwebIndex == BoardController.NoSelectionIndex)
+            {
+                return;
+            }
+
+            var cell = boardController != null && boardController.BoardView != null
+                ? boardController.BoardView.GetCellView(_previewCobwebIndex)
+                : null;
+            if (cell != null)
+            {
+                if (cell.ItemAnimator != null)
+                {
+                    cell.ItemAnimator.SetCobwebUnlockTarget(false);
+                }
+
+                cell.SetCobwebUnlockHover(false, boardController != null ? boardController.CobwebAnimationConfig : null);
+            }
+
+            _previewCobwebIndex = BoardController.NoSelectionIndex;
+        }
+
+        void ClearCobwebPreviewImmediate()
+        {
+            if (_previewCobwebIndex == BoardController.NoSelectionIndex)
+            {
+                return;
+            }
+
+            var cell = boardController != null && boardController.BoardView != null
+                ? boardController.BoardView.GetCellView(_previewCobwebIndex)
+                : null;
+            if (cell != null)
+            {
+                if (cell.ItemAnimator != null)
+                {
+                    cell.ItemAnimator.ClearMergeTargetImmediate();
+                }
+
+                cell.ResetCobwebVisualImmediate();
+            }
+
+            _previewCobwebIndex = BoardController.NoSelectionIndex;
+        }
+
+        void ClearInteractionPreviews()
+        {
+            ClearMergePreviewImmediate();
+            ClearCobwebPreviewImmediate();
+        }
+
+        void ClearInteractionPreviewsSoft()
+        {
+            ClearMergePreviewSoft();
+            ClearCobwebPreviewSoft();
         }
 
         bool IsTrackedPointerHeld()

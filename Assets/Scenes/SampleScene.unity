@@ -41850,8 +41850,10 @@ MonoBehaviour:
   uiFeedbackConfig: {fileID: 11400000, guid: 47f4f7f81ed544c6b532744c8df8fb3d, type: 2}
   dragAnimationConfig: {fileID: 11400000, guid: 1a502fa3d88e462aba4f1b046a359bb5, type: 2}
   mergeAnimationConfig: {fileID: 11400000, guid: e52c308b1f638924ca7b35e0c9f81d46, type: 2}
+  cobwebAnimationConfig: {fileID: 11400000, guid: a8b9c0d1e2f3456789abcdef01234567, type: 2}
   dragView: {fileID: 961391718}
   mergePresenter: {fileID: 0}
+  cobwebPresenter: {fileID: 0}
   selectionView: {fileID: 5193127447459430516}
   itemInfoView: {fileID: 48922685}
   useDevelopmentBoardState: 1
