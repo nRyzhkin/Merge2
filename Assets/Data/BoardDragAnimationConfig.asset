@@ -161,6 +161,10 @@ MonoBehaviour:
   directionalMergeVelocitySampleWindow: 0.12
   directionalMergeIncludeCobwebTargets: 1
   showDirectionalAssistDebug: 0
+  displaceLeadTime: 0.045
+  displaceFlightDuration: 0.16
+  displaceFlightHeightScale: 0.75
+  displacePeakScale: 1.06
   dropTargetColor: {r: 1, g: 1, b: 1, a: 0.18}
   dropTargetPulseAmplitude: 0.03
   dropTargetPulsePeriod: 0.85

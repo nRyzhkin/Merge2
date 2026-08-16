@@ -25,6 +25,7 @@ namespace SanIsland.Merge
         [SerializeField] BoardCobwebPresenter cobwebPresenter;
         [SerializeField] BoardBoxRevealPresenter boxRevealPresenter;
         [SerializeField] BoardGeneratorPresenter generatorPresenter;
+        [SerializeField] BoardDisplacePresenter displacePresenter;
         [SerializeField] MessagePresenter messagePresenter;
         [SerializeField] BoardSelectionView selectionView;
         [SerializeField] ItemInfoView itemInfoView;
@@ -62,6 +63,7 @@ namespace SanIsland.Merge
         public BoardCobwebPresenter CobwebPresenter => cobwebPresenter;
         public BoardBoxRevealPresenter BoxRevealPresenter => boxRevealPresenter;
         public BoardGeneratorPresenter GeneratorPresenter => generatorPresenter;
+        public BoardDisplacePresenter DisplacePresenter => displacePresenter;
         public MessagePresenter MessagePresenter => messagePresenter;
         public BoardDragController DragController => _dragController;
         public BoardSelectionView SelectionView => selectionView;
@@ -156,6 +158,11 @@ namespace SanIsland.Merge
             if (generatorPresenter != null)
             {
                 generatorPresenter.AbortAll();
+            }
+
+            if (displacePresenter != null)
+            {
+                displacePresenter.AbortAll();
             }
 
             _interactionLocks.ReleaseAll();
@@ -295,6 +302,169 @@ namespace SanIsland.Merge
 
             UpdateDebug();
             return true;
+        }
+
+        public bool CanDisplaceOccupiedTarget(int occupiedTargetIndex)
+        {
+            if (_state == null || !_state.IsValidIndex(occupiedTargetIndex) || IsCellInteractionLocked(occupiedTargetIndex))
+            {
+                return false;
+            }
+
+            return IsDisplaceableOccupant(occupiedTargetIndex);
+        }
+
+        bool IsDisplaceableOccupant(int occupiedTargetIndex)
+        {
+            var cell = _state.GetCell(occupiedTargetIndex);
+            if (cell == null || !cell.HasItem || cell.IsBox || cell.ItemLocked || cell.BlockType != CellBlockType.None)
+            {
+                return false;
+            }
+
+            if (boardView != null)
+            {
+                var view = boardView.GetCellView(occupiedTargetIndex);
+                if (view != null && view.IsTransientAnimationRunning())
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public int FindDisplaceDestination(int occupiedTargetIndex, int dragSourceIndex)
+        {
+            if (boardView == null || _state == null || !_state.IsValidIndex(occupiedTargetIndex))
+            {
+                return NoSelectionIndex;
+            }
+
+            var origin = GetCellUiCenter(occupiedTargetIndex);
+            var bestDistance = float.MaxValue;
+            var bestIndex = NoSelectionIndex;
+            var cells = boardView.Cells;
+            if (cells == null)
+            {
+                return NoSelectionIndex;
+            }
+
+            for (var i = 0; i < cells.Count; i++)
+            {
+                var cellView = cells[i];
+                if (cellView == null)
+                {
+                    continue;
+                }
+
+                var index = cellView.Index;
+                if (index == occupiedTargetIndex)
+                {
+                    continue;
+                }
+
+                if (!IsDisplaceDestinationCandidate(index, dragSourceIndex))
+                {
+                    continue;
+                }
+
+                var distance = Vector2.Distance(origin, GetCellUiCenter(index));
+                if (distance >= bestDistance)
+                {
+                    continue;
+                }
+
+                bestDistance = distance;
+                bestIndex = index;
+            }
+
+            return bestIndex;
+        }
+
+        bool IsDisplaceDestinationCandidate(int index, int dragSourceIndex)
+        {
+            if (_state == null || !_state.IsValidIndex(index) || IsCellInteractionLocked(index))
+            {
+                return false;
+            }
+
+            // Source still holds the dragged item in BoardState until mutate — allow it.
+            if (index == dragSourceIndex)
+            {
+                return true;
+            }
+
+            var cell = _state.GetCell(index);
+            return cell != null && cell.IsEmpty && cell.BlockType == CellBlockType.None;
+        }
+
+        public DisplaceResult TryDisplaceItem(int sourceIndex, int occupiedTargetIndex, int displacementDestinationIndex)
+        {
+            if (_state == null ||
+                !_state.IsValidIndex(sourceIndex) ||
+                !_state.IsValidIndex(occupiedTargetIndex) ||
+                !_state.IsValidIndex(displacementDestinationIndex))
+            {
+                return DisplaceResult.Failed(sourceIndex, occupiedTargetIndex, displacementDestinationIndex);
+            }
+
+            if (sourceIndex == occupiedTargetIndex || occupiedTargetIndex == displacementDestinationIndex)
+            {
+                return DisplaceResult.Failed(sourceIndex, occupiedTargetIndex, displacementDestinationIndex);
+            }
+
+            // Interaction locks may already be held by the displace sequence.
+            if (!IsDisplaceableOccupant(occupiedTargetIndex))
+            {
+                return DisplaceResult.Failed(sourceIndex, occupiedTargetIndex, displacementDestinationIndex);
+            }
+
+            var source = _state.GetCell(sourceIndex);
+            var target = _state.GetCell(occupiedTargetIndex);
+            var destination = _state.GetCell(displacementDestinationIndex);
+            if (source == null || target == null || destination == null)
+            {
+                return DisplaceResult.Failed(sourceIndex, occupiedTargetIndex, displacementDestinationIndex);
+            }
+
+            if (!source.HasItem || source.IsBox || source.ItemLocked)
+            {
+                return DisplaceResult.Failed(sourceIndex, occupiedTargetIndex, displacementDestinationIndex);
+            }
+
+            if (displacementDestinationIndex != sourceIndex)
+            {
+                if (!destination.IsEmpty || destination.BlockType != CellBlockType.None)
+                {
+                    return DisplaceResult.Failed(sourceIndex, occupiedTargetIndex, displacementDestinationIndex);
+                }
+            }
+
+            var draggedId = source.ItemId;
+            var displacedId = target.ItemId;
+
+            source.Clear();
+            target.SetItem(draggedId, locked: false);
+            destination.SetItem(displacedId, locked: false);
+
+            if (boardView != null)
+            {
+                boardView.RefreshCell(sourceIndex);
+                boardView.RefreshCell(occupiedTargetIndex);
+                boardView.RefreshCell(displacementDestinationIndex);
+            }
+
+            UpdateDebug();
+            return new DisplaceResult
+            {
+                Success = true,
+                SourceIndex = sourceIndex,
+                OccupiedTargetIndex = occupiedTargetIndex,
+                DestinationIndex = displacementDestinationIndex,
+                DraggedItemId = draggedId,
+                DisplacedItemId = displacedId
+            };
         }
 
         public bool CanMerge(int fromIndex, int toIndex)
@@ -1037,7 +1207,24 @@ namespace SanIsland.Merge
             EnsureCobweb();
             EnsureBox();
             EnsureGenerator();
+            EnsureDisplace();
             EnsureMessagesReady();
+        }
+
+        void EnsureDisplace()
+        {
+            displacePresenter = GetComponent<BoardDisplacePresenter>();
+            if (displacePresenter == null)
+            {
+                displacePresenter = gameObject.AddComponent<BoardDisplacePresenter>();
+            }
+
+            displacePresenter.Configure(this, dragView, dragAnimationConfig);
+        }
+
+        public void EnsureDisplaceReady()
+        {
+            EnsureDisplace();
         }
 
         void EnsureMerge()
@@ -1144,7 +1331,7 @@ namespace SanIsland.Merge
 
             if (messagePresenter == null)
             {
-                messagePresenter = FindFirstObjectByType<MessagePresenter>();
+                messagePresenter = FindAnyObjectByType<MessagePresenter>();
             }
 
             if (messagePresenter == null)

@@ -51,6 +51,12 @@ namespace SanIsland.Merge
         [SerializeField] bool directionalMergeIncludeCobwebTargets = true;
         [SerializeField] bool showDirectionalAssistDebug;
 
+        [Header("Occupied Displace")]
+        [SerializeField] [Range(0.03f, 0.06f)] float displaceLeadTime = 0.045f;
+        [SerializeField] [Range(0.12f, 0.22f)] float displaceFlightDuration = 0.16f;
+        [SerializeField] [Range(0.6f, 1f)] float displaceFlightHeightScale = 0.75f;
+        [SerializeField] [Range(1.02f, 1.12f)] float displacePeakScale = 1.06f;
+
         [Header("Drop Target")]
         [SerializeField] Color dropTargetColor = new Color(1f, 1f, 1f, 0.18f);
         [SerializeField] [Range(0f, 0.08f)] float dropTargetPulseAmplitude = 0.03f;
@@ -92,6 +98,10 @@ namespace SanIsland.Merge
         public float DirectionalMergeVelocitySampleWindow => directionalMergeVelocitySampleWindow;
         public bool DirectionalMergeIncludeCobwebTargets => directionalMergeIncludeCobwebTargets;
         public bool ShowDirectionalAssistDebug => showDirectionalAssistDebug;
+        public float DisplaceLeadTime => displaceLeadTime;
+        public float DisplaceFlightDuration => displaceFlightDuration;
+        public float DisplaceFlightHeightScale => displaceFlightHeightScale;
+        public float DisplacePeakScale => displacePeakScale;
         public Color DropTargetColor => dropTargetColor;
         public float DropTargetPulseAmplitude => dropTargetPulseAmplitude;
         public float DropTargetPulsePeriod => dropTargetPulsePeriod;

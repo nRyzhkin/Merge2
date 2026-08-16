@@ -41,6 +41,7 @@ namespace SanIsland.Merge
         readonly float[] _velocityTimes = new float[MaxVelocitySamples];
         int _velocityCount;
         int _velocityWrite;
+        bool _waitingDisplaceADrop;
 
         public BoardDragPhase Phase => _phase;
         public int ActivePointerId => _pointerId;
@@ -213,6 +214,12 @@ namespace SanIsland.Merge
         public void AbortImmediate()
         {
             ClearInteractionPreviews();
+            _waitingDisplaceADrop = false;
+            if (boardController != null && boardController.DisplacePresenter != null)
+            {
+                boardController.DisplacePresenter.AbortAll();
+            }
+
             var restoreIndex = _phase == BoardDragPhase.Dropping && _dropIndex != BoardController.NoSelectionIndex
                 ? _dropIndex
                 : _sourceIndex;
@@ -285,6 +292,13 @@ namespace SanIsland.Merge
 
             if (_phase == BoardDragPhase.Dropping)
             {
+                if (_waitingDisplaceADrop)
+                {
+                    // Hold A in place until displace presenter starts B flight + lead.
+                    dragView.TickFollowOrPickup(dt, dragView.CurrentPlanarPosition);
+                    return;
+                }
+
                 if (dragView.TickDrop(dt))
                 {
                     return;
@@ -392,6 +406,11 @@ namespace SanIsland.Merge
                 boardController.GeneratorPresenter.ReleaseCellVisualOwnership(cell.Index);
             }
 
+            if (boardController.DisplacePresenter != null)
+            {
+                boardController.DisplacePresenter.ReleaseCellVisualOwnership(cell.Index);
+            }
+
             if (cell.IsTransientAnimationRunning() || cell.IsCobwebBreakPlaying || cell.IsBoxRevealPlaying)
             {
                 cell.CancelTransientPresentationForPickup();
@@ -440,7 +459,7 @@ namespace SanIsland.Merge
                 return;
             }
 
-            // 3) Directional throw-to-merge assist.
+            // 3) Directional throw-to-merge assist (priority over displacement).
             if (TryFindDirectionalMergeAssist(out var assistIndex, out var assistCobweb))
             {
                 if (assistCobweb)
@@ -455,7 +474,22 @@ namespace SanIsland.Merge
                 return;
             }
 
-            // 4–5) Source return / nearest-empty fallback.
+            // 4) Occupied movable displacement — A keeps the cell, B yields.
+            if (underIndex != BoardController.NoSelectionIndex &&
+                boardController != null &&
+                boardController.CanDisplaceOccupiedTarget(underIndex) &&
+                !boardController.CanMerge(_sourceIndex, underIndex) &&
+                !boardController.CanUnlockCobweb(_sourceIndex, underIndex))
+            {
+                var destination = boardController.FindDisplaceDestination(underIndex, _sourceIndex);
+                if (destination != BoardController.NoSelectionIndex)
+                {
+                    BeginDisplacing(underIndex, destination);
+                    return;
+                }
+            }
+
+            // 5–6) Source return / nearest-empty fallback.
             BeginMoveOrReturn(ResolveDropIndex());
         }
 
@@ -512,7 +546,13 @@ namespace SanIsland.Merge
             }
 
             RevealCellItem(landingIndex);
-            RevealCellItem(_sourceIndex);
+            // Do not unhide a cell still owned by displace flight (B → destination).
+            if (boardController == null ||
+                boardController.DisplacePresenter == null ||
+                !boardController.DisplacePresenter.IsOwningCellVisual(_sourceIndex))
+            {
+                RevealCellItem(_sourceIndex);
+            }
 
             var hoverIndex = landingIndex;
             var allowHover = !_touch;
@@ -853,6 +893,7 @@ namespace SanIsland.Merge
             _previewMergeIndex = BoardController.NoSelectionIndex;
             _previewCobwebIndex = BoardController.NoSelectionIndex;
             _magnetBlend = 0f;
+            _waitingDisplaceADrop = false;
             ClearVelocitySamples();
         }
 
@@ -1209,6 +1250,87 @@ namespace SanIsland.Merge
 
             dragView.HideImmediate();
             ResetToIdle();
+        }
+
+        void BeginDisplacing(int occupiedTargetIndex, int destinationIndex)
+        {
+            if (boardController != null)
+            {
+                boardController.EnsureDisplaceReady();
+            }
+
+            if (boardController == null || boardController.DisplacePresenter == null || dragView == null || config == null)
+            {
+                BeginMoveOrReturn(ResolveDropIndex());
+                return;
+            }
+
+            var targetView = boardController.BoardView != null
+                ? boardController.BoardView.GetCellView(occupiedTargetIndex)
+                : null;
+            if (targetView == null || targetView.ItemImage == null)
+            {
+                BeginMoveOrReturn(ResolveDropIndex());
+                return;
+            }
+
+            var item = targetView.ItemImage;
+            var itemRect = item.rectTransform;
+            var displacedSprite = item.sprite;
+            var displacedSize = itemRect.rect.size;
+            if (displacedSize.x <= 1f || displacedSize.y <= 1f)
+            {
+                displacedSize = new Vector2(170f, 170f);
+            }
+
+            var preserveAspect = item.preserveAspect;
+            var color = item.color;
+            var sourceIndex = _sourceIndex;
+            var landingIndex = occupiedTargetIndex;
+
+            ClearInteractionPreviews();
+            dragView.HideDropTargetImmediate();
+
+            var started = boardController.DisplacePresenter.Play(
+                sourceIndex,
+                occupiedTargetIndex,
+                destinationIndex,
+                displacedSprite,
+                displacedSize,
+                preserveAspect,
+                color,
+                () =>
+                {
+                    if (dragView == null)
+                    {
+                        return;
+                    }
+
+                    // A lands into the freed target while B is already in flight.
+                    _waitingDisplaceADrop = false;
+                    _dropIndex = landingIndex;
+                    _phase = BoardDragPhase.Dropping;
+                    dragView.BeginDrop(GetCellItemLayerPosition(landingIndex), false);
+                },
+                () =>
+                {
+                    _waitingDisplaceADrop = false;
+                    BeginMoveOrReturn(_sourceIndex);
+                });
+
+            if (!started)
+            {
+                BeginMoveOrReturn(ResolveDropIndex());
+                return;
+            }
+
+            // Hold A in drag view until presenter signals drop; suppress source already done.
+            _dropIndex = landingIndex;
+            _phase = BoardDragPhase.Dropping;
+            // Keep current pose until BeginDrop — TickDrop no-ops while still in Follow/Pickup.
+            // Force a stable hold: treat as dropping but delay BeginDrop via presenter callback.
+            // If TickDrop runs before BeginDrop, it returns false and FinishDrop early — prevent that.
+            _waitingDisplaceADrop = true;
         }
 
         void SetMergePreview(int index)

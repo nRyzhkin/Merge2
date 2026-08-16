@@ -496,6 +496,14 @@ namespace SanIsland.Merge.Editor
                 controller.GeneratorAnimationConfig,
                 controller.MergeAnimationConfig);
 
+            var displacePresenter = controller.GetComponent<BoardDisplacePresenter>();
+            if (displacePresenter == null)
+            {
+                displacePresenter = Undo.AddComponent<BoardDisplacePresenter>(controller.gameObject);
+            }
+
+            displacePresenter.Configure(controller, dragView, controller.DragAnimationConfig);
+
             WireMessages(controller);
 
             var dragController = controller.GetComponent<BoardDragController>();
@@ -511,6 +519,7 @@ namespace SanIsland.Merge.Editor
             EditorUtility.SetDirty(cobwebPresenter);
             EditorUtility.SetDirty(boxRevealPresenter);
             EditorUtility.SetDirty(generatorPresenter);
+            EditorUtility.SetDirty(displacePresenter);
             EditorUtility.SetDirty(controller);
         }
 
