@@ -151,6 +151,16 @@ MonoBehaviour:
     m_RotationOrder: 4
   sourceReturnDurationScale: 0.88
   invalidDropSnapMaxDistance: 340
+  directionalMergeAssistEnabled: 1
+  directionalMergeMinSpeed: 650
+  directionalMergeSearchDistanceInCells: 1.75
+  directionalMergeMinDot: 0.7
+  directionalMergeDirectionWeight: 1.15
+  directionalMergeDistanceWeight: 0.55
+  directionalMergeVelocitySampleCount: 5
+  directionalMergeVelocitySampleWindow: 0.12
+  directionalMergeIncludeCobwebTargets: 1
+  showDirectionalAssistDebug: 0
   dropTargetColor: {r: 1, g: 1, b: 1, a: 0.18}
   dropTargetPulseAmplitude: 0.03
   dropTargetPulsePeriod: 0.85

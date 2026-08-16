@@ -39,6 +39,18 @@ namespace SanIsland.Merge
         [Header("Invalid Drop")]
         [SerializeField] float invalidDropSnapMaxDistance = 340f;
 
+        [Header("Directional Merge Assist")]
+        [SerializeField] bool directionalMergeAssistEnabled = true;
+        [SerializeField] [Min(0f)] float directionalMergeMinSpeed = 650f;
+        [SerializeField] [Range(1f, 2.5f)] float directionalMergeSearchDistanceInCells = 1.75f;
+        [SerializeField] [Range(0.5f, 0.95f)] float directionalMergeMinDot = 0.70f;
+        [SerializeField] [Range(0.5f, 2f)] float directionalMergeDirectionWeight = 1.15f;
+        [SerializeField] [Range(0.1f, 1.5f)] float directionalMergeDistanceWeight = 0.55f;
+        [SerializeField] [Range(3, 5)] int directionalMergeVelocitySampleCount = 5;
+        [SerializeField] [Range(0.06f, 0.2f)] float directionalMergeVelocitySampleWindow = 0.12f;
+        [SerializeField] bool directionalMergeIncludeCobwebTargets = true;
+        [SerializeField] bool showDirectionalAssistDebug;
+
         [Header("Drop Target")]
         [SerializeField] Color dropTargetColor = new Color(1f, 1f, 1f, 0.18f);
         [SerializeField] [Range(0f, 0.08f)] float dropTargetPulseAmplitude = 0.03f;
@@ -70,6 +82,16 @@ namespace SanIsland.Merge
         public AnimationCurve LandingCurve => landingCurve;
         public float SourceReturnDurationScale => sourceReturnDurationScale;
         public float InvalidDropSnapMaxDistance => invalidDropSnapMaxDistance;
+        public bool DirectionalMergeAssistEnabled => directionalMergeAssistEnabled;
+        public float DirectionalMergeMinSpeed => directionalMergeMinSpeed;
+        public float DirectionalMergeSearchDistanceInCells => directionalMergeSearchDistanceInCells;
+        public float DirectionalMergeMinDot => directionalMergeMinDot;
+        public float DirectionalMergeDirectionWeight => directionalMergeDirectionWeight;
+        public float DirectionalMergeDistanceWeight => directionalMergeDistanceWeight;
+        public int DirectionalMergeVelocitySampleCount => Mathf.Clamp(directionalMergeVelocitySampleCount, 3, 5);
+        public float DirectionalMergeVelocitySampleWindow => directionalMergeVelocitySampleWindow;
+        public bool DirectionalMergeIncludeCobwebTargets => directionalMergeIncludeCobwebTargets;
+        public bool ShowDirectionalAssistDebug => showDirectionalAssistDebug;
         public Color DropTargetColor => dropTargetColor;
         public float DropTargetPulseAmplitude => dropTargetPulseAmplitude;
         public float DropTargetPulsePeriod => dropTargetPulsePeriod;

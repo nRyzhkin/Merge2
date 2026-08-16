@@ -36,6 +36,12 @@ namespace SanIsland.Merge
         float _magnetBlend;
         Vector2 _magnetPos;
 
+        const int MaxVelocitySamples = 5;
+        readonly Vector2[] _velocityPositions = new Vector2[MaxVelocitySamples];
+        readonly float[] _velocityTimes = new float[MaxVelocitySamples];
+        int _velocityCount;
+        int _velocityWrite;
+
         public BoardDragPhase Phase => _phase;
         public int ActivePointerId => _pointerId;
         public bool IsBusy =>
@@ -267,6 +273,7 @@ namespace SanIsland.Merge
                     return;
                 }
 
+                SampleDragVelocity();
                 UpdateDropTarget();
                 var magnetIndex = _previewMergeIndex != BoardController.NoSelectionIndex
                     ? _previewMergeIndex
@@ -354,6 +361,8 @@ namespace SanIsland.Merge
             dragView.BeginPickup(sprite, size, preserveAspect, color, startPos, startScale);
             _phase = BoardDragPhase.Dragging;
             _dropIndex = BoardController.NoSelectionIndex;
+            ClearVelocitySamples();
+            SampleDragVelocity();
         }
 
         public void PrepareCellForPossiblePickup(BoardCellView cell)
@@ -386,6 +395,8 @@ namespace SanIsland.Merge
                 return;
             }
 
+            SampleDragVelocity();
+
             if (dragView != null)
             {
                 dragView.HideDropTargetImmediate();
@@ -396,35 +407,50 @@ namespace SanIsland.Merge
             var stickyCobwebIndex = _previewCobwebIndex;
             ClearInteractionPreviews();
             var underIndex = FindCellIndexUnderPointer();
-            var intentTarget = stickyMergeIndex != BoardController.NoSelectionIndex
-                ? stickyMergeIndex
-                : stickyCobwebIndex != BoardController.NoSelectionIndex
-                    ? stickyCobwebIndex
-                    : underIndex;
-            var canMerge = boardController != null && boardController.CanMerge(_sourceIndex, intentTarget);
-            var canUnlock = !canMerge && boardController != null &&
-                            boardController.CanUnlockCobweb(_sourceIndex, intentTarget);
-            Debug.Log(
-                $"[Cobweb] BeginDropping source={FormatCell(_sourceIndex)} under={FormatCell(underIndex)} " +
-                $"stickyMerge={FormatCell(stickyMergeIndex)} stickyCobweb={FormatCell(stickyCobwebIndex)} " +
-                $"intent={FormatCell(intentTarget)} canMerge={canMerge} canUnlock={canUnlock} " +
-                $"presenter={(boardController != null && boardController.CobwebPresenter != null)} " +
-                $"config={(boardController != null && boardController.CobwebAnimationConfig != null)}");
+            var intentMerge = stickyMergeIndex != BoardController.NoSelectionIndex ? stickyMergeIndex : underIndex;
+            var intentCobweb = stickyCobwebIndex != BoardController.NoSelectionIndex ? stickyCobwebIndex : underIndex;
 
-            if (canMerge)
+            // 1) Direct merge / cobweb under pointer (or sticky preview).
+            if (boardController != null && boardController.CanMerge(_sourceIndex, intentMerge))
             {
-                BeginMerging(intentTarget);
+                BeginMerging(intentMerge);
                 return;
             }
 
-            if (canUnlock)
+            if (boardController != null && boardController.CanUnlockCobweb(_sourceIndex, intentCobweb))
             {
-                BeginUnlocking(intentTarget);
+                BeginUnlocking(intentCobweb);
                 return;
             }
 
-            var targetIndex = ResolveDropIndex();
-            Debug.Log($"[Cobweb] fallback drop ResolveDropIndex={FormatCell(targetIndex)} (under was {FormatCell(underIndex)})");
+            // 2) Direct empty under pointer — never steal with throw-assist.
+            if (IsEmptyOpenCell(underIndex))
+            {
+                BeginMoveOrReturn(underIndex);
+                return;
+            }
+
+            // 3) Directional throw-to-merge assist.
+            if (TryFindDirectionalMergeAssist(out var assistIndex, out var assistCobweb))
+            {
+                if (assistCobweb)
+                {
+                    BeginUnlocking(assistIndex);
+                }
+                else
+                {
+                    BeginMerging(assistIndex);
+                }
+
+                return;
+            }
+
+            // 4–5) Source return / nearest-empty fallback.
+            BeginMoveOrReturn(ResolveDropIndex());
+        }
+
+        void BeginMoveOrReturn(int targetIndex)
+        {
             var landingIndex = targetIndex;
             var moved = false;
             if (targetIndex != _sourceIndex && IsEmptyOpenCell(targetIndex))
@@ -817,6 +843,232 @@ namespace SanIsland.Merge
             _previewMergeIndex = BoardController.NoSelectionIndex;
             _previewCobwebIndex = BoardController.NoSelectionIndex;
             _magnetBlend = 0f;
+            ClearVelocitySamples();
+        }
+
+        void ClearVelocitySamples()
+        {
+            _velocityCount = 0;
+            _velocityWrite = 0;
+        }
+
+        void SampleDragVelocity()
+        {
+            if (dragView == null || config == null)
+            {
+                return;
+            }
+
+            // Pointer movement only — ignore DragItemView visual offset.
+            var position = GetPointerCanvasPosition();
+            var time = Time.unscaledTime;
+            var capacity = Mathf.Min(MaxVelocitySamples, config.DirectionalMergeVelocitySampleCount);
+            if (capacity < 2)
+            {
+                capacity = 2;
+            }
+
+            if (_velocityCount > 0)
+            {
+                var lastIndex = (_velocityWrite - 1 + MaxVelocitySamples) % MaxVelocitySamples;
+                if ((_velocityPositions[lastIndex] - position).sqrMagnitude < 0.01f &&
+                    time - _velocityTimes[lastIndex] < 0.001f)
+                {
+                    return;
+                }
+            }
+
+            _velocityPositions[_velocityWrite] = position;
+            _velocityTimes[_velocityWrite] = time;
+            _velocityWrite = (_velocityWrite + 1) % MaxVelocitySamples;
+            if (_velocityCount < capacity)
+            {
+                _velocityCount++;
+            }
+        }
+
+        bool TryGetReleaseVelocity(out Vector2 velocity, out float speed)
+        {
+            velocity = Vector2.zero;
+            speed = 0f;
+            if (config == null || _velocityCount < 2)
+            {
+                return false;
+            }
+
+            var newestIndex = (_velocityWrite - 1 + MaxVelocitySamples) % MaxVelocitySamples;
+            var newestPos = _velocityPositions[newestIndex];
+            var newestTime = _velocityTimes[newestIndex];
+            var window = Mathf.Max(0.04f, config.DirectionalMergeVelocitySampleWindow);
+
+            var oldestPos = newestPos;
+            var oldestTime = newestTime;
+            for (var i = 0; i < _velocityCount; i++)
+            {
+                var index = (_velocityWrite - 1 - i + MaxVelocitySamples * 2) % MaxVelocitySamples;
+                var sampleTime = _velocityTimes[index];
+                if (newestTime - sampleTime > window && i > 0)
+                {
+                    break;
+                }
+
+                oldestPos = _velocityPositions[index];
+                oldestTime = sampleTime;
+            }
+
+            var dt = newestTime - oldestTime;
+            if (dt < 0.001f)
+            {
+                return false;
+            }
+
+            velocity = (newestPos - oldestPos) / dt;
+            speed = velocity.magnitude;
+            return speed > 0.01f;
+        }
+
+        bool TryFindDirectionalMergeAssist(out int targetIndex, out bool cobwebUnlock)
+        {
+            targetIndex = BoardController.NoSelectionIndex;
+            cobwebUnlock = false;
+            if (config == null || !config.DirectionalMergeAssistEnabled || boardController == null ||
+                boardController.BoardView == null)
+            {
+                return false;
+            }
+
+            if (!TryGetReleaseVelocity(out var velocity, out var speed))
+            {
+                return false;
+            }
+
+            if (speed < config.DirectionalMergeMinSpeed)
+            {
+                if (config.ShowDirectionalAssistDebug)
+                {
+                    Debug.Log($"[ThrowAssist] skip slow speed={speed:F0} min={config.DirectionalMergeMinSpeed:F0}");
+                }
+
+                return false;
+            }
+
+            var throwDirection = velocity.normalized;
+            var releasePos = GetPointerCanvasPosition();
+            var cellSize = EstimateCellSize();
+            var searchDistance = cellSize * config.DirectionalMergeSearchDistanceInCells;
+            var searchDistanceSq = searchDistance * searchDistance;
+            var minDot = config.DirectionalMergeMinDot;
+            var directionWeight = config.DirectionalMergeDirectionWeight;
+            var distanceWeight = config.DirectionalMergeDistanceWeight;
+
+            var bestScore = float.NegativeInfinity;
+            var bestIndex = BoardController.NoSelectionIndex;
+            var bestIsCobweb = false;
+            var bestDot = 0f;
+            var bestDistance = 0f;
+
+            var cells = boardController.BoardView.Cells;
+            if (cells == null)
+            {
+                return false;
+            }
+
+            for (var i = 0; i < cells.Count; i++)
+            {
+                var cellView = cells[i];
+                if (cellView == null)
+                {
+                    continue;
+                }
+
+                var index = cellView.Index;
+                if (index == _sourceIndex)
+                {
+                    continue;
+                }
+
+                var canMerge = boardController.CanMerge(_sourceIndex, index);
+                var canCobweb = !canMerge && config.DirectionalMergeIncludeCobwebTargets &&
+                                boardController.CanUnlockCobweb(_sourceIndex, index);
+                if (!canMerge && !canCobweb)
+                {
+                    continue;
+                }
+
+                var candidateCenter = GetCellItemLayerPosition(index);
+                var toCandidate = candidateCenter - releasePos;
+                var distanceSq = toCandidate.sqrMagnitude;
+                if (distanceSq > searchDistanceSq || distanceSq < 0.0001f)
+                {
+                    continue;
+                }
+
+                var distance = Mathf.Sqrt(distanceSq);
+                var directionScore = Vector2.Dot(toCandidate / distance, throwDirection);
+                if (directionScore < minDot)
+                {
+                    continue;
+                }
+
+                var normalizedDistance = distance / Mathf.Max(1f, searchDistance);
+                var score = directionScore * directionWeight - normalizedDistance * distanceWeight;
+                if (score <= bestScore)
+                {
+                    continue;
+                }
+
+                bestScore = score;
+                bestIndex = index;
+                bestIsCobweb = canCobweb;
+                bestDot = directionScore;
+                bestDistance = distance;
+            }
+
+            if (bestIndex == BoardController.NoSelectionIndex)
+            {
+                if (config.ShowDirectionalAssistDebug)
+                {
+                    Debug.Log(
+                        $"[ThrowAssist] no candidate speed={speed:F0} dir={throwDirection} " +
+                        $"search={searchDistance:F0}");
+                }
+
+                return false;
+            }
+
+            if (config.ShowDirectionalAssistDebug)
+            {
+                Debug.Log(
+                    $"[ThrowAssist] choose={bestIndex} cobweb={bestIsCobweb} speed={speed:F0} " +
+                    $"dot={bestDot:F2} dist={bestDistance:F0}/{searchDistance:F0} score={bestScore:F2}");
+            }
+
+            targetIndex = bestIndex;
+            cobwebUnlock = bestIsCobweb;
+            return true;
+        }
+
+        float EstimateCellSize()
+        {
+            if (boardController == null || boardController.BoardView == null)
+            {
+                return 170f;
+            }
+
+            var cells = boardController.BoardView.Cells;
+            if (cells == null || cells.Count == 0 || cells[0] == null)
+            {
+                return 170f;
+            }
+
+            var rect = cells[0].transform as RectTransform;
+            if (rect == null)
+            {
+                return 170f;
+            }
+
+            var size = rect.rect.size;
+            return Mathf.Max(1f, Mathf.Min(size.x, size.y));
         }
 
         void BeginMerging(int targetIndex)
