@@ -104,17 +104,25 @@ namespace SanIsland.Merge.Editor
                 }
             }
 
-            UpsertUiKey(collection, "en", "Lvl {0}");
-            UpsertUiKey(collection, "ru", "Ур. {0}");
-            UpsertUiKey(collection, "de", "St. {0}");
-            UpsertUiKey(collection, "es", "Niv. {0}");
-            UpsertUiKey(collection, "fr", "Niv. {0}");
-            UpsertUiKey(collection, "pt", "Nv. {0}");
-            UpsertUiKey(collection, "tr", "Sv. {0}");
+            UpsertUiKey(collection, MergeUiLocalization.LevelShortKey, "en", "Lvl {0}", smart: true);
+            UpsertUiKey(collection, MergeUiLocalization.LevelShortKey, "ru", "Ур. {0}", smart: true);
+            UpsertUiKey(collection, MergeUiLocalization.LevelShortKey, "de", "St. {0}", smart: true);
+            UpsertUiKey(collection, MergeUiLocalization.LevelShortKey, "es", "Niv. {0}", smart: true);
+            UpsertUiKey(collection, MergeUiLocalization.LevelShortKey, "fr", "Niv. {0}", smart: true);
+            UpsertUiKey(collection, MergeUiLocalization.LevelShortKey, "pt", "Nv. {0}", smart: true);
+            UpsertUiKey(collection, MergeUiLocalization.LevelShortKey, "tr", "Sv. {0}", smart: true);
+
+            UpsertUiKey(collection, MergeUiLocalization.BoardFullKey, "en", "Board is full");
+            UpsertUiKey(collection, MergeUiLocalization.BoardFullKey, "ru", "Поле заполнено");
+            UpsertUiKey(collection, MergeUiLocalization.BoardFullKey, "de", "Spielfeld ist voll");
+            UpsertUiKey(collection, MergeUiLocalization.BoardFullKey, "es", "El tablero está lleno");
+            UpsertUiKey(collection, MergeUiLocalization.BoardFullKey, "fr", "Plateau plein");
+            UpsertUiKey(collection, MergeUiLocalization.BoardFullKey, "pt", "Tabuleiro cheio");
+            UpsertUiKey(collection, MergeUiLocalization.BoardFullKey, "tr", "Tahta dolu");
             AssetDatabase.SaveAssets();
         }
 
-        static void UpsertUiKey(StringTableCollection collection, string localeCode, string value)
+        static void UpsertUiKey(StringTableCollection collection, string key, string localeCode, string value, bool smart = false)
         {
             var table = collection.GetTable(localeCode) as StringTable;
             if (table == null)
@@ -123,14 +131,13 @@ namespace SanIsland.Merge.Editor
                 return;
             }
 
-            var key = MergeUiLocalization.LevelShortKey;
             var shared = collection.SharedData.GetEntry(key);
             if (shared == null)
             {
                 var entry = table.AddEntry(key, value);
                 if (entry != null)
                 {
-                    entry.IsSmart = true;
+                    entry.IsSmart = smart;
                 }
             }
             else
@@ -147,7 +154,7 @@ namespace SanIsland.Merge.Editor
 
                 if (entry != null)
                 {
-                    entry.IsSmart = true;
+                    entry.IsSmart = smart;
                 }
             }
 

@@ -1,5 +1,4 @@
 using UnityEngine.Localization;
-using UnityEngine.Localization.Settings;
 
 namespace SanIsland.Merge
 {
@@ -7,6 +6,7 @@ namespace SanIsland.Merge
     {
         public const string TableName = "UI";
         public const string LevelShortKey = "ui.item.level_short";
+        public const string BoardFullKey = "ui.message.board_full";
 
         public static string GetLevelLabel(int level)
         {
@@ -15,6 +15,16 @@ namespace SanIsland.Merge
                 Arguments = new object[] { level }
             };
             return localized.GetLocalizedString();
+        }
+
+        public static string Get(string key)
+        {
+            if (string.IsNullOrEmpty(key))
+            {
+                return string.Empty;
+            }
+
+            return new LocalizedString(TableName, key).GetLocalizedString();
         }
     }
 }

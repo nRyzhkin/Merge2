@@ -407,6 +407,58 @@ namespace SanIsland.Merge
             ApplyPose();
         }
 
+        public void PlayGeneratorTap(BoardGeneratorAnimationConfig generatorConfig)
+        {
+            if (itemRect == null || generatorConfig == null)
+            {
+                return;
+            }
+
+            if (IsTransientAnimationRunning())
+            {
+                CancelTransientAnimationAndAdoptCurrentVisualState();
+            }
+
+            CaptureIdleIfNeeded();
+            SetHovered(false);
+            var peak = Vector2.one * generatorConfig.TapPeakScale;
+            var squash = generatorConfig.TapScale;
+            BeginPhase(
+                Phase.Press,
+                generatorConfig.TapDuration * 0.45f,
+                generatorConfig.TapCurve,
+                new Vector2(peak.x * squash.x, peak.y * squash.y),
+                0f);
+        }
+
+        public void PlayGeneratorItemSpawn(BoardGeneratorAnimationConfig generatorConfig)
+        {
+            if (itemRect == null || generatorConfig == null)
+            {
+                return;
+            }
+
+            BeginTransientPresentation();
+            ClearMergePreviewImmediate();
+            SetHovered(false);
+            CaptureIdleIfNeeded();
+            _resultReboundScale = generatorConfig.SpawnReboundScale;
+            _resultDuration = generatorConfig.SpawnSettleDuration;
+            var start = Vector2.one * generatorConfig.SpawnStartScale;
+            var grow = Mathf.Max(0.04f, generatorConfig.SpawnSettleDuration * 0.45f);
+            var up = CellHeight() * generatorConfig.SpawnOffsetY;
+            _actionScale = start;
+            _currentDown = 0f;
+            BeginPhase(
+                Phase.ResultGrow,
+                grow,
+                generatorConfig.SpawnSettleCurve,
+                Vector2.one * generatorConfig.SpawnOvershootScale,
+                -up);
+            _fromScale = start;
+            ApplyPose();
+        }
+
         public void Drop()
         {
             SnapActionToIdle();

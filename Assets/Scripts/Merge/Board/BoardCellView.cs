@@ -148,12 +148,11 @@ namespace SanIsland.Merge
                 ClearBoxRevealPresentation();
             }
 
-            if (!_itemPresentationSuppressed && !_hideItemForDrag)
+            _hideItemForDrag = false;
+            if (_itemPresentationSuppressed)
             {
-                return;
+                SetActiveSafe(itemImage, false);
             }
-
-            SetActiveSafe(itemImage, false);
         }
 
         public void SetCobwebUnlockHover(bool active, BoardCobwebAnimationConfig config)
@@ -536,6 +535,8 @@ namespace SanIsland.Merge
 
         void SetEmpty()
         {
+            _hideItemForDrag = false;
+            _itemPresentationSuppressed = false;
             SetActiveSafe(itemImage, false);
             SetActiveSafe(blockerImage, false);
             SetActiveSafe(lockOverlayImage, false);

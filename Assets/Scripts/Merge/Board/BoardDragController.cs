@@ -387,6 +387,11 @@ namespace SanIsland.Merge
                 boardController.BoxRevealPresenter.ReleaseCellVisualOwnership(cell.Index);
             }
 
+            if (boardController.GeneratorPresenter != null)
+            {
+                boardController.GeneratorPresenter.ReleaseCellVisualOwnership(cell.Index);
+            }
+
             if (cell.IsTransientAnimationRunning() || cell.IsCobwebBreakPlaying || cell.IsBoxRevealPlaying)
             {
                 cell.CancelTransientPresentationForPickup();
@@ -1153,7 +1158,6 @@ namespace SanIsland.Merge
 
             if (!boardController.CanUnlockCobweb(_sourceIndex, lockedTargetIndex))
             {
-                Debug.LogWarning($"[Cobweb] BeginUnlocking CanUnlock became false source={_sourceIndex} target={lockedTargetIndex}");
                 _dropIndex = _sourceIndex;
                 _phase = BoardDragPhase.Dropping;
                 dragView.BeginDrop(GetCellItemLayerPosition(_sourceIndex), true);
@@ -1161,8 +1165,6 @@ namespace SanIsland.Merge
             }
 
             var destination = boardController.FindUnlockDestination(_sourceIndex, lockedTargetIndex);
-            Debug.Log(
-                $"[Cobweb] BeginUnlocking OK source={_sourceIndex} locked={lockedTargetIndex} dest={destination}");
 
             if (!dragView.TryCaptureVisualSnapshot(
                     out var sprite,
@@ -1311,7 +1313,6 @@ namespace SanIsland.Merge
 
             ClearCobwebPreviewSoft();
             _previewCobwebIndex = index;
-            Debug.Log($"[Cobweb] hover enter locked target={index} from source={_sourceIndex}");
             var cobwebConfig = boardController != null ? boardController.CobwebAnimationConfig : null;
             var cell = boardController != null && boardController.BoardView != null
                 ? boardController.BoardView.GetCellView(index)

@@ -17,6 +17,8 @@ namespace SanIsland.Merge.Editor
         public const string MergeAnimationConfigPath = "Assets/Data/BoardMergeAnimationConfig.asset";
         public const string CobwebAnimationConfigPath = "Assets/Data/BoardCobwebAnimationConfig.asset";
         public const string BoxAnimationConfigPath = "Assets/Data/BoardBoxAnimationConfig.asset";
+        public const string GeneratorAnimationConfigPath = "Assets/Data/BoardGeneratorAnimationConfig.asset";
+        public const string GeneratorProductionDatabasePath = "Assets/Data/GeneratorProductionDatabase.asset";
         public const string BaseSpritesFolder = "Assets/Sprites/Base";
 
         [MenuItem("Tools/San Island/Setup Merge Board")]
@@ -123,6 +125,8 @@ namespace SanIsland.Merge.Editor
             controller.SetMergeAnimationConfig(EnsureMergeAnimationConfig());
             controller.SetCobwebAnimationConfig(EnsureCobwebAnimationConfig());
             controller.SetBoxAnimationConfig(EnsureBoxAnimationConfig());
+            controller.SetGeneratorAnimationConfig(EnsureGeneratorAnimationConfig());
+            controller.SetGeneratorProductionDatabase(EnsureGeneratorProductionDatabase(database));
             WireCellInteraction(cellViews, controller);
             WireHud(controller);
             WireDrag(controller);
@@ -449,6 +453,8 @@ namespace SanIsland.Merge.Editor
             controller.SetMergeAnimationConfig(EnsureMergeAnimationConfig());
             controller.SetCobwebAnimationConfig(EnsureCobwebAnimationConfig());
             controller.SetBoxAnimationConfig(EnsureBoxAnimationConfig());
+            controller.SetGeneratorAnimationConfig(EnsureGeneratorAnimationConfig());
+            controller.SetGeneratorProductionDatabase(EnsureGeneratorProductionDatabase(controller.ItemDatabase));
 
             var presenter = controller.GetComponent<BoardMergePresenter>();
             if (presenter == null)
@@ -478,6 +484,20 @@ namespace SanIsland.Merge.Editor
 
             boxRevealPresenter.Configure(controller, controller.BoxAnimationConfig);
 
+            var generatorPresenter = controller.GetComponent<BoardGeneratorPresenter>();
+            if (generatorPresenter == null)
+            {
+                generatorPresenter = Undo.AddComponent<BoardGeneratorPresenter>(controller.gameObject);
+            }
+
+            generatorPresenter.Configure(
+                controller,
+                dragView,
+                controller.GeneratorAnimationConfig,
+                controller.MergeAnimationConfig);
+
+            WireMessages(controller);
+
             var dragController = controller.GetComponent<BoardDragController>();
             if (dragController == null)
             {
@@ -490,7 +510,44 @@ namespace SanIsland.Merge.Editor
             EditorUtility.SetDirty(presenter);
             EditorUtility.SetDirty(cobwebPresenter);
             EditorUtility.SetDirty(boxRevealPresenter);
+            EditorUtility.SetDirty(generatorPresenter);
             EditorUtility.SetDirty(controller);
+        }
+
+        static void WireMessages(BoardController controller)
+        {
+            var canvas = controller.BoardRoot != null
+                ? controller.BoardRoot.GetComponentInParent<Canvas>()
+                : controller.GetComponentInParent<Canvas>();
+            if (canvas == null)
+            {
+                Debug.LogWarning("[MergeBoardSetup] Canvas not found for Messages Layer.");
+                return;
+            }
+
+            var layer = FindNamedTransform("Messages Layer");
+            if (layer == null)
+            {
+                Debug.LogWarning("[MergeBoardSetup] Messages Layer not found.");
+                return;
+            }
+
+            var messagePresenter = layer.GetComponent<MessagePresenter>();
+            if (messagePresenter == null)
+            {
+                messagePresenter = Undo.AddComponent<MessagePresenter>(layer.gameObject);
+            }
+
+            var white = layer.Find("ToastMessage_White") as RectTransform;
+            var rose = layer.Find("ToastMessage_Rose") as RectTransform;
+            messagePresenter.Configure(
+                layer,
+                white,
+                rose,
+                controller.GeneratorAnimationConfig,
+                canvas);
+            controller.SetMessagePresenter(messagePresenter);
+            EditorUtility.SetDirty(messagePresenter);
         }
 
         static RectTransform FindNamedTransform(string objectName)
@@ -581,6 +638,36 @@ namespace SanIsland.Merge.Editor
             }
 
             return config;
+        }
+
+        static BoardGeneratorAnimationConfig EnsureGeneratorAnimationConfig()
+        {
+            EnsureFolder("Assets/Data");
+            var config = AssetDatabase.LoadAssetAtPath<BoardGeneratorAnimationConfig>(GeneratorAnimationConfigPath);
+            if (config == null)
+            {
+                config = ScriptableObject.CreateInstance<BoardGeneratorAnimationConfig>();
+                AssetDatabase.CreateAsset(config, GeneratorAnimationConfigPath);
+                AssetDatabase.SaveAssets();
+            }
+
+            return config;
+        }
+
+        static GeneratorProductionDatabase EnsureGeneratorProductionDatabase(MergeItemDatabase itemDatabase)
+        {
+            EnsureFolder("Assets/Data");
+            var database = AssetDatabase.LoadAssetAtPath<GeneratorProductionDatabase>(GeneratorProductionDatabasePath);
+            if (database == null)
+            {
+                database = ScriptableObject.CreateInstance<GeneratorProductionDatabase>();
+                AssetDatabase.CreateAsset(database, GeneratorProductionDatabasePath);
+            }
+
+            database.EnsureFromItemDatabase(itemDatabase);
+            EditorUtility.SetDirty(database);
+            AssetDatabase.SaveAssets();
+            return database;
         }
 
         static Image EnsureImageChild(Transform parent, string childName, int siblingIndex)

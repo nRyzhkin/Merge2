@@ -24,6 +24,10 @@ MonoBehaviour:
     m_Metadata:
       m_Items:
       - rid: 8013459914571120917
+  - m_Id: 1030742017
+    m_Localized: Tabuleiro cheio
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

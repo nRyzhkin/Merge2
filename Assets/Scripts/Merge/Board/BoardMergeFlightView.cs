@@ -140,6 +140,15 @@ namespace SanIsland.Merge
 
         public void BeginLanding(Vector2 landPos, BoardDragAnimationConfig dragConfig, float flightHeight)
         {
+            BeginLanding(landPos, dragConfig, flightHeight, null);
+        }
+
+        public void BeginLanding(
+            Vector2 landPos,
+            BoardDragAnimationConfig dragConfig,
+            float flightHeight,
+            float? moveDurationOverride)
+        {
             if (item == null)
             {
                 return;
@@ -153,9 +162,50 @@ namespace SanIsland.Merge
             _fromScale = _currentScale;
             _toScale = dragConfig != null ? dragConfig.DropApproachScale : Vector2.one;
             _elapsed = 0f;
-            _duration = Mathf.Max(0.01f, dragConfig != null ? dragConfig.LandingMoveDuration : 0.12f);
+            _duration = Mathf.Max(
+                0.01f,
+                moveDurationOverride ?? (dragConfig != null ? dragConfig.LandingMoveDuration : 0.12f));
             _curve = dragConfig != null ? dragConfig.LandingMoveCurve : null;
             _phase = Phase.LandingMove;
+            gameObject.SetActive(true);
+        }
+
+        public void BeginSpawn(
+            Sprite sprite,
+            Vector2 size,
+            bool preserveAspect,
+            Color color,
+            Vector2 startPos,
+            Vector2 endPos,
+            Vector2 startScale,
+            Vector2 peakScale,
+            float flightHeight,
+            float moveDuration,
+            AnimationCurve curve,
+            BoardDragAnimationConfig dragConfig)
+        {
+            Ensure(_layer);
+            if (item == null)
+            {
+                return;
+            }
+
+            item.Show(sprite, size, preserveAspect, color);
+            _dragConfig = dragConfig;
+            _planarPos = startPos;
+            _flightHeight = flightHeight;
+            _currentScale = startScale;
+            _fromPlanar = startPos;
+            _toPlanar = endPos;
+            _fromFlight = flightHeight;
+            _toFlight = 0f;
+            _fromScale = startScale;
+            _toScale = peakScale;
+            _elapsed = 0f;
+            _duration = Mathf.Max(0.01f, moveDuration);
+            _curve = curve;
+            _phase = Phase.LandingMove;
+            ApplyPose();
             gameObject.SetActive(true);
         }
 

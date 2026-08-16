@@ -195,6 +195,25 @@ namespace SanIsland.Merge
                 {
                     sequence.TargetView.HideCobwebOverlayImmediate();
                 }
+
+                // Early pickup must receive a visible cell; Finish will no longer unhide.
+                if (sequence.TargetIndex == cellIndex &&
+                    sequence.TargetView != null &&
+                    !sequence.TargetView.IsItemPresentationSuppressed)
+                {
+                    sequence.TargetView.SetHideItemForDrag(false);
+                }
+
+                if (sequence.SourceIndex == cellIndex &&
+                    boardController != null &&
+                    boardController.BoardView != null)
+                {
+                    var sourceView = boardController.BoardView.GetCellView(cellIndex);
+                    if (sourceView != null && !sourceView.IsItemPresentationSuppressed)
+                    {
+                        sourceView.SetHideItemForDrag(false);
+                    }
+                }
             }
         }
 
@@ -443,10 +462,12 @@ namespace SanIsland.Merge
                                            || sequence.TargetAnimator.IsPresentationRevisionCurrent(sequence.PresentationRevision)
                                            || sequence.PresentationRevision == 0);
 
-            if (canTouchTargetVisual)
+            if (sequence.TargetView != null && !sequence.TargetView.IsItemPresentationSuppressed)
             {
                 sequence.TargetView.SetHideItemForDrag(false);
-                if (boardController != null && boardController.BoardView != null)
+                if (canTouchTargetVisual &&
+                    boardController != null &&
+                    boardController.BoardView != null)
                 {
                     boardController.BoardView.RefreshCell(target);
                 }

@@ -18,10 +18,14 @@ namespace SanIsland.Merge
         [SerializeField] BoardMergeAnimationConfig mergeAnimationConfig;
         [SerializeField] BoardCobwebAnimationConfig cobwebAnimationConfig;
         [SerializeField] BoardBoxAnimationConfig boxAnimationConfig;
+        [SerializeField] BoardGeneratorAnimationConfig generatorAnimationConfig;
+        [SerializeField] GeneratorProductionDatabase generatorProductionDatabase;
         [SerializeField] BoardDragView dragView;
         [SerializeField] BoardMergePresenter mergePresenter;
         [SerializeField] BoardCobwebPresenter cobwebPresenter;
         [SerializeField] BoardBoxRevealPresenter boxRevealPresenter;
+        [SerializeField] BoardGeneratorPresenter generatorPresenter;
+        [SerializeField] MessagePresenter messagePresenter;
         [SerializeField] BoardSelectionView selectionView;
         [SerializeField] ItemInfoView itemInfoView;
         [SerializeField] bool useDevelopmentBoardState = true;
@@ -51,10 +55,14 @@ namespace SanIsland.Merge
         public BoardMergeAnimationConfig MergeAnimationConfig => mergeAnimationConfig;
         public BoardCobwebAnimationConfig CobwebAnimationConfig => cobwebAnimationConfig;
         public BoardBoxAnimationConfig BoxAnimationConfig => boxAnimationConfig;
+        public BoardGeneratorAnimationConfig GeneratorAnimationConfig => generatorAnimationConfig;
+        public GeneratorProductionDatabase GeneratorProductionDatabase => generatorProductionDatabase;
         public BoardDragView DragView => dragView;
         public BoardMergePresenter MergePresenter => mergePresenter;
         public BoardCobwebPresenter CobwebPresenter => cobwebPresenter;
         public BoardBoxRevealPresenter BoxRevealPresenter => boxRevealPresenter;
+        public BoardGeneratorPresenter GeneratorPresenter => generatorPresenter;
+        public MessagePresenter MessagePresenter => messagePresenter;
         public BoardDragController DragController => _dragController;
         public BoardSelectionView SelectionView => selectionView;
         public ItemInfoView ItemInfoView => itemInfoView;
@@ -77,6 +85,7 @@ namespace SanIsland.Merge
         public event Action<int, int> MergeCommitted;
         public event Action BoxBreak;
         public event Action BoxItemRevealed;
+        public event Action GeneratorProduced;
 
         void Awake()
         {
@@ -144,6 +153,11 @@ namespace SanIsland.Merge
                 boxRevealPresenter.AbortAll();
             }
 
+            if (generatorPresenter != null)
+            {
+                generatorPresenter.AbortAll();
+            }
+
             _interactionLocks.ReleaseAll();
 
             if (boardView != null)
@@ -157,32 +171,7 @@ namespace SanIsland.Merge
             _discovery.DiscoverFromBoard(_state);
             BindAndRefresh();
             UpdateDebug();
-            LogLockedCellsForDebug();
             BoardLayoutValidator.Validate(_state, itemDatabase);
-        }
-
-        void LogLockedCellsForDebug()
-        {
-            if (_state == null)
-            {
-                return;
-            }
-
-            var locked = 0;
-            for (var i = 0; i < BoardState.CellCount; i++)
-            {
-                var cell = _state.GetCell(i);
-                if (cell == null || !cell.ItemLocked)
-                {
-                    continue;
-                }
-
-                locked++;
-                _state.GetCoordinates(i, out var row, out var col);
-                Debug.Log($"[Cobweb] board locked cell={i}[{row},{col}] id={cell.ItemId}");
-            }
-
-            Debug.Log($"[Cobweb] board locked total={locked}");
         }
 
         public void SelectCell(int index)
@@ -366,9 +355,6 @@ namespace SanIsland.Merge
         {
             if (IsCellInteractionLocked(fromIndex) || IsCellInteractionLocked(lockedTargetIndex))
             {
-                Debug.Log(
-                    $"[Cobweb] CanUnlock=false locked cells from={fromIndex}({IsCellInteractionLocked(fromIndex)}) " +
-                    $"to={lockedTargetIndex}({IsCellInteractionLocked(lockedTargetIndex)})");
                 return false;
             }
 
@@ -380,13 +366,11 @@ namespace SanIsland.Merge
             itemId = BoardCellState.EmptyItemId;
             if (_state == null || fromIndex == lockedTargetIndex)
             {
-                Debug.Log($"[Cobweb] Validate=false stateNull={_state == null} sameIndex={fromIndex == lockedTargetIndex} from={fromIndex} to={lockedTargetIndex}");
                 return false;
             }
 
             if (!_state.IsValidIndex(fromIndex) || !_state.IsValidIndex(lockedTargetIndex))
             {
-                Debug.Log($"[Cobweb] Validate=false invalidIndex from={fromIndex} to={lockedTargetIndex}");
                 return false;
             }
 
@@ -394,24 +378,16 @@ namespace SanIsland.Merge
             var target = _state.GetCell(lockedTargetIndex);
             if (source == null || target == null || !source.HasItem || !target.HasItem)
             {
-                Debug.Log(
-                    $"[Cobweb] Validate=false missing items sourceNull={source == null} targetNull={target == null} " +
-                    $"sourceHas={source != null && source.HasItem} targetHas={target != null && target.HasItem}");
                 return false;
             }
 
             if (source.IsBox || target.IsBox || source.ItemLocked || !target.ItemLocked)
             {
-                Debug.Log(
-                    $"[Cobweb] Validate=false box/lock sourceBox={source.IsBox} targetBox={target.IsBox} " +
-                    $"sourceLocked={source.ItemLocked} targetLocked={target.ItemLocked} " +
-                    $"sourceId={source.ItemId} targetId={target.ItemId}");
                 return false;
             }
 
             if (source.ItemId != target.ItemId)
             {
-                Debug.Log($"[Cobweb] Validate=false id mismatch sourceId={source.ItemId} targetId={target.ItemId}");
                 return false;
             }
 
@@ -490,13 +466,11 @@ namespace SanIsland.Merge
 
             if (!TryValidateUnlock(sourceIndex, lockedTargetIndex, out var itemId))
             {
-                Debug.LogWarning($"[Cobweb] TryUnlock failed validation source={sourceIndex} target={lockedTargetIndex}");
                 return result;
             }
 
             if (!_state.IsValidIndex(destinationIndex) || destinationIndex == lockedTargetIndex)
             {
-                Debug.LogWarning($"[Cobweb] TryUnlock bad destination={destinationIndex} locked={lockedTargetIndex}");
                 return result;
             }
 
@@ -506,7 +480,6 @@ namespace SanIsland.Merge
                 var destCell = _state.GetCell(destinationIndex);
                 if (destCell == null || !destCell.IsEmpty)
                 {
-                    Debug.LogWarning($"[Cobweb] TryUnlock destination not empty dest={destinationIndex}");
                     return result;
                 }
             }
@@ -537,6 +510,7 @@ namespace SanIsland.Merge
                     var sourceView = boardView.GetCellView(sourceIndex);
                     if (sourceView != null)
                     {
+                        sourceView.SetItemPresentationSuppressed(false);
                         sourceView.SetHideItemForDrag(false);
                     }
 
@@ -629,6 +603,9 @@ namespace SanIsland.Merge
                 var sourceView = boardView.GetCellView(fromIndex);
                 if (sourceView != null)
                 {
+                    // Drag began with presentation suppressed; merge flight owns visuals now.
+                    // Must clear suppressed or the empty source cell stays poisoned for future spawns.
+                    sourceView.SetItemPresentationSuppressed(false);
                     sourceView.SetHideItemForDrag(false);
                 }
 
@@ -714,6 +691,193 @@ namespace SanIsland.Merge
             BoxItemRevealed?.Invoke();
         }
 
+        public void NotifyGeneratorProduced()
+        {
+            GeneratorProduced?.Invoke();
+        }
+
+        public bool IsGeneratorCell(int index)
+        {
+            if (_state == null || itemDatabase == null || !_state.IsValidIndex(index))
+            {
+                return false;
+            }
+
+            var cell = _state.GetCell(index);
+            if (cell == null || !cell.HasItem || cell.IsBox || cell.ItemLocked)
+            {
+                return false;
+            }
+
+            return itemDatabase.TryGetById(cell.ItemId, out var data) &&
+                   data != null &&
+                   data.Kind == MergeItemKind.Generator;
+        }
+
+        public GeneratorSpawnResult TryActivateGenerator(int generatorIndex, Vector2 pointerScreenPosition)
+        {
+            var result = TrySpawnGeneratorItem(generatorIndex);
+            if (!result.Success)
+            {
+                if (result.BoardFull)
+                {
+                    EnsureMessagesReady();
+                    messagePresenter?.ShowBoardFull(pointerScreenPosition);
+                }
+
+                return result;
+            }
+
+            EnsureGeneratorReady();
+            generatorPresenter?.Play(result);
+            NotifyGeneratorProduced();
+            return result;
+        }
+
+        public GeneratorSpawnResult TrySpawnGeneratorItem(int generatorIndex)
+        {
+            if (_state == null || itemDatabase == null || !_state.IsValidIndex(generatorIndex))
+            {
+                return GeneratorSpawnResult.Failed(generatorIndex);
+            }
+
+            if (IsCellInteractionLocked(generatorIndex))
+            {
+                return GeneratorSpawnResult.Failed(generatorIndex);
+            }
+
+            var generatorCell = _state.GetCell(generatorIndex);
+            if (generatorCell == null || !generatorCell.HasItem || generatorCell.IsBox || generatorCell.ItemLocked)
+            {
+                return GeneratorSpawnResult.Failed(generatorIndex);
+            }
+
+            if (!itemDatabase.TryGetById(generatorCell.ItemId, out var generatorData) ||
+                generatorData == null ||
+                generatorData.Kind != MergeItemKind.Generator)
+            {
+                return GeneratorSpawnResult.Failed(generatorIndex);
+            }
+
+            EnsureGeneratorProductionDatabase();
+            if (generatorProductionDatabase == null ||
+                !generatorProductionDatabase.TryGetOutputItemId(generatorData.Id, out var outputItemId) ||
+                outputItemId == BoardCellState.EmptyItemId)
+            {
+                Debug.LogWarning($"[Generator] No output configured for '{generatorData.InternalKey}'.");
+                return GeneratorSpawnResult.Failed(generatorIndex);
+            }
+
+            var spawnIndex = FindGeneratorSpawnCell(generatorIndex);
+            if (spawnIndex == NoSelectionIndex)
+            {
+                return GeneratorSpawnResult.Failed(generatorIndex, boardFull: true);
+            }
+
+            var lockToken = _interactionLocks.Acquire(generatorIndex, spawnIndex);
+            var spawnCell = _state.GetCell(spawnIndex);
+            if (spawnCell == null || !spawnCell.IsEmpty)
+            {
+                _interactionLocks.Release(lockToken);
+                return GeneratorSpawnResult.Failed(generatorIndex, boardFull: true);
+            }
+
+            spawnCell.SetItem(outputItemId, locked: false);
+            var newlyDiscovered = _discovery != null && _discovery.Discover(outputItemId);
+            if (newlyDiscovered)
+            {
+                ItemDiscovered?.Invoke(outputItemId);
+            }
+
+            // Keep spawn cell locked until presentation handoff. Unlock generator immediately
+            // so another tap can start a parallel flight.
+            _interactionLocks.ReleaseCell(lockToken, generatorIndex);
+
+            // Do NOT RefreshCell here — BoardState owns the item, GeneratorFlightView owns visuals
+            // until BoardGeneratorPresenter hands off.
+            UpdateDebug();
+            return new GeneratorSpawnResult
+            {
+                Success = true,
+                BoardFull = false,
+                GeneratorIndex = generatorIndex,
+                SpawnCellIndex = spawnIndex,
+                GeneratedItemId = outputItemId,
+                InteractionLockToken = lockToken
+            };
+        }
+
+        public void ReleaseGeneratorSpawnLock(int token)
+        {
+            if (token != 0)
+            {
+                _interactionLocks.Release(token);
+            }
+        }
+
+        public int FindGeneratorSpawnCell(int generatorIndex)
+        {
+            if (_state == null || !_state.IsValidIndex(generatorIndex) || boardView == null)
+            {
+                return NoSelectionIndex;
+            }
+
+            var origin = GetCellUiCenter(generatorIndex);
+            _state.GetOrthogonalNeighborIndices(generatorIndex, _orthogonalScratch);
+            var bestOrthogonal = NoSelectionIndex;
+            var bestOrthogonalDistance = float.MaxValue;
+            for (var i = 0; i < _orthogonalScratch.Count; i++)
+            {
+                var index = _orthogonalScratch[i];
+                if (!IsGeneratorSpawnCandidate(index))
+                {
+                    continue;
+                }
+
+                var distance = Vector2.Distance(origin, GetCellUiCenter(index));
+                if (distance < bestOrthogonalDistance)
+                {
+                    bestOrthogonalDistance = distance;
+                    bestOrthogonal = index;
+                }
+            }
+
+            if (bestOrthogonal != NoSelectionIndex)
+            {
+                return bestOrthogonal;
+            }
+
+            var bestIndex = NoSelectionIndex;
+            var bestDistance = float.MaxValue;
+            for (var i = 0; i < BoardState.CellCount; i++)
+            {
+                if (i == generatorIndex || !IsGeneratorSpawnCandidate(i))
+                {
+                    continue;
+                }
+
+                var distance = Vector2.Distance(origin, GetCellUiCenter(i));
+                if (distance < bestDistance)
+                {
+                    bestDistance = distance;
+                    bestIndex = i;
+                }
+            }
+
+            return bestIndex;
+        }
+
+        bool IsGeneratorSpawnCandidate(int index)
+        {
+            if (_state == null || !_state.IsValidIndex(index) || IsCellInteractionLocked(index))
+            {
+                return false;
+            }
+
+            var cell = _state.GetCell(index);
+            return cell != null && cell.IsEmpty && !cell.IsBox;
+        }
+
         public void PrepareDragPresentation(int sourceIndex)
         {
             if (selectionView != null)
@@ -761,6 +925,21 @@ namespace SanIsland.Merge
         public void SetBoxAnimationConfig(BoardBoxAnimationConfig animation)
         {
             boxAnimationConfig = animation;
+        }
+
+        public void SetGeneratorAnimationConfig(BoardGeneratorAnimationConfig animation)
+        {
+            generatorAnimationConfig = animation;
+        }
+
+        public void SetGeneratorProductionDatabase(GeneratorProductionDatabase database)
+        {
+            generatorProductionDatabase = database;
+        }
+
+        public void SetMessagePresenter(MessagePresenter presenter)
+        {
+            messagePresenter = presenter;
         }
 
         public void SetDragView(BoardDragView view)
@@ -857,6 +1036,8 @@ namespace SanIsland.Merge
             EnsureMerge();
             EnsureCobweb();
             EnsureBox();
+            EnsureGenerator();
+            EnsureMessagesReady();
         }
 
         void EnsureMerge()
@@ -915,6 +1096,94 @@ namespace SanIsland.Merge
             }
 
             boxRevealPresenter.Configure(this, boxAnimationConfig);
+        }
+
+        public void EnsureGeneratorReady()
+        {
+            EnsureGenerator();
+        }
+
+        void EnsureGenerator()
+        {
+            if (generatorAnimationConfig == null)
+            {
+                generatorAnimationConfig = ScriptableObject.CreateInstance<BoardGeneratorAnimationConfig>();
+            }
+
+            EnsureGeneratorProductionDatabase();
+
+            generatorPresenter = GetComponent<BoardGeneratorPresenter>();
+            if (generatorPresenter == null)
+            {
+                generatorPresenter = gameObject.AddComponent<BoardGeneratorPresenter>();
+            }
+
+            generatorPresenter.Configure(
+                this,
+                dragView,
+                generatorAnimationConfig,
+                mergeAnimationConfig);
+        }
+
+        void EnsureGeneratorProductionDatabase()
+        {
+            if (generatorProductionDatabase == null)
+            {
+                generatorProductionDatabase = ScriptableObject.CreateInstance<GeneratorProductionDatabase>();
+            }
+
+            generatorProductionDatabase.EnsureFromItemDatabase(itemDatabase);
+        }
+
+        public void EnsureMessagesReady()
+        {
+            if (generatorAnimationConfig == null)
+            {
+                generatorAnimationConfig = ScriptableObject.CreateInstance<BoardGeneratorAnimationConfig>();
+            }
+
+            if (messagePresenter == null)
+            {
+                messagePresenter = FindFirstObjectByType<MessagePresenter>();
+            }
+
+            if (messagePresenter == null)
+            {
+                var canvas = boardRoot != null ? boardRoot.GetComponentInParent<Canvas>() : GetComponentInParent<Canvas>();
+                if (canvas != null)
+                {
+                    var layer = canvas.transform.Find("Messages Layer") as RectTransform;
+                    if (layer == null)
+                    {
+                        for (var i = 0; i < canvas.transform.childCount; i++)
+                        {
+                            var child = canvas.transform.GetChild(i) as RectTransform;
+                            if (child != null && child.name == "Messages Layer")
+                            {
+                                layer = child;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (layer != null)
+                    {
+                        messagePresenter = layer.GetComponent<MessagePresenter>();
+                        if (messagePresenter == null)
+                        {
+                            messagePresenter = layer.gameObject.AddComponent<MessagePresenter>();
+                        }
+
+                        var white = layer.Find("ToastMessage_White") as RectTransform;
+                        var rose = layer.Find("ToastMessage_Rose") as RectTransform;
+                        messagePresenter.Configure(layer, white, rose, generatorAnimationConfig, canvas);
+                    }
+                }
+            }
+            else
+            {
+                messagePresenter.SetConfig(generatorAnimationConfig);
+            }
         }
 
         bool ValidateDependencies()

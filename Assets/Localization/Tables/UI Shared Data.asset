@@ -19,6 +19,10 @@ MonoBehaviour:
     m_Key: ui.item.level_short
     m_Metadata:
       m_Items: []
+  - m_Id: 1030742017
+    m_Key: ui.message.board_full
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

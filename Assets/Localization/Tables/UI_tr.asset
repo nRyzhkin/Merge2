@@ -24,6 +24,10 @@ MonoBehaviour:
     m_Metadata:
       m_Items:
       - rid: 8013459914571120919
+  - m_Id: 1030742017
+    m_Localized: Tahta dolu
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

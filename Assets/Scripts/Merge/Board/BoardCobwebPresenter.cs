@@ -81,10 +81,6 @@ namespace SanIsland.Merge
                 return;
             }
 
-            Debug.Log(
-                $"[Cobweb] Presenter.Play source={sourceIndex} target={targetIndex} dest={destinationIndex} " +
-                $"sprite={sprite != null} start={startPos}");
-
             EnsurePools();
             var sequence = RentSequence();
             sequence.SourceIndex = sourceIndex;
@@ -170,6 +166,14 @@ namespace SanIsland.Merge
                     || sequence.DestinationIndex == cellIndex)
                 {
                     sequence.VisualOwnershipReleased = true;
+                    if (boardController != null && boardController.BoardView != null)
+                    {
+                        var view = boardController.BoardView.GetCellView(cellIndex);
+                        if (view != null && !view.IsItemPresentationSuppressed)
+                        {
+                            view.SetHideItemForDrag(false);
+                        }
+                    }
                 }
             }
         }
@@ -291,9 +295,6 @@ namespace SanIsland.Merge
                 sequence.TargetIndex,
                 sequence.DestinationIndex);
             sequence.Mutated = result.Success;
-            Debug.Log(
-                $"[Cobweb] Commit success={result.Success} source={sequence.SourceIndex} " +
-                $"target={sequence.TargetIndex} dest={sequence.DestinationIndex} itemId={result.ItemId}");
             if (!sequence.Mutated)
             {
                 AbortSequence(sequence);

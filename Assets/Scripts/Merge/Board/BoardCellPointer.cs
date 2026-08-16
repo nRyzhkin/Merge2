@@ -172,6 +172,10 @@ namespace SanIsland.Merge
                     if (!boardController.IsCellInteractionLocked(cellView.Index))
                     {
                         boardController.SelectCell(cellView.Index);
+                        if (boardController.IsGeneratorCell(cellView.Index))
+                        {
+                            boardController.TryActivateGenerator(cellView.Index, eventData.position);
+                        }
                     }
                 }
             }

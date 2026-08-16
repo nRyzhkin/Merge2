@@ -58,10 +58,11 @@ namespace SanIsland.Merge
             SetBox(state, database, 3, 8, "tools_l01");
             SetBox(state, 3, 9);
 
-            // Row 4 — generator pair + 4-box cluster center
+            // Row 4 — generator pair (mergeable) + empties for production + box cluster
             SetBox(state, 4, 0);
             SetItem(state, database, 4, 2, "tools_g01");
             SetItem(state, database, 4, 3, "tools_g01");
+            // (4,1)/(4,4)/(5,2)/(5,3) left empty for tools generator spawn tests
 
             //            BOX(tools_l01) at (3,8)
             // BOX(empty)=(4,7) - tools_l01=(4,8) - BOX(cleaning_l01)=(4,9)
@@ -73,9 +74,11 @@ namespace SanIsland.Merge
             SetBox(state, database, 4, 9, "cleaning_l01");
             SetBox(state, 5, 8);
 
-            // Row 5 — remaining sparse corner boxes
+            // Row 5 — coffee generator with empty neighbors + sparse boxes
             SetBox(state, 5, 0);
             SetBox(state, 5, 1);
+            SetItem(state, database, 5, 4, "coffee_g01");
+            // (5,3)/(5,5)/(4,4) empty around coffee_g01 for production
         }
 
         public static void SetItem(BoardState state, MergeItemDatabase database, int row, int column, string internalKey)
