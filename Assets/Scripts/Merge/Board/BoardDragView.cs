@@ -14,7 +14,9 @@ namespace SanIsland.Merge
             DropMove,
             Squash,
             Rebound,
-            Settle
+            Settle,
+            MergeCollision,
+            MergeAbsorb
         }
 
         [SerializeField] RectTransform layer;
@@ -48,6 +50,35 @@ namespace SanIsland.Merge
         public BoardDropTargetView DropTarget => dropTarget;
         public RectTransform Layer => layer;
         public bool IsDropFinished => _phase == VisualPhase.Hidden;
+        public Vector2 CurrentDragPosition => _currentPos;
+        public Vector2 CurrentPlanarPosition => _planarPos;
+        public Vector2 CurrentScale => _currentScale;
+
+        public bool TryCaptureVisualSnapshot(out Sprite sprite, out Vector2 size, out bool preserveAspect, out Color color, out Vector2 position, out Vector2 scale)
+        {
+            sprite = null;
+            size = Vector2.zero;
+            preserveAspect = true;
+            color = Color.white;
+            position = _currentPos;
+            scale = _currentScale;
+            if (dragItem == null || !dragItem.gameObject.activeSelf)
+            {
+                return false;
+            }
+
+            var image = dragItem.GetComponent<Image>();
+            if (image == null)
+            {
+                return false;
+            }
+
+            sprite = image.sprite;
+            size = dragItem.Rect.sizeDelta;
+            preserveAspect = image.preserveAspect;
+            color = image.color;
+            return sprite != null;
+        }
 
         public void Bind(RectTransform layerRect, DragItemView item, BoardDropTargetView target, Canvas nestedCanvas)
         {
@@ -159,6 +190,64 @@ namespace SanIsland.Merge
             gameObject.SetActive(true);
         }
 
+        public void BeginMergeCollision(Vector2 landPos, Vector2 dragScale, float duration, AnimationCurve curve)
+        {
+            if (_phase == VisualPhase.Hidden)
+            {
+                return;
+            }
+
+            HideDropTargetImmediate();
+            _fromPlanar = _planarPos;
+            _toPlanar = landPos;
+            _fromPos = _currentPos;
+            _toPos = landPos;
+            _fromFlight = _flightHeight;
+            _toFlight = 0f;
+            _fromScale = _currentScale;
+            _toScale = dragScale;
+            _elapsed = 0f;
+            _duration = Mathf.Max(0.01f, duration);
+            _curve = curve;
+            _scaleSettling = false;
+            _phase = VisualPhase.MergeCollision;
+        }
+
+        public void BeginMergeAbsorb(float finalScale, float duration, AnimationCurve curve)
+        {
+            if (_phase == VisualPhase.Hidden)
+            {
+                return;
+            }
+
+            _fromPlanar = _planarPos;
+            _toPlanar = _planarPos;
+            _fromFlight = _flightHeight;
+            _toFlight = 0f;
+            _fromScale = _currentScale;
+            _toScale = Vector2.one * finalScale;
+            _elapsed = 0f;
+            _duration = Mathf.Max(0.01f, duration);
+            _curve = curve;
+            _phase = VisualPhase.MergeAbsorb;
+        }
+
+        public void TickMerge(float dt)
+        {
+            if (_phase != VisualPhase.MergeCollision && _phase != VisualPhase.MergeAbsorb)
+            {
+                return;
+            }
+
+            _elapsed += dt;
+            var t = _duration <= 0f ? 1f : Mathf.Clamp01(_elapsed / _duration);
+            var curved = _curve != null ? _curve.Evaluate(t) : t;
+            _planarPos = Vector2.LerpUnclamped(_fromPlanar, _toPlanar, curved);
+            _flightHeight = Mathf.LerpUnclamped(_fromFlight, _toFlight, curved);
+            _currentScale = Vector2.LerpUnclamped(_fromScale, _toScale, curved);
+            ApplyPose();
+        }
+
         public void BeginDrop(Vector2 landPos, bool returnToSource)
         {
             if (_phase == VisualPhase.Hidden)
@@ -166,7 +255,7 @@ namespace SanIsland.Merge
                 return;
             }
 
-            HideDropTarget();
+            HideDropTargetImmediate();
             _fromPlanar = _planarPos;
             _toPlanar = landPos;
             _fromPos = _currentPos;
@@ -243,7 +332,7 @@ namespace SanIsland.Merge
 
         public void HideImmediate()
         {
-            HideDropTarget();
+            HideDropTargetImmediate();
             if (dragItem != null)
             {
                 dragItem.Hide();
@@ -264,11 +353,29 @@ namespace SanIsland.Merge
             dropTarget.ShowOn(cell);
         }
 
+        public void ShowMergeDropTarget(BoardCellView cell, BoardMergeAnimationConfig mergeConfig)
+        {
+            if (dropTarget == null)
+            {
+                return;
+            }
+
+            dropTarget.ShowMergeOn(cell, mergeConfig);
+        }
+
         public void HideDropTarget()
         {
             if (dropTarget != null)
             {
                 dropTarget.Hide();
+            }
+        }
+
+        public void HideDropTargetImmediate()
+        {
+            if (dropTarget != null)
+            {
+                dropTarget.HideImmediate();
             }
         }
 

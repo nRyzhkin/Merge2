@@ -80,6 +80,11 @@ namespace SanIsland.Merge
                 return;
             }
 
+            if (cellView != null && boardController != null && boardController.IsCellInteractionLocked(cellView.Index))
+            {
+                return;
+            }
+
             if (!TryGetItemCell(out _))
             {
                 return;
@@ -152,7 +157,10 @@ namespace SanIsland.Merge
 
                 if (boardController != null && cellView != null)
                 {
-                    boardController.SelectCell(cellView.Index);
+                    if (!boardController.IsCellInteractionLocked(cellView.Index))
+                    {
+                        boardController.SelectCell(cellView.Index);
+                    }
                 }
             }
             else if (boardController != null && cellView != null)

@@ -44,6 +44,7 @@ namespace SanIsland.Merge
 
             // Row 2 — L2 anchors + locked tools + box
             SetItem(state, database, 2, 2, "tools_l02");
+            SetItem(state, database, 2, 3, "tools_l02");
             SetItem(state, database, 2, 4, "cleaning_l02");
             SetLockedItem(state, database, 2, 6, "tools_l01");
             SetBox(state, 2, 8);
@@ -57,6 +58,8 @@ namespace SanIsland.Merge
 
             // Row 4 — sparse boxes, mostly empty for drag targets
             SetBox(state, 4, 0);
+            SetItem(state, database, 4, 2, "tools_g01");
+            SetItem(state, database, 4, 3, "tools_g01");
             SetBox(state, 4, 8);
 
             // Row 5 — corner boxes

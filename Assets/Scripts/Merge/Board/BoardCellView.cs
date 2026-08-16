@@ -54,6 +54,15 @@ namespace SanIsland.Merge
             }
         }
 
+        public void RevealItemAfterMerge()
+        {
+            _hideItemForDrag = false;
+            if (itemImage != null && itemImage.sprite != null)
+            {
+                SetActiveSafe(itemImage, true);
+            }
+        }
+
         public void ApplyContentSiblingOrder(RectTransform selectionBack, RectTransform selectionFront)
         {
             var order = 0;

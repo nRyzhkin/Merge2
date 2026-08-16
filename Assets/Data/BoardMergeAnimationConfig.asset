@@ -1,0 +1,114 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c4a1e8b92d64f0aa31c5e6b8d9f0a12, type: 3}
+  m_Name: BoardMergeAnimationConfig
+  m_EditorClassIdentifier: SanIsland.Merge::SanIsland.Merge.BoardMergeAnimationConfig
+  mergeMagnetStrength: 0.26
+  mergeTargetBaseScale: 1.075
+  mergeTargetBreathingAmount: 0.012
+  mergeTargetBreathingDuration: 0.55
+  mergeTargetAcceptDuration: 0.1
+  mergeTargetAcceptOvershoot: 0.015
+  mergeTargetAttractionOffset: 0.03
+  mergeTargetAttractionSmoothing: 0.08
+  mergeTargetHighlightAlpha: 0.42
+  mergeTargetHighlightScale: 1.035
+  mergeTargetHighlightEnterDuration: 0.1
+  mergeTargetHighlightExitDuration: 0.09
+  mergeTargetHighlightColor: {r: 1, g: 0.9, b: 0.55, a: 1}
+  collisionDragScale: {x: 0.9, y: 1.14}
+  collisionTargetScale: {x: 0.94, y: 0.9}
+  collisionDuration: 0.1
+  collisionCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  absorbTargetScale: {x: 1.12, y: 0.88}
+  absorbFinalScale: 0.72
+  absorbDuration: 0.08
+  absorbCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  resultStartScale: 0.62
+  resultOvershootScale: 1.13
+  resultReboundScale: 0.97
+  resultSpawnOffsetY: 0.045
+  resultDuration: 0.22
+  resultCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 2.2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  fxDuration: 0.28
+  fxColor: {r: 1, g: 0.92, b: 0.72, a: 0.9}
+  mergeFxScaleMultiplier: 1.2
+  useUnscaledTime: 1

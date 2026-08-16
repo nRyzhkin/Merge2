@@ -31,10 +31,15 @@ namespace SanIsland.Merge
         bool _canDrag;
         int _touchId;
         Sprite _highlightSprite;
+        int _previewMergeIndex = BoardController.NoSelectionIndex;
+        float _magnetBlend;
+        Vector2 _magnetPos;
 
         public BoardDragPhase Phase => _phase;
         public int ActivePointerId => _pointerId;
-        public bool IsBusy => _phase == BoardDragPhase.Dragging || _phase == BoardDragPhase.Dropping;
+        public bool IsBusy =>
+            _phase == BoardDragPhase.Dragging ||
+            _phase == BoardDragPhase.Dropping;
         public bool IsDragInteractionActive => IsBusy;
 
         public void Configure(BoardController controller, BoardDragAnimationConfig animationConfig, BoardDragView view)
@@ -84,6 +89,11 @@ namespace SanIsland.Merge
                 return false;
             }
 
+            if (boardController.IsCellInteractionLocked(cell.Index))
+            {
+                return false;
+            }
+
             var state = boardController.State.GetCell(cell.Index);
             if (state == null || !state.HasItem || state.IsBox)
             {
@@ -127,6 +137,11 @@ namespace SanIsland.Merge
         public void HandleDrag(PointerEventData eventData)
         {
             if (eventData == null || eventData.pointerId != _pointerId)
+            {
+                return;
+            }
+
+            if (_phase != BoardDragPhase.Pressed && _phase != BoardDragPhase.Dragging)
             {
                 return;
             }
@@ -188,6 +203,7 @@ namespace SanIsland.Merge
 
         public void AbortImmediate()
         {
+            ClearMergePreview();
             var restoreIndex = _phase == BoardDragPhase.Dropping && _dropIndex != BoardController.NoSelectionIndex
                 ? _dropIndex
                 : _sourceIndex;
@@ -248,8 +264,9 @@ namespace SanIsland.Merge
                     return;
                 }
 
-                dragView.TickFollowOrPickup(dt, GetFollowTarget());
                 UpdateDropTarget();
+                TickMagnet(dt, _previewMergeIndex);
+                dragView.TickFollowOrPickup(dt, GetFollowTarget());
                 return;
             }
 
@@ -261,6 +278,7 @@ namespace SanIsland.Merge
                 }
 
                 FinishDrop();
+                return;
             }
         }
 
@@ -335,7 +353,15 @@ namespace SanIsland.Merge
 
             if (dragView != null)
             {
-                dragView.HideDropTarget();
+                dragView.HideDropTargetImmediate();
+            }
+
+            ClearMergePreview();
+            var mergeIndex = FindCellIndexUnderPointer();
+            if (boardController != null && boardController.CanMerge(_sourceIndex, mergeIndex))
+            {
+                BeginMerging(mergeIndex);
+                return;
             }
 
             var targetIndex = ResolveDropIndex();
@@ -412,10 +438,22 @@ namespace SanIsland.Merge
             var index = FindCellIndexUnderPointer();
             if (index == BoardController.NoSelectionIndex)
             {
+                ClearMergePreviewSoft();
                 dragView.HideDropTarget();
                 return;
             }
 
+            if (boardController != null && boardController.CanMerge(_sourceIndex, index))
+            {
+                SetMergePreview(index);
+                var cell = boardController.BoardView != null ? boardController.BoardView.GetCellView(index) : null;
+                var mergeConfig = boardController.MergeAnimationConfig;
+                dragView.ShowMergeDropTarget(cell, mergeConfig);
+                UpdateMergeTargetAttraction(index);
+                return;
+            }
+
+            ClearMergePreviewSoft();
             if (index == _sourceIndex || IsEmptyOpenCell(index))
             {
                 var cell = boardController.BoardView.GetCellView(index);
@@ -429,6 +467,11 @@ namespace SanIsland.Merge
         int ResolveDropIndex()
         {
             var index = FindCellIndexUnderPointer();
+            if (boardController != null && boardController.CanMerge(_sourceIndex, index))
+            {
+                return index;
+            }
+
             if (IsEmptyOpenCell(index))
             {
                 return index;
@@ -535,6 +578,11 @@ namespace SanIsland.Merge
                 return false;
             }
 
+            if (boardController.IsCellInteractionLocked(index))
+            {
+                return false;
+            }
+
             var cell = boardController.State.GetCell(index);
             return cell != null && cell.IsEmpty;
         }
@@ -564,7 +612,15 @@ namespace SanIsland.Merge
                 local += config.GetPointerOffset(_touch);
             }
 
-            return local;
+            if (_magnetBlend <= 0.001f)
+            {
+                return local;
+            }
+
+            var strength = boardController != null && boardController.MergeAnimationConfig != null
+                ? boardController.MergeAnimationConfig.MergeMagnetStrength
+                : 0.26f;
+            return Vector2.Lerp(local, _magnetPos, strength * _magnetBlend);
         }
 
         Vector2 GetCellItemLayerPosition(int index)
@@ -637,6 +693,154 @@ namespace SanIsland.Merge
             _canDrag = false;
             _touch = false;
             _touchId = 0;
+            _previewMergeIndex = BoardController.NoSelectionIndex;
+            _magnetBlend = 0f;
+        }
+
+        void BeginMerging(int targetIndex)
+        {
+            if (boardController == null || boardController.MergePresenter == null || dragView == null)
+            {
+                _dropIndex = _sourceIndex;
+                _phase = BoardDragPhase.Dropping;
+                dragView?.BeginDrop(GetCellItemLayerPosition(_sourceIndex), true);
+                return;
+            }
+
+            if (boardController.IsCellInteractionLocked(targetIndex) ||
+                boardController.IsCellInteractionLocked(_sourceIndex) ||
+                !boardController.TryGetMergeResultItemId(_sourceIndex, targetIndex, out var resultItemId))
+            {
+                _dropIndex = _sourceIndex;
+                _phase = BoardDragPhase.Dropping;
+                dragView.BeginDrop(GetCellItemLayerPosition(_sourceIndex), true);
+                return;
+            }
+
+            if (!dragView.TryCaptureVisualSnapshot(
+                    out var sprite,
+                    out var size,
+                    out var preserveAspect,
+                    out var color,
+                    out var startPos,
+                    out var startScale))
+            {
+                _dropIndex = _sourceIndex;
+                _phase = BoardDragPhase.Dropping;
+                dragView.BeginDrop(GetCellItemLayerPosition(_sourceIndex), true);
+                return;
+            }
+
+            ClearMergePreview();
+            dragView.HideDropTargetImmediate();
+
+            var selectionRevision = boardController.SelectionRevision;
+            var sourceIndex = _sourceIndex;
+            boardController.MergePresenter.Play(
+                sourceIndex,
+                targetIndex,
+                resultItemId,
+                selectionRevision,
+                sprite,
+                size,
+                preserveAspect,
+                color,
+                startPos,
+                startScale);
+
+            // Hand off to independent merge presentation; free the shared drag view immediately.
+            dragView.HideImmediate();
+            ResetToIdle();
+        }
+
+        void SetMergePreview(int index)
+        {
+            if (_previewMergeIndex == index)
+            {
+                return;
+            }
+
+            ClearMergePreviewSoft();
+            _previewMergeIndex = index;
+            var mergeConfig = boardController != null ? boardController.MergeAnimationConfig : null;
+            var cell = boardController != null && boardController.BoardView != null
+                ? boardController.BoardView.GetCellView(index)
+                : null;
+            if (cell != null && cell.ItemAnimator != null)
+            {
+                cell.ItemAnimator.SetMergeTarget(true, mergeConfig);
+            }
+        }
+
+        void ClearMergePreview()
+        {
+            ClearMergePreviewImmediate();
+        }
+
+        void ClearMergePreviewSoft()
+        {
+            if (_previewMergeIndex == BoardController.NoSelectionIndex)
+            {
+                return;
+            }
+
+            var cell = boardController != null && boardController.BoardView != null
+                ? boardController.BoardView.GetCellView(_previewMergeIndex)
+                : null;
+            if (cell != null && cell.ItemAnimator != null)
+            {
+                cell.ItemAnimator.SetMergeTarget(false);
+            }
+
+            _previewMergeIndex = BoardController.NoSelectionIndex;
+        }
+
+        void ClearMergePreviewImmediate()
+        {
+            if (_previewMergeIndex == BoardController.NoSelectionIndex)
+            {
+                return;
+            }
+
+            var cell = boardController != null && boardController.BoardView != null
+                ? boardController.BoardView.GetCellView(_previewMergeIndex)
+                : null;
+            if (cell != null && cell.ItemAnimator != null)
+            {
+                cell.ItemAnimator.ClearMergeTargetImmediate();
+            }
+
+            _previewMergeIndex = BoardController.NoSelectionIndex;
+        }
+
+        void UpdateMergeTargetAttraction(int mergeIndex)
+        {
+            if (mergeIndex == BoardController.NoSelectionIndex || dragView == null || boardController == null ||
+                boardController.BoardView == null)
+            {
+                return;
+            }
+
+            var cell = boardController.BoardView.GetCellView(mergeIndex);
+            if (cell == null || cell.ItemAnimator == null)
+            {
+                return;
+            }
+
+            var cellCenter = GetCellItemLayerPosition(mergeIndex);
+            cell.ItemAnimator.UpdateMergeAttraction(dragView.CurrentDragPosition, cellCenter);
+        }
+
+        void TickMagnet(float dt, int mergeIndex)
+        {
+            var targetBlend = mergeIndex != BoardController.NoSelectionIndex ? 1f : 0f;
+            if (mergeIndex != BoardController.NoSelectionIndex)
+            {
+                _magnetPos = GetCellItemLayerPosition(mergeIndex);
+                UpdateMergeTargetAttraction(mergeIndex);
+            }
+
+            _magnetBlend = Mathf.MoveTowards(_magnetBlend, targetBlend, dt / 0.08f);
         }
 
         bool IsTrackedPointerHeld()

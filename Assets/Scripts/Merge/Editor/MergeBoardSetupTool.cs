@@ -14,6 +14,7 @@ namespace SanIsland.Merge.Editor
         public const string DatabasePath = "Assets/Data/MergeItemDatabase.asset";
         public const string AnimationConfigPath = "Assets/Data/BoardItemAnimationConfig.asset";
         public const string DragAnimationConfigPath = "Assets/Data/BoardDragAnimationConfig.asset";
+        public const string MergeAnimationConfigPath = "Assets/Data/BoardMergeAnimationConfig.asset";
         public const string BaseSpritesFolder = "Assets/Sprites/Base";
 
         [MenuItem("Tools/San Island/Setup Merge Board")]
@@ -117,6 +118,7 @@ namespace SanIsland.Merge.Editor
             controller.SetAnimationConfig(EnsureAnimationConfig());
             controller.SetUiFeedbackConfig(UiInteractionFeedbackSetupTool.EnsureConfig());
             controller.SetDragAnimationConfig(EnsureDragAnimationConfig());
+            controller.SetMergeAnimationConfig(EnsureMergeAnimationConfig());
             WireCellInteraction(cellViews, controller);
             WireHud(controller);
             WireDrag(controller);
@@ -440,6 +442,15 @@ namespace SanIsland.Merge.Editor
 
             controller.SetDragView(dragView);
             controller.SetDragAnimationConfig(EnsureDragAnimationConfig());
+            controller.SetMergeAnimationConfig(EnsureMergeAnimationConfig());
+
+            var presenter = controller.GetComponent<BoardMergePresenter>();
+            if (presenter == null)
+            {
+                presenter = Undo.AddComponent<BoardMergePresenter>(controller.gameObject);
+            }
+
+            presenter.Configure(controller, dragView, controller.MergeAnimationConfig);
 
             var dragController = controller.GetComponent<BoardDragController>();
             if (dragController == null)
@@ -450,6 +461,7 @@ namespace SanIsland.Merge.Editor
             dragController.Configure(controller, controller.DragAnimationConfig, dragView);
             EditorUtility.SetDirty(dragView);
             EditorUtility.SetDirty(dragController);
+            EditorUtility.SetDirty(presenter);
             EditorUtility.SetDirty(controller);
         }
 
@@ -495,6 +507,20 @@ namespace SanIsland.Merge.Editor
             {
                 config = ScriptableObject.CreateInstance<BoardDragAnimationConfig>();
                 AssetDatabase.CreateAsset(config, DragAnimationConfigPath);
+                AssetDatabase.SaveAssets();
+            }
+
+            return config;
+        }
+
+        static BoardMergeAnimationConfig EnsureMergeAnimationConfig()
+        {
+            EnsureFolder("Assets/Data");
+            var config = AssetDatabase.LoadAssetAtPath<BoardMergeAnimationConfig>(MergeAnimationConfigPath);
+            if (config == null)
+            {
+                config = ScriptableObject.CreateInstance<BoardMergeAnimationConfig>();
+                AssetDatabase.CreateAsset(config, MergeAnimationConfigPath);
                 AssetDatabase.SaveAssets();
             }
 
