@@ -50,6 +50,11 @@ namespace SanIsland.Merge
             ShowLocalized(MessageKind.Info, MergeUiLocalization.BoardFullKey, screenPosition);
         }
 
+        public void ShowGeneratorRecharging(Vector2 screenPosition)
+        {
+            ShowLocalized(MessageKind.Info, MergeUiLocalization.GeneratorRechargingKey, screenPosition);
+        }
+
         public void Show(MessageKind kind, string text, Vector2 screenPosition)
         {
             if (messagesRoot == null || config == null)

@@ -82,6 +82,7 @@ namespace SanIsland.Merge.Editor
                 }
 
                 EnsureCellLayers(cellView);
+                EnsureGeneratorChargeSlider(cellView, i);
                 cellView.SetIndex(i);
                 EditorUtility.SetDirty(cellView);
 
@@ -298,6 +299,37 @@ namespace SanIsland.Merge.Editor
             }
 
             cellView.BindLayers(item, blocker, lockOverlay, fx);
+        }
+
+        static void EnsureGeneratorChargeSlider(BoardCellView cellView, int cellIndex)
+        {
+            if (cellView == null)
+            {
+                return;
+            }
+
+            var existing = cellView.transform.Find(GeneratorChargeIndicator.SliderObjectName);
+            if (existing == null)
+            {
+                Debug.LogWarning($"[MergeBoardSetup] Slider_02_Orange is missing on cell {cellIndex}.");
+                return;
+            }
+
+            var slider = existing.GetComponent<Slider>();
+            if (slider == null)
+            {
+                Debug.LogWarning($"[MergeBoardSetup] Slider_02_Orange on cell {cellIndex} has no Slider component.");
+                return;
+            }
+
+            var indicator = cellView.GetComponent<GeneratorChargeIndicator>();
+            if (indicator == null)
+            {
+                indicator = Undo.AddComponent<GeneratorChargeIndicator>(cellView.gameObject);
+            }
+
+            indicator.Bind(slider);
+            cellView.BindGeneratorChargeIndicator(indicator);
         }
 
         static void WireCellInteraction(List<BoardCellView> cellViews, BoardController controller)
@@ -665,17 +697,13 @@ namespace SanIsland.Merge.Editor
 
         static GeneratorProductionDatabase EnsureGeneratorProductionDatabase(MergeItemDatabase itemDatabase)
         {
-            EnsureFolder("Assets/Data");
-            var database = AssetDatabase.LoadAssetAtPath<GeneratorProductionDatabase>(GeneratorProductionDatabasePath);
+            var database = GeneratorProductionDatabaseTools.Rebuild();
             if (database == null)
             {
-                database = ScriptableObject.CreateInstance<GeneratorProductionDatabase>();
-                AssetDatabase.CreateAsset(database, GeneratorProductionDatabasePath);
+                EnsureFolder("Assets/Data");
+                database = AssetDatabase.LoadAssetAtPath<GeneratorProductionDatabase>(GeneratorProductionDatabasePath);
             }
 
-            database.EnsureFromItemDatabase(itemDatabase);
-            EditorUtility.SetDirty(database);
-            AssetDatabase.SaveAssets();
             return database;
         }
 

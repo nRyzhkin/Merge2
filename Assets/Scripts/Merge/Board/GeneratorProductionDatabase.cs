@@ -35,81 +35,172 @@ namespace SanIsland.Merge
             }
         }
 
-        public bool TryGetOutputItemId(int generatorItemId, out int outputItemId)
+        public bool TryGetGeneratorData(int generatorItemId, out GeneratorData data)
         {
             EnsureLookups();
+            return _byId.TryGetValue(generatorItemId, out data) && data != null;
+        }
+
+        public bool TryRollOutputItemId(int generatorItemId, IGeneratorRandom random, out int outputItemId)
+        {
             outputItemId = BoardCellState.EmptyItemId;
-            if (!_byId.TryGetValue(generatorItemId, out var data) || data == null)
+            if (random == null || !TryGetGeneratorData(generatorItemId, out var data))
             {
                 return false;
             }
 
-            return data.TryGetDeterministicOutput(out outputItemId);
-        }
-
-        public void EnsureFromItemDatabase(MergeItemDatabase itemDatabase)
-        {
-            if (itemDatabase == null)
+            var table = data.DropTable;
+            if (table == null || table.Count == 0)
             {
-                return;
+                return false;
             }
 
-            var items = itemDatabase.Items;
-            if (items == null)
+            var totalWeight = 0;
+            for (var i = 0; i < table.Count; i++)
             {
-                return;
-            }
-
-            var dirty = false;
-            for (var i = 0; i < items.Count; i++)
-            {
-                var item = items[i];
-                if (item == null || item.Kind != MergeItemKind.Generator)
+                var entry = table[i];
+                if (entry == null || entry.Weight <= 0)
                 {
                     continue;
                 }
 
-                if (HasGeneratorEntry(item.Id))
+                totalWeight += entry.Weight;
+            }
+
+            if (totalWeight <= 0)
+            {
+                return false;
+            }
+
+            var roll = random.NextInt(0, totalWeight);
+            var cursor = 0;
+            for (var i = 0; i < table.Count; i++)
+            {
+                var entry = table[i];
+                if (entry == null || entry.Weight <= 0)
                 {
                     continue;
                 }
 
-                var chain = itemDatabase.GetNormalChain(item.Family);
-                if (chain == null || chain.Count == 0 || chain[0] == null)
+                cursor += entry.Weight;
+                if (roll < cursor)
                 {
-                    Debug.LogWarning($"[GeneratorProduction] No normal chain output for generator '{item.InternalKey}'.");
-                    continue;
-                }
-
-                var entry = new GeneratorData { GeneratorId = item.Id };
-                entry.PossibleOutputItems.Add(chain[0].Id);
-                generators.Add(entry);
-                dirty = true;
-            }
-
-            if (dirty)
-            {
-                RebuildLookups();
-            }
-        }
-
-        bool HasGeneratorEntry(int generatorId)
-        {
-            EnsureLookups();
-            if (_byId.ContainsKey(generatorId))
-            {
-                return true;
-            }
-
-            for (var i = 0; i < generators.Count; i++)
-            {
-                if (generators[i] != null && generators[i].GeneratorId == generatorId)
-                {
-                    return true;
+                    outputItemId = entry.OutputItemId;
+                    return outputItemId != BoardCellState.EmptyItemId;
                 }
             }
 
             return false;
+        }
+
+        public bool TryGetOutputItemId(int generatorItemId, out int outputItemId)
+        {
+            outputItemId = BoardCellState.EmptyItemId;
+            if (!TryGetGeneratorData(generatorItemId, out var data) || data.DropTable == null)
+            {
+                return false;
+            }
+
+            for (var i = 0; i < data.DropTable.Count; i++)
+            {
+                var entry = data.DropTable[i];
+                if (entry == null || entry.Weight <= 0 || entry.OutputItemId == BoardCellState.EmptyItemId)
+                {
+                    continue;
+                }
+
+                outputItemId = entry.OutputItemId;
+                return true;
+            }
+
+            return false;
+        }
+
+        public void Validate(MergeItemDatabase itemDatabase)
+        {
+            if (itemDatabase == null)
+            {
+                Debug.LogError("[GeneratorProduction] MergeItemDatabase is null.");
+                return;
+            }
+
+            EnsureLookups();
+            var seen = new HashSet<int>();
+            for (var i = 0; i < generators.Count; i++)
+            {
+                var entry = generators[i];
+                if (entry == null)
+                {
+                    Debug.LogError($"[GeneratorProduction] Null generator entry at index {i}.");
+                    continue;
+                }
+
+                if (entry.GeneratorId == BoardCellState.EmptyItemId)
+                {
+                    Debug.LogError($"[GeneratorProduction] Generator entry at index {i} has empty id.");
+                    continue;
+                }
+
+                if (!seen.Add(entry.GeneratorId))
+                {
+                    Debug.LogError($"[GeneratorProduction] Duplicate generator id {entry.GeneratorId}.");
+                }
+
+                if (entry.CapacityDrops <= 0)
+                {
+                    Debug.LogError($"[GeneratorProduction] Generator {entry.GeneratorId}: capacityDrops must be > 0.");
+                }
+
+                if (entry.CooldownSeconds <= 0f)
+                {
+                    Debug.LogError($"[GeneratorProduction] Generator {entry.GeneratorId}: cooldownSeconds must be > 0.");
+                }
+
+                if (entry.DropTable == null || entry.DropTable.Count == 0)
+                {
+                    Debug.LogError($"[GeneratorProduction] Generator {entry.GeneratorId}: dropTable is empty.");
+                    continue;
+                }
+
+                if (!itemDatabase.TryGetById(entry.GeneratorId, out var generatorItem) ||
+                    generatorItem == null ||
+                    generatorItem.Kind != MergeItemKind.Generator)
+                {
+                    Debug.LogError($"[GeneratorProduction] Generator {entry.GeneratorId} is missing or not a generator item.");
+                    continue;
+                }
+
+                for (var j = 0; j < entry.DropTable.Count; j++)
+                {
+                    var drop = entry.DropTable[j];
+                    if (drop == null)
+                    {
+                        Debug.LogError($"[GeneratorProduction] Generator {entry.GeneratorId}: null drop entry at {j}.");
+                        continue;
+                    }
+
+                    if (drop.Weight <= 0)
+                    {
+                        Debug.LogError($"[GeneratorProduction] Generator {entry.GeneratorId}: drop {j} weight must be > 0.");
+                    }
+
+                    if (!itemDatabase.TryGetById(drop.OutputItemId, out var outputItem) || outputItem == null)
+                    {
+                        Debug.LogError($"[GeneratorProduction] Generator {entry.GeneratorId}: output item {drop.OutputItemId} not found.");
+                        continue;
+                    }
+
+                    if (outputItem.Kind != MergeItemKind.Normal)
+                    {
+                        Debug.LogError($"[GeneratorProduction] Generator {entry.GeneratorId}: output {outputItem.InternalKey} must be Normal.");
+                    }
+
+                    if (outputItem.Family != generatorItem.Family)
+                    {
+                        Debug.LogError($"[GeneratorProduction] Generator {entry.GeneratorId}: output {outputItem.InternalKey} family mismatch.");
+                    }
+                }
+            }
         }
 
 #if UNITY_EDITOR

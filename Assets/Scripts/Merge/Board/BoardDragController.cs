@@ -440,9 +440,20 @@ namespace SanIsland.Merge
             var intentCobweb = stickyCobwebIndex != BoardController.NoSelectionIndex ? stickyCobwebIndex : underIndex;
 
             // 1) Direct merge / cobweb under pointer (or sticky preview).
+            // Important: locked cobweb targets can still be valid merge targets.
+            // Sticky preview for locked cells is stored in _previewCobwebIndex,
+            // so we must check merge against that index before falling back to unlock.
             if (boardController != null && boardController.CanMerge(_sourceIndex, intentMerge))
             {
                 BeginMerging(intentMerge);
+                return;
+            }
+
+            if (boardController != null &&
+                intentCobweb != intentMerge &&
+                boardController.CanMerge(_sourceIndex, intentCobweb))
+            {
+                BeginMerging(intentCobweb);
                 return;
             }
 

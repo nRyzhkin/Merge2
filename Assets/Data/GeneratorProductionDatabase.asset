@@ -14,41 +14,122 @@ MonoBehaviour:
   m_EditorClassIdentifier: SanIsland.Merge::SanIsland.Merge.GeneratorProductionDatabase
   generators:
   - generatorId: 1101
-    possibleOutputItems:
-    - 1001
+    dropTable:
+    - outputItemId: 1001
+      weight: 100
+    capacityDrops: 16
+    cooldownSeconds: 60
   - generatorId: 1102
-    possibleOutputItems:
-    - 1001
+    dropTable:
+    - outputItemId: 1001
+      weight: 82
+    - outputItemId: 1002
+      weight: 18
+    capacityDrops: 20
+    cooldownSeconds: 60
   - generatorId: 1103
-    possibleOutputItems:
-    - 1001
+    dropTable:
+    - outputItemId: 1001
+      weight: 68
+    - outputItemId: 1002
+      weight: 28
+    - outputItemId: 1003
+      weight: 4
+    capacityDrops: 24
+    cooldownSeconds: 60
   - generatorId: 1104
-    possibleOutputItems:
-    - 1001
+    dropTable:
+    - outputItemId: 1001
+      weight: 55
+    - outputItemId: 1002
+      weight: 35
+    - outputItemId: 1003
+      weight: 9
+    - outputItemId: 1004
+      weight: 1
+    capacityDrops: 28
+    cooldownSeconds: 60
   - generatorId: 1105
-    possibleOutputItems:
-    - 1001
+    dropTable:
+    - outputItemId: 1001
+      weight: 48
+    - outputItemId: 1002
+      weight: 36
+    - outputItemId: 1003
+      weight: 13
+    - outputItemId: 1004
+      weight: 3
+    capacityDrops: 32
+    cooldownSeconds: 60
   - generatorId: 2101
-    possibleOutputItems:
-    - 2001
+    dropTable:
+    - outputItemId: 2001
+      weight: 100
+    capacityDrops: 16
+    cooldownSeconds: 60
   - generatorId: 2102
-    possibleOutputItems:
-    - 2001
+    dropTable:
+    - outputItemId: 2001
+      weight: 82
+    - outputItemId: 2002
+      weight: 18
+    capacityDrops: 20
+    cooldownSeconds: 60
   - generatorId: 2103
-    possibleOutputItems:
-    - 2001
+    dropTable:
+    - outputItemId: 2001
+      weight: 68
+    - outputItemId: 2002
+      weight: 28
+    - outputItemId: 2003
+      weight: 4
+    capacityDrops: 24
+    cooldownSeconds: 60
   - generatorId: 2104
-    possibleOutputItems:
-    - 2001
+    dropTable:
+    - outputItemId: 2001
+      weight: 55
+    - outputItemId: 2002
+      weight: 35
+    - outputItemId: 2003
+      weight: 9
+    - outputItemId: 2004
+      weight: 1
+    capacityDrops: 28
+    cooldownSeconds: 60
   - generatorId: 3101
-    possibleOutputItems:
-    - 3001
+    dropTable:
+    - outputItemId: 3001
+      weight: 100
+    capacityDrops: 16
+    cooldownSeconds: 60
   - generatorId: 3102
-    possibleOutputItems:
-    - 3001
+    dropTable:
+    - outputItemId: 3001
+      weight: 82
+    - outputItemId: 3002
+      weight: 18
+    capacityDrops: 20
+    cooldownSeconds: 60
   - generatorId: 3103
-    possibleOutputItems:
-    - 3001
+    dropTable:
+    - outputItemId: 3001
+      weight: 68
+    - outputItemId: 3002
+      weight: 28
+    - outputItemId: 3003
+      weight: 4
+    capacityDrops: 24
+    cooldownSeconds: 60
   - generatorId: 3104
-    possibleOutputItems:
-    - 3001
+    dropTable:
+    - outputItemId: 3001
+      weight: 55
+    - outputItemId: 3002
+      weight: 35
+    - outputItemId: 3003
+      weight: 9
+    - outputItemId: 3004
+      weight: 1
+    capacityDrops: 28
+    cooldownSeconds: 60

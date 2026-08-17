@@ -15,7 +15,6 @@ namespace SanIsland.Merge
         enum Phase
         {
             Idle,
-            Anticipation,
             Flight
         }
 
@@ -91,7 +90,7 @@ namespace SanIsland.Merge
             sequence.TargetIndex = targetIndex;
             sequence.DestinationIndex = destinationIndex;
             sequence.Elapsed = 0f;
-            sequence.Phase = Phase.Anticipation;
+            sequence.Phase = Phase.Flight;
             sequence.Mutated = false;
             sequence.VisualOwnershipReleased = false;
             sequence.ReadyForADropSignaled = false;
@@ -103,12 +102,6 @@ namespace SanIsland.Merge
             sequence.Flight = null;
             sequence.LockToken = boardController.InteractionLocks.Acquire(sourceIndex, targetIndex, destinationIndex);
 
-            if (sequence.TargetAnimator != null)
-            {
-                sequence.TargetAnimator.PlayPressAnticipation();
-            }
-
-            // Keep B visible during brief anticipation squash, then launch.
             sequence.DisplacedSprite = displacedSprite;
             sequence.DisplacedSize = displacedSize;
             sequence.PreserveAspect = preserveAspect;
@@ -118,6 +111,12 @@ namespace SanIsland.Merge
             {
                 var scale = sequence.TargetView.ItemImage.rectTransform.localScale;
                 sequence.StartScale = new Vector2(scale.x, scale.y);
+            }
+
+            if (!BeginFlightAndMutate(sequence))
+            {
+                ReleaseSequence(sequence);
+                return false;
             }
 
             _active.Add(sequence);
@@ -224,22 +223,6 @@ namespace SanIsland.Merge
             }
 
             sequence.Elapsed += dt;
-
-            if (sequence.Phase == Phase.Anticipation)
-            {
-                // Brief squash on B, then launch — keep this shorter than A lead.
-                if (sequence.Elapsed < Mathf.Min(0.04f, dragConfig.DisplaceLeadTime))
-                {
-                    return;
-                }
-
-                if (!BeginFlightAndMutate(sequence))
-                {
-                    AbortSequence(sequence);
-                }
-
-                return;
-            }
 
             if (sequence.Phase == Phase.Flight)
             {

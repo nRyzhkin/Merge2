@@ -28,6 +28,10 @@ MonoBehaviour:
     m_Localized: Tabuleiro cheio
     m_Metadata:
       m_Items: []
+  - m_Id: 1030742018
+    m_Localized: Gerador recarregando
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

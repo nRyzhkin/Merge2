@@ -18,8 +18,12 @@ namespace SanIsland.Merge
         [SerializeField] Image lockOverlayImage;
         [SerializeField] RectTransform fxRoot;
         [SerializeField] BoardItemAnimator itemAnimator;
+        [SerializeField] GeneratorChargeIndicator generatorChargeIndicator;
         bool _hideItemForDrag;
         bool _itemPresentationSuppressed;
+        bool _generatorExhaustedVisual;
+        Color _itemBaseColor = Color.white;
+        bool _itemBaseColorCaptured;
 
         Color _cobwebBaseColor = Color.white;
         Vector3 _cobwebBaseScale = Vector3.one;
@@ -67,6 +71,7 @@ namespace SanIsland.Merge
         public Image LockOverlayImage => lockOverlayImage;
         public RectTransform FxRoot => fxRoot;
         public BoardItemAnimator ItemAnimator => itemAnimator;
+        public GeneratorChargeIndicator GeneratorChargeIndicator => generatorChargeIndicator;
         public bool IsItemPresentationSuppressed => _itemPresentationSuppressed;
         public bool IsItemHiddenForDrag => _hideItemForDrag;
 
@@ -86,6 +91,31 @@ namespace SanIsland.Merge
         public void BindAnimator(BoardItemAnimator animator)
         {
             itemAnimator = animator;
+        }
+
+        public void BindGeneratorChargeIndicator(GeneratorChargeIndicator indicator)
+        {
+            generatorChargeIndicator = indicator;
+        }
+
+        public void ApplyGeneratorPresentation(bool showRechargeSlider, bool exhausted, float rechargeProgress)
+        {
+            if (generatorChargeIndicator != null)
+            {
+                generatorChargeIndicator.SetVisible(showRechargeSlider);
+                if (showRechargeSlider)
+                {
+                    generatorChargeIndicator.SetProgress(rechargeProgress);
+                }
+            }
+
+            if (_generatorExhaustedVisual == exhausted)
+            {
+                return;
+            }
+
+            _generatorExhaustedVisual = exhausted;
+            ApplyItemBrightness();
         }
 
         public void SetItemPresentationSuppressed(bool suppressed)
@@ -441,6 +471,10 @@ namespace SanIsland.Merge
             SetSibling(itemImage != null ? itemImage.rectTransform : null, ref order);
             SetSibling(blockerImage != null ? blockerImage.rectTransform : null, ref order);
             SetSibling(lockOverlayImage != null ? lockOverlayImage.rectTransform : null, ref order);
+            if (generatorChargeIndicator != null && generatorChargeIndicator.RechargeSlider != null)
+            {
+                SetSibling(generatorChargeIndicator.RechargeSlider.transform as RectTransform, ref order);
+            }
             SetSibling(selectionFront, ref order);
             SetSibling(fxRoot, ref order);
         }
@@ -501,6 +535,8 @@ namespace SanIsland.Merge
                 {
                     itemImage.sprite = icon;
                     itemImage.enabled = icon != null;
+                    CaptureItemBaseColor();
+                    ApplyItemBrightness();
                 }
 
                 if (state.ItemLocked)
@@ -537,14 +573,46 @@ namespace SanIsland.Merge
         {
             _hideItemForDrag = false;
             _itemPresentationSuppressed = false;
+            _generatorExhaustedVisual = false;
             SetActiveSafe(itemImage, false);
             SetActiveSafe(blockerImage, false);
             SetActiveSafe(lockOverlayImage, false);
+            if (generatorChargeIndicator != null)
+            {
+                generatorChargeIndicator.SetVisible(false);
+            }
             if (itemAnimator != null)
             {
                 itemAnimator.SetHovered(false);
                 itemAnimator.SnapActionToIdle();
             }
+        }
+
+        void CaptureItemBaseColor()
+        {
+            if (_itemBaseColorCaptured || itemImage == null)
+            {
+                return;
+            }
+
+            _itemBaseColor = itemImage.color;
+            _itemBaseColorCaptured = true;
+        }
+
+        void ApplyItemBrightness()
+        {
+            if (itemImage == null)
+            {
+                return;
+            }
+
+            CaptureItemBaseColor();
+            var brightness = _generatorExhaustedVisual ? 0.8f : 1f;
+            var color = _itemBaseColor;
+            color.r *= brightness;
+            color.g *= brightness;
+            color.b *= brightness;
+            itemImage.color = color;
         }
 
         static void SetSibling(RectTransform rect, ref int order)

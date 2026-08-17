@@ -6,9 +6,11 @@ namespace SanIsland.Merge
     public class BoardCellState
     {
         public const int EmptyItemId = -1;
+        public const int NoGeneratorInstanceId = 0;
 
         public int Index;
         public int ItemId = EmptyItemId;
+        public int GeneratorInstanceId = NoGeneratorInstanceId;
         public CellBlockType BlockType = CellBlockType.None;
         public int ConcealedItemId = EmptyItemId;
         public bool ItemLocked;
@@ -21,6 +23,7 @@ namespace SanIsland.Merge
         public void Clear()
         {
             ItemId = EmptyItemId;
+            GeneratorInstanceId = NoGeneratorInstanceId;
             BlockType = CellBlockType.None;
             ConcealedItemId = EmptyItemId;
             ItemLocked = false;

@@ -31,6 +31,10 @@ namespace SanIsland.Merge
         [SerializeField] ItemInfoView itemInfoView;
         [SerializeField] bool useDevelopmentBoardState = true;
 
+        [Header("Generator Debug")]
+        [SerializeField] bool useDebugCooldownOverride;
+        [SerializeField] float debugCooldownSeconds = 5f;
+
         [Header("Debug")]
         [SerializeField] int debugSelectedCellIndex = NoSelectionIndex;
         [SerializeField] int debugSelectedItemId = BoardCellState.EmptyItemId;
@@ -42,9 +46,13 @@ namespace SanIsland.Merge
         readonly BoardInteractionLockService _interactionLocks = new BoardInteractionLockService();
         readonly List<int> _orthogonalScratch = new List<int>(4);
         readonly List<BoxRevealResult> _boxRevealScratch = new List<BoxRevealResult>(4);
+        readonly GeneratorInstanceService _generatorInstances = new GeneratorInstanceService();
+        readonly IGameTimeProvider _gameTimeProvider = new GameTimeProvider();
+        readonly IGeneratorRandom _generatorRandom = new GeneratorRandomService();
         int _selectedCellIndex = NoSelectionIndex;
         int _selectionRevision;
         BoardDragController _dragController;
+        BoardGeneratorCooldownPresenter _generatorCooldownPresenter;
 
         public RectTransform BoardRoot => boardRoot;
         public BoardView BoardView => boardView;
@@ -72,6 +80,11 @@ namespace SanIsland.Merge
         public MergeDiscoveryState Discovery => _discovery;
         public BoardInteractionLockService InteractionLocks => _interactionLocks;
         public bool UseDevelopmentBoardState => useDevelopmentBoardState;
+        public bool UseDebugCooldownOverride => useDebugCooldownOverride;
+        public float DebugCooldownSeconds => debugCooldownSeconds;
+        public GeneratorInstanceService GeneratorInstances => _generatorInstances;
+        public IGameTimeProvider GameTimeProvider => _gameTimeProvider;
+        public IGeneratorRandom GeneratorRandom => _generatorRandom;
         public int SelectedCellIndex => _selectedCellIndex;
         public int SelectionRevision => _selectionRevision;
         public bool IsDragInteractionActive => _dragController != null && _dragController.IsBusy;
@@ -88,6 +101,7 @@ namespace SanIsland.Merge
         public event Action BoxBreak;
         public event Action BoxItemRevealed;
         public event Action GeneratorProduced;
+        public event Action<int, int> GeneratorRareDrop;
 
         void Awake()
         {
@@ -175,7 +189,9 @@ namespace SanIsland.Merge
             ClearSelection();
             _state = BoardDevelopmentStateFactory.Create(itemDatabase);
             _discovery = new MergeDiscoveryState();
+            _generatorInstances.Clear();
             _discovery.DiscoverFromBoard(_state);
+            SyncGeneratorInstancesFromBoard();
             BindAndRefresh();
             UpdateDebug();
             BoardLayoutValidator.Validate(_state, itemDatabase);
@@ -207,6 +223,11 @@ namespace SanIsland.Merge
             if (itemDatabase.TryGetById(cell.ItemId, out var data))
             {
                 ShowItemInfo(data);
+                if (data.Kind == MergeItemKind.Generator &&
+                    TryGetGeneratorPresentationInfo(index, out var generatorInfo))
+                {
+                    itemInfoView?.ApplyGeneratorPresentation(generatorInfo);
+                }
             }
             else
             {
@@ -293,6 +314,7 @@ namespace SanIsland.Merge
             }
 
             target.SetItem(source.ItemId);
+            TransferItemInstanceState(source, target);
             source.Clear();
             if (boardView != null)
             {
@@ -443,10 +465,14 @@ namespace SanIsland.Merge
 
             var draggedId = source.ItemId;
             var displacedId = target.ItemId;
+            var draggedInstanceId = source.GeneratorInstanceId;
+            var displacedInstanceId = target.GeneratorInstanceId;
 
             source.Clear();
             target.SetItem(draggedId, locked: false);
+            target.GeneratorInstanceId = draggedInstanceId;
             destination.SetItem(displacedId, locked: false);
+            destination.GeneratorInstanceId = displacedInstanceId;
 
             if (boardView != null)
             {
@@ -664,8 +690,10 @@ namespace SanIsland.Merge
 
             if (destinationIndex != sourceIndex)
             {
+                var sourceInstanceId = source.GeneratorInstanceId;
                 source.Clear();
                 destination.SetItem(itemId, locked: false);
+                destination.GeneratorInstanceId = sourceInstanceId;
             }
 
             target.ItemLocked = false;
@@ -758,8 +786,26 @@ namespace SanIsland.Merge
 
             var source = _state.GetCell(fromIndex);
             var target = _state.GetCell(toIndex);
+            var sourceInstanceId = source.GeneratorInstanceId;
+            var targetInstanceId = target.GeneratorInstanceId;
+            var isGeneratorMerge = itemDatabase.TryGetById(nextItemId, out var mergedItem) &&
+                                   mergedItem != null &&
+                                   mergedItem.Kind == MergeItemKind.Generator;
+
             source.Clear();
             target.SetItem(nextItemId, locked: false);
+            if (isGeneratorMerge)
+            {
+                RemoveGeneratorInstance(sourceInstanceId);
+                RemoveGeneratorInstance(targetInstanceId);
+                InitializeFullGeneratorOnCell(target, nextItemId);
+            }
+            else
+            {
+                RemoveGeneratorInstance(sourceInstanceId);
+                RemoveGeneratorInstance(targetInstanceId);
+                target.GeneratorInstanceId = BoardCellState.NoGeneratorInstanceId;
+            }
             result.Success = true;
             result.ResultingItemId = nextItemId;
             result.NewlyDiscovered = _discovery != null && _discovery.Discover(nextItemId);
@@ -807,11 +853,20 @@ namespace SanIsland.Merge
                 }
 
                 var revealedId = cell.RevealBox();
-                if (revealedId != BoardCellState.EmptyItemId &&
-                    _discovery != null &&
-                    _discovery.Discover(revealedId))
+                if (revealedId != BoardCellState.EmptyItemId)
                 {
-                    ItemDiscovered?.Invoke(revealedId);
+                    if (itemDatabase != null &&
+                        itemDatabase.TryGetById(revealedId, out var revealedItem) &&
+                        revealedItem != null &&
+                        revealedItem.Kind == MergeItemKind.Generator)
+                    {
+                        InitializeFullGeneratorOnCell(cell, revealedId);
+                    }
+
+                    if (_discovery != null && _discovery.Discover(revealedId))
+                    {
+                        ItemDiscovered?.Invoke(revealedId);
+                    }
                 }
 
                 _boxRevealScratch.Add(new BoxRevealResult
@@ -894,6 +949,11 @@ namespace SanIsland.Merge
                     EnsureMessagesReady();
                     messagePresenter?.ShowBoardFull(pointerScreenPosition);
                 }
+                else if (result.Recharging)
+                {
+                    EnsureMessagesReady();
+                    messagePresenter?.ShowGeneratorRecharging(pointerScreenPosition);
+                }
 
                 return result;
             }
@@ -901,6 +961,14 @@ namespace SanIsland.Merge
             EnsureGeneratorReady();
             generatorPresenter?.Play(result);
             NotifyGeneratorProduced();
+            if (itemDatabase != null &&
+                itemDatabase.TryGetById(result.GeneratedItemId, out var outputItem) &&
+                outputItem != null &&
+                outputItem.Level >= 3)
+            {
+                GeneratorRareDrop?.Invoke(generatorIndex, result.GeneratedItemId);
+            }
+
             return result;
         }
 
@@ -931,17 +999,45 @@ namespace SanIsland.Merge
 
             EnsureGeneratorProductionDatabase();
             if (generatorProductionDatabase == null ||
-                !generatorProductionDatabase.TryGetOutputItemId(generatorData.Id, out var outputItemId) ||
-                outputItemId == BoardCellState.EmptyItemId)
+                !generatorProductionDatabase.TryGetGeneratorData(generatorCell.ItemId, out var productionData))
             {
-                Debug.LogWarning($"[Generator] No output configured for '{generatorData.InternalKey}'.");
+                Debug.LogWarning($"[Generator] No production configured for '{generatorData.InternalKey}'.");
                 return GeneratorSpawnResult.Failed(generatorIndex);
+            }
+
+            if (!_generatorInstances.TryGetRuntime(generatorCell.GeneratorInstanceId, out var runtime))
+            {
+                InitializeFullGeneratorOnCell(generatorCell, generatorCell.ItemId);
+                if (!_generatorInstances.TryGetRuntime(generatorCell.GeneratorInstanceId, out runtime))
+                {
+                    return GeneratorSpawnResult.Failed(generatorIndex);
+                }
+            }
+
+            var now = _gameTimeProvider.UnixTimeNow;
+            var cooldownSeconds = GetEffectiveCooldownSeconds(productionData);
+            _generatorInstances.ResolveCooldown(runtime, productionData, now);
+            if (_generatorInstances.IsOnCooldown(runtime, now))
+            {
+                return GeneratorSpawnResult.Failed(generatorIndex, recharging: true);
+            }
+
+            if (runtime.AvailableDrops <= 0)
+            {
+                return GeneratorSpawnResult.Failed(generatorIndex, recharging: true);
             }
 
             var spawnIndex = FindGeneratorSpawnCell(generatorIndex);
             if (spawnIndex == NoSelectionIndex)
             {
                 return GeneratorSpawnResult.Failed(generatorIndex, boardFull: true);
+            }
+
+            if (!generatorProductionDatabase.TryRollOutputItemId(generatorCell.ItemId, _generatorRandom, out var outputItemId) ||
+                outputItemId == BoardCellState.EmptyItemId)
+            {
+                Debug.LogWarning($"[Generator] Failed to roll output for '{generatorData.InternalKey}'.");
+                return GeneratorSpawnResult.Failed(generatorIndex);
             }
 
             var lockToken = _interactionLocks.Acquire(generatorIndex, spawnIndex);
@@ -953,6 +1049,7 @@ namespace SanIsland.Merge
             }
 
             spawnCell.SetItem(outputItemId, locked: false);
+            _generatorInstances.OnDropConsumed(runtime, productionData, now, cooldownSeconds);
             var newlyDiscovered = _discovery != null && _discovery.Discover(outputItemId);
             if (newlyDiscovered)
             {
@@ -970,6 +1067,7 @@ namespace SanIsland.Merge
             {
                 Success = true,
                 BoardFull = false,
+                Recharging = false,
                 GeneratorIndex = generatorIndex,
                 SpawnCellIndex = spawnIndex,
                 GeneratedItemId = outputItemId,
@@ -1130,7 +1228,9 @@ namespace SanIsland.Merge
         void BindAndRefresh()
         {
             boardView.Bind(_state, itemDatabase, visualConfig);
+            SyncGeneratorInstancesFromBoard();
             boardView.RefreshAll();
+            EnsureGeneratorCooldownPresenter();
             if (_selectedCellIndex != NoSelectionIndex)
             {
                 var selected = _state.GetCell(_selectedCellIndex);
@@ -1310,6 +1410,191 @@ namespace SanIsland.Merge
                 dragView,
                 generatorAnimationConfig,
                 mergeAnimationConfig);
+            EnsureGeneratorCooldownPresenter();
+        }
+
+        void EnsureGeneratorCooldownPresenter()
+        {
+            if (boardView == null)
+            {
+                return;
+            }
+
+            _generatorCooldownPresenter = GetComponent<BoardGeneratorCooldownPresenter>();
+            if (_generatorCooldownPresenter == null)
+            {
+                _generatorCooldownPresenter = gameObject.AddComponent<BoardGeneratorCooldownPresenter>();
+            }
+
+            _generatorCooldownPresenter.Configure(
+                this,
+                boardView,
+                _generatorInstances,
+                generatorProductionDatabase,
+                itemDatabase,
+                _gameTimeProvider);
+        }
+
+        public float GetEffectiveCooldownSeconds(GeneratorData definition)
+        {
+            if (definition == null)
+            {
+                return 60f;
+            }
+
+            if (useDebugCooldownOverride)
+            {
+                return debugCooldownSeconds;
+            }
+
+            return definition.CooldownSeconds;
+        }
+
+        public int GetAvailableDrops(int cellIndex)
+        {
+            return TryGetGeneratorRuntime(cellIndex, out var runtime, out _) ? runtime.AvailableDrops : 0;
+        }
+
+        public int GetCapacityDrops(int cellIndex)
+        {
+            if (!TryGetGeneratorRuntime(cellIndex, out _, out var productionData))
+            {
+                return 0;
+            }
+
+            return productionData.CapacityDrops;
+        }
+
+        public float GetCooldownRemaining(int cellIndex)
+        {
+            if (!TryGetGeneratorRuntime(cellIndex, out var runtime, out var productionData))
+            {
+                return 0f;
+            }
+
+            var now = _gameTimeProvider.UnixTimeNow;
+            _generatorInstances.ResolveCooldown(runtime, productionData, now);
+            return _generatorInstances.GetCooldownRemaining(runtime, now);
+        }
+
+        public bool TryGetGeneratorPresentationInfo(int cellIndex, out GeneratorPresentationInfo info)
+        {
+            info = GeneratorPresentationInfo.Invalid;
+            if (!TryGetGeneratorRuntime(cellIndex, out var runtime, out var productionData))
+            {
+                return false;
+            }
+
+            var now = _gameTimeProvider.UnixTimeNow;
+            _generatorInstances.ResolveCooldown(runtime, productionData, now);
+            info = new GeneratorPresentationInfo
+            {
+                IsValid = true,
+                AvailableDrops = runtime.AvailableDrops,
+                CapacityDrops = productionData.CapacityDrops,
+                CooldownRemainingSeconds = _generatorInstances.GetCooldownRemaining(runtime, now)
+            };
+            return true;
+        }
+
+        bool TryGetGeneratorRuntime(int cellIndex, out GeneratorInstanceRuntime runtime, out GeneratorData productionData)
+        {
+            runtime = null;
+            productionData = null;
+            if (_state == null || !_state.IsValidIndex(cellIndex) || generatorProductionDatabase == null || itemDatabase == null)
+            {
+                return false;
+            }
+
+            var cell = _state.GetCell(cellIndex);
+            if (cell == null || !cell.HasItem || cell.IsBox || cell.ItemLocked)
+            {
+                return false;
+            }
+
+            if (!itemDatabase.TryGetById(cell.ItemId, out var itemData) ||
+                itemData == null ||
+                itemData.Kind != MergeItemKind.Generator)
+            {
+                return false;
+            }
+
+            if (!generatorProductionDatabase.TryGetGeneratorData(cell.ItemId, out productionData))
+            {
+                return false;
+            }
+
+            if (!_generatorInstances.TryGetRuntime(cell.GeneratorInstanceId, out runtime))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        void SyncGeneratorInstancesFromBoard()
+        {
+            if (_state == null || itemDatabase == null)
+            {
+                return;
+            }
+
+            EnsureGeneratorProductionDatabase();
+            for (var i = 0; i < BoardState.CellCount; i++)
+            {
+                var cell = _state.GetCell(i);
+                if (cell == null || !cell.HasItem || cell.IsBox)
+                {
+                    continue;
+                }
+
+                if (!itemDatabase.TryGetById(cell.ItemId, out var itemData) ||
+                    itemData == null ||
+                    itemData.Kind != MergeItemKind.Generator)
+                {
+                    cell.GeneratorInstanceId = BoardCellState.NoGeneratorInstanceId;
+                    continue;
+                }
+
+                if (cell.GeneratorInstanceId == BoardCellState.NoGeneratorInstanceId ||
+                    !_generatorInstances.TryGetRuntime(cell.GeneratorInstanceId, out _))
+                {
+                    InitializeFullGeneratorOnCell(cell, cell.ItemId);
+                }
+            }
+        }
+
+        void InitializeFullGeneratorOnCell(BoardCellState cell, int generatorItemId)
+        {
+            if (cell == null || generatorProductionDatabase == null)
+            {
+                return;
+            }
+
+            RemoveGeneratorInstance(cell.GeneratorInstanceId);
+            if (!generatorProductionDatabase.TryGetGeneratorData(generatorItemId, out var productionData))
+            {
+                cell.GeneratorInstanceId = BoardCellState.NoGeneratorInstanceId;
+                return;
+            }
+
+            cell.GeneratorInstanceId = _generatorInstances.CreateFullInstance(generatorItemId, productionData.CapacityDrops);
+        }
+
+        void RemoveGeneratorInstance(int instanceId)
+        {
+            _generatorInstances.RemoveInstance(instanceId);
+        }
+
+        void TransferItemInstanceState(BoardCellState from, BoardCellState to)
+        {
+            if (from == null || to == null)
+            {
+                return;
+            }
+
+            to.GeneratorInstanceId = from.GeneratorInstanceId;
+            from.GeneratorInstanceId = BoardCellState.NoGeneratorInstanceId;
         }
 
         void EnsureGeneratorProductionDatabase()
@@ -1318,8 +1603,6 @@ namespace SanIsland.Merge
             {
                 generatorProductionDatabase = ScriptableObject.CreateInstance<GeneratorProductionDatabase>();
             }
-
-            generatorProductionDatabase.EnsureFromItemDatabase(itemDatabase);
         }
 
         public void EnsureMessagesReady()

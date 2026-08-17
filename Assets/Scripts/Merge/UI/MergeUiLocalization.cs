@@ -7,6 +7,7 @@ namespace SanIsland.Merge
         public const string TableName = "UI";
         public const string LevelShortKey = "ui.item.level_short";
         public const string BoardFullKey = "ui.message.board_full";
+        public const string GeneratorRechargingKey = "ui.message.generator_recharging";
 
         public static string GetLevelLabel(int level)
         {

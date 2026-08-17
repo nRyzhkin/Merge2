@@ -8,7 +8,9 @@ namespace SanIsland.Merge
     public class GeneratorData
     {
         [SerializeField] int generatorId = BoardCellState.EmptyItemId;
-        [SerializeField] List<int> possibleOutputItems = new List<int>();
+        [SerializeField] List<GeneratorDropEntry> dropTable = new List<GeneratorDropEntry>();
+        [SerializeField] int capacityDrops = 16;
+        [SerializeField] float cooldownSeconds = 60f;
 
         public int GeneratorId
         {
@@ -16,18 +18,18 @@ namespace SanIsland.Merge
             set => generatorId = value;
         }
 
-        public List<int> PossibleOutputItems => possibleOutputItems;
+        public List<GeneratorDropEntry> DropTable => dropTable;
 
-        public bool TryGetDeterministicOutput(out int itemId)
+        public int CapacityDrops
         {
-            itemId = BoardCellState.EmptyItemId;
-            if (possibleOutputItems == null || possibleOutputItems.Count == 0)
-            {
-                return false;
-            }
+            get => capacityDrops;
+            set => capacityDrops = value;
+        }
 
-            itemId = possibleOutputItems[0];
-            return itemId != BoardCellState.EmptyItemId;
+        public float CooldownSeconds
+        {
+            get => cooldownSeconds;
+            set => cooldownSeconds = value;
         }
     }
 }

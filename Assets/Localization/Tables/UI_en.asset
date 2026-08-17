@@ -28,6 +28,10 @@ MonoBehaviour:
     m_Localized: Board is full
     m_Metadata:
       m_Items: []
+  - m_Id: 1030742018
+    m_Localized: Generator is recharging
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

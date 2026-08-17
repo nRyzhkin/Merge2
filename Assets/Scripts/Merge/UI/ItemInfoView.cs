@@ -153,5 +153,12 @@ namespace SanIsland.Merge
                 generatorIcon.enabled = false;
             }
         }
+
+        public void ApplyGeneratorPresentation(GeneratorPresentationInfo info)
+        {
+            // Reserved for future Item Info TMP fields:
+            // Available: info.AvailableDrops / info.CapacityDrops
+            // Cooldown remaining: info.CooldownRemainingSeconds
+        }
     }
 }

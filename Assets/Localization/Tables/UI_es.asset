@@ -25,7 +25,11 @@ MonoBehaviour:
       m_Items:
       - rid: 8013459914571120918
   - m_Id: 1030742017
-    m_Localized: "El tablero est\u00E1 lleno"
+    m_Localized: "El tablero est\xE1 lleno"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742018
+    m_Localized: "El generador se est\xE1 recargando"
     m_Metadata:
       m_Items: []
   references:
