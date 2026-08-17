@@ -24781,13 +24781,34 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8837755548164708084, guid: 550b53f6857bd4b9f8a59acb1807c81f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 763010151}
   m_SourcePrefab: {fileID: 100100000, guid: 550b53f6857bd4b9f8a59acb1807c81f, type: 3}
 --- !u!224 &763010149 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8837755548164706571, guid: 550b53f6857bd4b9f8a59acb1807c81f, type: 3}
   m_PrefabInstance: {fileID: 763010148}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &763010150 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8837755548164708084, guid: 550b53f6857bd4b9f8a59acb1807c81f, type: 3}
+  m_PrefabInstance: {fileID: 763010148}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &763010151
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 763010150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d8b4e6a0c174f91b5e3a7c9d1f04682, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SanIsland.Merge::SanIsland.Merge.CoinHudView
+  valueText: {fileID: 0}
 --- !u!1 &767990994
 GameObject:
   m_ObjectHideFlags: 0
@@ -29738,11 +29759,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 8837755548164706571, guid: 550b53f6857bd4b9f8a59acb1807c81f, type: 3}
   m_PrefabInstance: {fileID: 930164622}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &930164625 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8837755548164708084, guid: 550b53f6857bd4b9f8a59acb1807c81f, type: 3}
-  m_PrefabInstance: {fileID: 930164622}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &930164624
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -29758,6 +29774,11 @@ MonoBehaviour:
   valueText: {fileID: 0}
   timerContainer: {fileID: 0}
   timerText: {fileID: 0}
+--- !u!1 &930164625 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8837755548164708084, guid: 550b53f6857bd4b9f8a59acb1807c81f, type: 3}
+  m_PrefabInstance: {fileID: 930164622}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &931181978 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5122337066122539361, guid: 751dc699b5da945839d310bcabb3802a, type: 3}
@@ -31019,7 +31040,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
   m_UseReflectionProbes: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 20
@@ -40108,6 +40129,7 @@ GameObject:
   - component: {fileID: 1182406210}
   - component: {fileID: 1182406209}
   - component: {fileID: 1182406211}
+  - component: {fileID: 1182406212}
   m_Layer: 5
   m_Name: Sell
   m_TagString: Untagged
@@ -40218,6 +40240,21 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1182406212
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1182406207}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a1e5c9d3b804f62a8e0c4f6d2b19573, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SanIsland.Merge::SanIsland.Merge.SellButtonView
+  button: {fileID: 1182406211}
+  actionLabel: {fileID: 587080057}
+  priceLabel: {fileID: 0}
 --- !u!1 &1185080608
 GameObject:
   m_ObjectHideFlags: 0
@@ -49426,11 +49463,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 8837755548164706571, guid: 550b53f6857bd4b9f8a59acb1807c81f, type: 3}
   m_PrefabInstance: {fileID: 1532890883}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1532890886 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8837755548164708084, guid: 550b53f6857bd4b9f8a59acb1807c81f, type: 3}
-  m_PrefabInstance: {fileID: 1532890883}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1532890885
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -49446,6 +49478,11 @@ MonoBehaviour:
   valueText: {fileID: 0}
   timerContainer: {fileID: 0}
   timerText: {fileID: 0}
+--- !u!1 &1532890886 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8837755548164708084, guid: 550b53f6857bd4b9f8a59acb1807c81f, type: 3}
+  m_PrefabInstance: {fileID: 1532890883}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1533207094
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -53264,13 +53301,34 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8837755548164708084, guid: 550b53f6857bd4b9f8a59acb1807c81f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1646045632}
   m_SourcePrefab: {fileID: 100100000, guid: 550b53f6857bd4b9f8a59acb1807c81f, type: 3}
 --- !u!224 &1646045630 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8837755548164706571, guid: 550b53f6857bd4b9f8a59acb1807c81f, type: 3}
   m_PrefabInstance: {fileID: 1646045629}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1646045631 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8837755548164708084, guid: 550b53f6857bd4b9f8a59acb1807c81f, type: 3}
+  m_PrefabInstance: {fileID: 1646045629}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1646045632
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1646045631}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d8b4e6a0c174f91b5e3a7c9d1f04682, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SanIsland.Merge::SanIsland.Merge.CoinHudView
+  valueText: {fileID: 0}
 --- !u!1 &1646064056
 GameObject:
   m_ObjectHideFlags: 0
@@ -67907,6 +67965,10 @@ GameObject:
   - component: {fileID: 5193127447459430519}
   - component: {fileID: 5193127447459430518}
   - component: {fileID: 5193127447459430523}
+  - component: {fileID: 5193127447459430524}
+  - component: {fileID: 5193127447459430525}
+  - component: {fileID: 5193127447459430526}
+  - component: {fileID: 5193127447459430527}
   m_Layer: 5
   m_Name: Center
   m_TagString: Untagged
@@ -68184,6 +68246,61 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f7a91c0e2b54d6a8c4e1f9b0d7a5628, type: 3}
   m_Name: 
   m_EditorClassIdentifier: SanIsland.Merge::SanIsland.Merge.EnergySystem
+--- !u!114 &5193127447459430524
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5193127447459430511}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a9f3c7e5b824d60a2e4f6c8d0b1a357, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SanIsland.Merge::SanIsland.Merge.CurrencySystem
+--- !u!114 &5193127447459430525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5193127447459430511}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f2a9c1e4d834b70a5e8c0f3d1b7924e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SanIsland.Merge::SanIsland.Merge.SellSystem
+  boardController: {fileID: 5193127447459430515}
+  config: {fileID: 11400000, guid: 3c7e1a5f9b264d80e4c2a6f8d0b13957, type: 2}
+--- !u!114 &5193127447459430526
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5193127447459430511}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c3e7a1f5b264d80a4e6c2f8d0b13579, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SanIsland.Merge::SanIsland.Merge.BoardSellPresenter
+  boardController: {fileID: 5193127447459430515}
+  dragView: {fileID: 961391718}
+  config: {fileID: 11400000, guid: 3c7e1a5f9b264d80e4c2a6f8d0b13957, type: 2}
+  popupPrefab: {fileID: 11000005, guid: 8d2c4e6a1b3f4c759e0a2d5f8c1b3479, type: 3}
+--- !u!114 &5193127447459430527
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5193127447459430511}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6e3a8b49d5b4f8c92e0d1a4b5c76062, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SanIsland.Merge::SanIsland.Merge.IconSystem
+  catalog: {fileID: 11400000, guid: f3b6d1e7208e42bf9c53d4e6f7a09395, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

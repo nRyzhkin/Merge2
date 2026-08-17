@@ -19,6 +19,11 @@ namespace SanIsland.Merge.Editor
         public const string BoxAnimationConfigPath = "Assets/Data/BoardBoxAnimationConfig.asset";
         public const string GeneratorAnimationConfigPath = "Assets/Data/BoardGeneratorAnimationConfig.asset";
         public const string GeneratorProductionDatabasePath = "Assets/Data/GeneratorProductionDatabase.asset";
+        public const string EconomyConfigPath = "Assets/Data/EconomyConfig.asset";
+        public const string IconCatalogPath = "Assets/Data/IconCatalog.asset";
+        public const string CoinPopupPrefabPath = "Assets/Prefabs/Merge/CoinPopup.prefab";
+        public const string CoinIconPath = "Assets/Layer Lab/GUI-LifeGame/ResourcesData/Sprites/icon_money_bundle_128.png";
+        public const string EnergyIconPath = "Assets/Layer Lab/GUI-LifeGame/ResourcesData/Sprites/icon_energy_lightning_128.png";
         public const string BaseSpritesFolder = "Assets/Sprites/Base";
 
         [MenuItem("Tools/San Island/Setup Merge Board")]
@@ -419,6 +424,8 @@ namespace SanIsland.Merge.Editor
 
             EditorUtility.SetDirty(selectionView);
             WireEnergy(controller);
+            WireIcons(controller);
+            WireEconomy(controller);
         }
 
         static void WireEnergy(BoardController controller)
@@ -474,6 +481,177 @@ namespace SanIsland.Merge.Editor
             }
 
             return roots;
+        }
+
+        static void WireEconomy(BoardController controller)
+        {
+            var economy = EnsureEconomyConfig();
+            var currency = controller.GetComponent<CurrencySystem>();
+            if (currency == null)
+            {
+                currency = Undo.AddComponent<CurrencySystem>(controller.gameObject);
+            }
+
+            EditorUtility.SetDirty(currency);
+
+            var sell = controller.GetComponent<SellSystem>();
+            if (sell == null)
+            {
+                sell = Undo.AddComponent<SellSystem>(controller.gameObject);
+            }
+
+            sell.Configure(controller, economy);
+            EditorUtility.SetDirty(sell);
+
+            var presenter = controller.GetComponent<BoardSellPresenter>();
+            if (presenter == null)
+            {
+                presenter = Undo.AddComponent<BoardSellPresenter>(controller.gameObject);
+            }
+
+            presenter.Configure(controller, controller.DragView, economy, LoadCoinPopupPrefab());
+            EditorUtility.SetDirty(presenter);
+
+            var coinRoots = FindNamedHudRoots(CoinHudView.CoinRootName);
+            if (coinRoots.Count == 0)
+            {
+                Debug.LogWarning("[MergeBoardSetup] No Resource_Coin widgets found. Add CoinHudView on each coin widget so it binds its own children.");
+            }
+            else
+            {
+                for (var i = 0; i < coinRoots.Count; i++)
+                {
+                    var hud = coinRoots[i].GetComponent<CoinHudView>();
+                    if (hud == null)
+                    {
+                        hud = Undo.AddComponent<CoinHudView>(coinRoots[i].gameObject);
+                    }
+
+                    hud.BindLocal();
+                    EditorUtility.SetDirty(hud);
+                }
+            }
+
+            var sellRoot = FindNamedTransform(SellButtonView.SellRootName);
+            if (sellRoot == null)
+            {
+                Debug.LogWarning("[MergeBoardSetup] Sell button was not found. Scene already expected to contain it.");
+                return;
+            }
+
+            var sellButton = sellRoot.GetComponent<SellButtonView>();
+            if (sellButton == null)
+            {
+                sellButton = Undo.AddComponent<SellButtonView>(sellRoot.gameObject);
+            }
+
+            sellButton.BindLocal();
+            EditorUtility.SetDirty(sellButton);
+        }
+
+        static List<RectTransform> FindNamedHudRoots(string objectName)
+        {
+            var transforms = Object.FindObjectsByType<RectTransform>(FindObjectsInactive.Include);
+            var roots = new List<RectTransform>();
+            for (var i = 0; i < transforms.Length; i++)
+            {
+                if (transforms[i] != null && transforms[i].name == objectName)
+                {
+                    roots.Add(transforms[i]);
+                }
+            }
+
+            return roots;
+        }
+
+        static void WireIcons(BoardController controller)
+        {
+            var catalog = EnsureIconCatalog();
+            var icons = controller.GetComponent<IconSystem>();
+            if (icons == null)
+            {
+                icons = Undo.AddComponent<IconSystem>(controller.gameObject);
+            }
+
+            icons.Configure(catalog);
+            EditorUtility.SetDirty(icons);
+        }
+
+        static EconomyConfig EnsureEconomyConfig()
+        {
+            EnsureFolder("Assets/Data");
+            var config = AssetDatabase.LoadAssetAtPath<EconomyConfig>(EconomyConfigPath);
+            if (config == null)
+            {
+                config = ScriptableObject.CreateInstance<EconomyConfig>();
+                AssetDatabase.CreateAsset(config, EconomyConfigPath);
+            }
+
+            EditorUtility.SetDirty(config);
+            return config;
+        }
+
+        static IconCatalog EnsureIconCatalog()
+        {
+            EnsureFolder("Assets/Data");
+            var catalog = AssetDatabase.LoadAssetAtPath<IconCatalog>(IconCatalogPath);
+            if (catalog == null)
+            {
+                catalog = ScriptableObject.CreateInstance<IconCatalog>();
+                AssetDatabase.CreateAsset(catalog, IconCatalogPath);
+            }
+
+            var serialized = new SerializedObject(catalog);
+            var entries = serialized.FindProperty("entries");
+            EnsureIconEntry(entries, IconTokens.Coin, CoinIconPath);
+            EnsureIconEntry(entries, IconTokens.Energy, EnergyIconPath);
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            catalog.RebuildLookups();
+            EditorUtility.SetDirty(catalog);
+            return catalog;
+        }
+
+        static void EnsureIconEntry(SerializedProperty entries, string token, string spritePath)
+        {
+            if (entries == null || string.IsNullOrEmpty(token))
+            {
+                return;
+            }
+
+            for (var i = 0; i < entries.arraySize; i++)
+            {
+                var existing = entries.GetArrayElementAtIndex(i).FindPropertyRelative("token");
+                if (existing != null && existing.stringValue == token)
+                {
+                    return;
+                }
+            }
+
+            var index = entries.arraySize;
+            entries.InsertArrayElementAtIndex(index);
+            var entry = entries.GetArrayElementAtIndex(index);
+            var tokenProperty = entry.FindPropertyRelative("token");
+            var spriteProperty = entry.FindPropertyRelative("sprite");
+            if (tokenProperty != null)
+            {
+                tokenProperty.stringValue = token;
+            }
+
+            if (spriteProperty != null)
+            {
+                spriteProperty.objectReferenceValue = AssetDatabase.LoadAssetAtPath<Sprite>(spritePath);
+            }
+        }
+
+        static CoinPopupView LoadCoinPopupPrefab()
+        {
+            var prefab = AssetDatabase.LoadAssetAtPath<CoinPopupView>(CoinPopupPrefabPath);
+            if (prefab == null)
+            {
+                Debug.LogWarning($"[MergeBoardSetup] CoinPopup prefab was not found at '{CoinPopupPrefabPath}'.");
+            }
+
+            return prefab;
         }
 
         static void WireChainTemplates(RectTransform chainRoot, MergeChainInfoView chainView)

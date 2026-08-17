@@ -156,6 +156,8 @@ namespace SanIsland.Merge
             boardView.BindInteraction(this, animationConfig, uiFeedbackConfig);
             EnsureDrag();
             EnsureEnergySystem();
+            EnsureIcons();
+            EnsureSell();
 
             if (useDevelopmentBoardState)
             {
@@ -206,6 +208,11 @@ namespace SanIsland.Merge
             {
                 displacePresenter.AbortAll();
             }
+
+            var sellPresenter = GetComponent<BoardSellPresenter>();
+            sellPresenter?.AbortAll();
+            var sellSystem = GetComponent<SellSystem>();
+            sellSystem?.ClearLastSale();
 
             _interactionLocks.ReleaseAll();
 
@@ -290,6 +297,227 @@ namespace SanIsland.Merge
             }
 
             return _state.GetCell(_selectedCellIndex);
+        }
+
+        public bool CanSellSelected()
+        {
+            var economy = SellSystem.Current != null ? SellSystem.Current.Config : null;
+            return TryGetSellableSelection(economy, _selectedCellIndex, out _, out _, out _);
+        }
+
+        public long GetSelectedSellPrice(EconomyConfig economy)
+        {
+            if (!TryGetSellableSelection(economy, _selectedCellIndex, out _, out var price, out _))
+            {
+                return 0;
+            }
+
+            return price;
+        }
+
+        public bool TrySellSelected(EconomyConfig economy, out SoldItemSnapshot snapshot, out Sprite sprite, out Vector2 size)
+        {
+            snapshot = default;
+            sprite = null;
+            size = Vector2.zero;
+            if (!TryGetSellableSelection(economy, _selectedCellIndex, out var index, out var price, out var data))
+            {
+                return false;
+            }
+
+            var view = boardView != null ? boardView.GetCellView(index) : null;
+            if (view != null && _dragController != null)
+            {
+                _dragController.PrepareCellForPossiblePickup(view);
+            }
+
+            if (!TryGetSellableSelection(economy, _selectedCellIndex, out index, out price, out data))
+            {
+                return false;
+            }
+
+            view = boardView != null ? boardView.GetCellView(index) : null;
+            if (view != null && view.ItemImage != null)
+            {
+                sprite = view.ItemImage.sprite;
+                var rectSize = view.ItemImage.rectTransform.rect.size;
+                size = rectSize.x > 1f && rectSize.y > 1f ? rectSize : new Vector2(170f, 170f);
+            }
+
+            var cell = _state.GetCell(index);
+            snapshot = new SoldItemSnapshot
+            {
+                ItemId = cell.ItemId,
+                OriginalCellIndex = index,
+                SalePrice = price,
+                Level = data.Level,
+                ItemLocked = cell.ItemLocked,
+                GeneratorInstanceId = cell.GeneratorInstanceId
+            };
+
+            cell.Clear();
+            if (boardView != null)
+            {
+                boardView.RefreshCell(index);
+            }
+
+            ClearSelection();
+            UpdateDebug();
+            return true;
+        }
+
+        public bool TryRestoreSoldItem(SoldItemSnapshot snapshot, out int placedIndex)
+        {
+            placedIndex = NoSelectionIndex;
+            if (_state == null || snapshot.ItemId == BoardCellState.EmptyItemId)
+            {
+                return false;
+            }
+
+            placedIndex = FindRestoreCell(snapshot.OriginalCellIndex);
+            if (placedIndex == NoSelectionIndex)
+            {
+                return false;
+            }
+
+            var cell = _state.GetCell(placedIndex);
+            if (cell == null || !cell.IsEmpty)
+            {
+                placedIndex = NoSelectionIndex;
+                return false;
+            }
+
+            cell.SetItem(snapshot.ItemId, snapshot.ItemLocked);
+            cell.GeneratorInstanceId = snapshot.GeneratorInstanceId;
+            if (boardView != null)
+            {
+                boardView.RefreshCell(placedIndex);
+            }
+
+            SelectCell(placedIndex);
+            UpdateDebug();
+            return true;
+        }
+
+        public int FindRestoreCell(int originIndex)
+        {
+            if (IsEmptyOpenCell(originIndex))
+            {
+                return originIndex;
+            }
+
+            if (_state == null)
+            {
+                return NoSelectionIndex;
+            }
+
+            var origin = originIndex;
+            if (!_state.IsValidIndex(origin))
+            {
+                origin = 0;
+            }
+
+            var originPos = GetCellUiCenter(origin);
+            var bestIndex = NoSelectionIndex;
+            var bestDistance = float.MaxValue;
+            for (var i = 0; i < BoardState.CellCount; i++)
+            {
+                if (i == origin || !IsEmptyOpenCell(i))
+                {
+                    continue;
+                }
+
+                var distance = Vector2.Distance(originPos, GetCellUiCenter(i));
+                if (distance < bestDistance)
+                {
+                    bestDistance = distance;
+                    bestIndex = i;
+                }
+            }
+
+            return bestIndex;
+        }
+
+        public Vector2 GetCellScreenPosition(int index)
+        {
+            if (boardView == null)
+            {
+                return Vector2.zero;
+            }
+
+            var cell = boardView.GetCellView(index);
+            if (cell == null)
+            {
+                return Vector2.zero;
+            }
+
+            var rect = cell.transform as RectTransform;
+            if (rect == null)
+            {
+                return Vector2.zero;
+            }
+
+            var canvas = rect.GetComponentInParent<Canvas>();
+            var camera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay
+                ? canvas.worldCamera
+                : null;
+            return RectTransformUtility.WorldToScreenPoint(camera, rect.TransformPoint(rect.rect.center));
+        }
+
+        bool TryGetSellableSelection(EconomyConfig economy, int cellIndex, out int index, out long price, out MergeItemData data)
+        {
+            index = NoSelectionIndex;
+            price = 0;
+            data = null;
+            if (_state == null || economy == null || !_state.IsValidIndex(cellIndex))
+            {
+                return false;
+            }
+
+            if (IsCellInteractionLocked(cellIndex))
+            {
+                return false;
+            }
+
+            if (_dragController != null && _dragController.IsBusyWithCell(cellIndex))
+            {
+                return false;
+            }
+
+            var cell = _state.GetCell(cellIndex);
+            if (cell == null || !cell.HasItem || cell.IsBox || cell.ItemLocked)
+            {
+                return false;
+            }
+
+            if (itemDatabase == null || !itemDatabase.TryGetById(cell.ItemId, out data) || data == null)
+            {
+                return false;
+            }
+
+            if (data.Kind != MergeItemKind.Normal)
+            {
+                return false;
+            }
+
+            if (!economy.TryGetSellPrice(data.Level, out price) || price <= 0)
+            {
+                return false;
+            }
+
+            index = cellIndex;
+            return true;
+        }
+
+        bool IsEmptyOpenCell(int index)
+        {
+            if (_state == null || !_state.IsValidIndex(index) || IsCellInteractionLocked(index))
+            {
+                return false;
+            }
+
+            var cell = _state.GetCell(index);
+            return cell != null && cell.IsEmpty && !cell.IsBox;
         }
 
         public void SetBoardRoot(RectTransform root)
@@ -1354,6 +1582,52 @@ namespace SanIsland.Merge
 
             _energySystem.EnsureReady();
             _energy = _energySystem.Service;
+        }
+
+        void EnsureIcons()
+        {
+            var icons = GetComponent<IconSystem>();
+            if (icons == null)
+            {
+                icons = IconSystem.Current;
+            }
+
+            if (icons == null)
+            {
+                icons = gameObject.AddComponent<IconSystem>();
+            }
+        }
+
+        void EnsureSell()
+        {
+            EnsureDrag();
+            var currency = GetComponent<CurrencySystem>();
+            if (currency == null)
+            {
+                currency = CurrencySystem.Current;
+            }
+
+            if (currency == null)
+            {
+                currency = gameObject.AddComponent<CurrencySystem>();
+            }
+
+            currency.EnsureReady();
+
+            var sell = GetComponent<SellSystem>();
+            if (sell == null)
+            {
+                sell = gameObject.AddComponent<SellSystem>();
+            }
+
+            sell.Configure(this, sell.Config);
+            var presenter = GetComponent<BoardSellPresenter>();
+            if (presenter == null)
+            {
+                presenter = gameObject.AddComponent<BoardSellPresenter>();
+            }
+
+            presenter.Configure(this, dragView, sell.Config);
         }
 
         void BindAndRefresh()

@@ -135,6 +135,30 @@ namespace SanIsland.Merge.Editor
             UpsertUiKey(collection, MergeUiLocalization.NotEnoughEnergyKey, "fr", "Pas assez d'énergie");
             UpsertUiKey(collection, MergeUiLocalization.NotEnoughEnergyKey, "pt", "Energia insuficiente");
             UpsertUiKey(collection, MergeUiLocalization.NotEnoughEnergyKey, "tr", "Yeterli enerji yok");
+
+            UpsertUiKey(collection, MergeUiLocalization.SellActionKey, "en", "Sell");
+            UpsertUiKey(collection, MergeUiLocalization.SellActionKey, "ru", "Продать");
+            UpsertUiKey(collection, MergeUiLocalization.SellActionKey, "de", "Verkaufen");
+            UpsertUiKey(collection, MergeUiLocalization.SellActionKey, "es", "Vender");
+            UpsertUiKey(collection, MergeUiLocalization.SellActionKey, "fr", "Vendre");
+            UpsertUiKey(collection, MergeUiLocalization.SellActionKey, "pt", "Vender");
+            UpsertUiKey(collection, MergeUiLocalization.SellActionKey, "tr", "Sat");
+
+            UpsertUiKey(collection, MergeUiLocalization.UndoActionKey, "en", "Undo");
+            UpsertUiKey(collection, MergeUiLocalization.UndoActionKey, "ru", "Отмена");
+            UpsertUiKey(collection, MergeUiLocalization.UndoActionKey, "de", "Rückgängig");
+            UpsertUiKey(collection, MergeUiLocalization.UndoActionKey, "es", "Deshacer");
+            UpsertUiKey(collection, MergeUiLocalization.UndoActionKey, "fr", "Annuler");
+            UpsertUiKey(collection, MergeUiLocalization.UndoActionKey, "pt", "Desfazer");
+            UpsertUiKey(collection, MergeUiLocalization.UndoActionKey, "tr", "Geri Al");
+
+            UpsertUiKey(collection, MergeUiLocalization.UndoNoSpaceKey, "en", "No space to restore item");
+            UpsertUiKey(collection, MergeUiLocalization.UndoNoSpaceKey, "ru", "Нет места, чтобы вернуть предмет");
+            UpsertUiKey(collection, MergeUiLocalization.UndoNoSpaceKey, "de", "Kein Platz zum Zurücklegen");
+            UpsertUiKey(collection, MergeUiLocalization.UndoNoSpaceKey, "es", "No hay espacio para restaurar");
+            UpsertUiKey(collection, MergeUiLocalization.UndoNoSpaceKey, "fr", "Pas de place pour restaurer");
+            UpsertUiKey(collection, MergeUiLocalization.UndoNoSpaceKey, "pt", "Sem espaço para restaurar");
+            UpsertUiKey(collection, MergeUiLocalization.UndoNoSpaceKey, "tr", "Geri koymak için yer yok");
             AssetDatabase.SaveAssets();
         }
 

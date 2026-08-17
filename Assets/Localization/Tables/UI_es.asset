@@ -36,6 +36,18 @@ MonoBehaviour:
     m_Localized: "Energ\xEDa insuficiente"
     m_Metadata:
       m_Items: []
+  - m_Id: 1030742020
+    m_Localized: Vender
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742021
+    m_Localized: Deshacer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742022
+    m_Localized: No hay espacio para restaurar
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

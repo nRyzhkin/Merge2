@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8c1e4f27b394d6aa0c5e8f1d2b73940, type: 3}
+  m_Name: IconCatalog
+  m_EditorClassIdentifier: SanIsland.Merge::SanIsland.Merge.IconCatalog
+  entries:
+  - token: coin
+    sprite: {fileID: 21300000, guid: 656ec46a8cb1e477e9fc7028a5f9f812, type: 3}
+  - token: energy
+    sprite: {fileID: 21300000, guid: 7a865fa2cbdfe4fe7b91eb99ecf74fc3, type: 3}

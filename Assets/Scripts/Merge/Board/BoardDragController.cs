@@ -45,9 +45,12 @@ namespace SanIsland.Merge
 
         public BoardDragPhase Phase => _phase;
         public int ActivePointerId => _pointerId;
+        public int ActiveSourceIndex => _sourceIndex;
         public bool IsBusy =>
             _phase == BoardDragPhase.Dragging ||
             _phase == BoardDragPhase.Dropping;
+        public bool IsBusyWithCell(int index) =>
+            index != BoardController.NoSelectionIndex && IsBusy && _sourceIndex == index;
         public bool IsDragInteractionActive => IsBusy;
 
         public void Configure(BoardController controller, BoardDragAnimationConfig animationConfig, BoardDragView view)

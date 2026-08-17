@@ -31,6 +31,18 @@ MonoBehaviour:
     m_Key: ui.message.not_enough_energy
     m_Metadata:
       m_Items: []
+  - m_Id: 1030742020
+    m_Key: ui.action.sell
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742021
+    m_Key: ui.action.undo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742022
+    m_Key: ui.message.undo_no_space
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

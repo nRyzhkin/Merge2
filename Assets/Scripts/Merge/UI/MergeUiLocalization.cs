@@ -9,6 +9,9 @@ namespace SanIsland.Merge
         public const string BoardFullKey = "ui.message.board_full";
         public const string GeneratorRechargingKey = "ui.message.generator_recharging";
         public const string NotEnoughEnergyKey = "ui.message.not_enough_energy";
+        public const string SellActionKey = "ui.action.sell";
+        public const string UndoActionKey = "ui.action.undo";
+        public const string UndoNoSpaceKey = "ui.message.undo_no_space";
 
         public static string GetLevelLabel(int level)
         {

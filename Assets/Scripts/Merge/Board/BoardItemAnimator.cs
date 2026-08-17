@@ -407,6 +407,28 @@ namespace SanIsland.Merge
             ApplyPose();
         }
 
+        public void PlayUndoReturn(EconomyConfig economy)
+        {
+            if (itemRect == null || economy == null)
+            {
+                return;
+            }
+
+            BeginTransientPresentation();
+            ClearMergePreviewImmediate();
+            SetHovered(false);
+            CaptureIdleIfNeeded();
+            _resultReboundScale = 1f;
+            _resultDuration = economy.UndoReturnDuration;
+            var start = Vector2.one * economy.UndoStartScale;
+            var grow = Mathf.Max(0.04f, economy.UndoReturnDuration * 0.45f);
+            _actionScale = start;
+            _currentDown = 0f;
+            BeginPhase(Phase.ResultGrow, grow, economy.UndoReturnCurve, Vector2.one * economy.UndoOvershootScale, 0f);
+            _fromScale = start;
+            ApplyPose();
+        }
+
         public void PlayGeneratorTap(BoardGeneratorAnimationConfig generatorConfig)
         {
             if (itemRect == null || generatorConfig == null)

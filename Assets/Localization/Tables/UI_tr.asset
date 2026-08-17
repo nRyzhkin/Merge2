@@ -36,6 +36,18 @@ MonoBehaviour:
     m_Localized: Yeterli enerji yok
     m_Metadata:
       m_Items: []
+  - m_Id: 1030742020
+    m_Localized: Sat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742021
+    m_Localized: Geri Al
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742022
+    m_Localized: "Geri koymak i\xE7in yer yok"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

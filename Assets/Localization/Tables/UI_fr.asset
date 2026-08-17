@@ -36,6 +36,18 @@ MonoBehaviour:
     m_Localized: "Pas assez d'\xE9nergie"
     m_Metadata:
       m_Items: []
+  - m_Id: 1030742020
+    m_Localized: Vendre
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742021
+    m_Localized: Annuler
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742022
+    m_Localized: Pas de place pour restaurer
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

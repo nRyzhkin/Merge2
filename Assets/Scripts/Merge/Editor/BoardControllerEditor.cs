@@ -90,6 +90,36 @@ namespace SanIsland.Merge.Editor
                     controller.DebugAdvanceEnergyTime(120d);
                 }
             }
+
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("Sell / Coins Debug", EditorStyles.boldLabel);
+            var sell = controller.GetComponent<SellSystem>();
+            using (new EditorGUI.DisabledScope(!Application.isPlaying || sell == null))
+            {
+                var coins = Application.isPlaying && sell != null ? sell.Currency.GetCoins() : 0;
+                var canUndo = Application.isPlaying && sell != null && sell.CanUndoLastSale;
+                var remaining = Application.isPlaying && sell != null ? sell.UndoSecondsRemaining : 0f;
+                EditorGUILayout.LabelField("Coins", coins.ToString());
+                EditorGUILayout.LabelField("Can Undo Last Sale", canUndo.ToString());
+                EditorGUILayout.LabelField("Undo Seconds Remaining", remaining.ToString("0.0"));
+                EditorGUILayout.HelpBox("Undo button is not on the scene. This Play Mode control tests TryUndoLastSale(). Place a designer Undo control later and bind it to SellSystem.TryUndoLastSale().", MessageType.Info);
+                if (GUILayout.Button("Undo Last Sale"))
+                {
+                    sell.TryUndoLastSale();
+                }
+
+                EditorGUILayout.BeginHorizontal();
+                if (GUILayout.Button("Coins 0"))
+                {
+                    sell.Currency.DebugSetCoins(0);
+                }
+
+                if (GUILayout.Button("Coins +100"))
+                {
+                    sell.Currency.AddCoins(100);
+                }
+                EditorGUILayout.EndHorizontal();
+            }
         }
     }
 }

@@ -36,6 +36,18 @@ MonoBehaviour:
     m_Localized: Not enough energy
     m_Metadata:
       m_Items: []
+  - m_Id: 1030742020
+    m_Localized: Sell
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742021
+    m_Localized: Undo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742022
+    m_Localized: No space to restore item
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

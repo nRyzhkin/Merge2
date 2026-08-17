@@ -36,6 +36,18 @@ MonoBehaviour:
     m_Localized: Energia insuficiente
     m_Metadata:
       m_Items: []
+  - m_Id: 1030742020
+    m_Localized: Vender
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742021
+    m_Localized: Desfazer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742022
+    m_Localized: "Sem espa\xE7o para restaurar"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:
