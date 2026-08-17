@@ -115,6 +115,11 @@ namespace SanIsland.Merge
 
             if (!BeginFlightAndMutate(sequence))
             {
+                Debug.LogWarning(
+                    $"[Displace] BeginFlightAndMutate failed src={sourceIndex} tgt={targetIndex} dst={destinationIndex} token={sequence.LockToken}");
+                RevealCell(sequence.TargetIndex);
+                RevealCell(sequence.DestinationIndex);
+                RevealCell(sequence.SourceIndex);
                 ReleaseSequence(sequence);
                 return false;
             }
@@ -467,6 +472,12 @@ namespace SanIsland.Merge
         void ReleaseSequence(DisplaceSequence sequence)
         {
             _active.Remove(sequence);
+            if (sequence.LockToken != 0 && boardController != null)
+            {
+                boardController.InteractionLocks.Release(sequence.LockToken);
+                sequence.LockToken = 0;
+            }
+
             sequence.Phase = Phase.Idle;
             sequence.TargetView = null;
             sequence.DestinationView = null;

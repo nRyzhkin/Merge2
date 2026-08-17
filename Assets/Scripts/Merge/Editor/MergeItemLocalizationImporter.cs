@@ -119,6 +119,22 @@ namespace SanIsland.Merge.Editor
             UpsertUiKey(collection, MergeUiLocalization.BoardFullKey, "fr", "Plateau plein");
             UpsertUiKey(collection, MergeUiLocalization.BoardFullKey, "pt", "Tabuleiro cheio");
             UpsertUiKey(collection, MergeUiLocalization.BoardFullKey, "tr", "Tahta dolu");
+
+            UpsertUiKey(collection, MergeUiLocalization.GeneratorRechargingKey, "en", "Generator is recharging");
+            UpsertUiKey(collection, MergeUiLocalization.GeneratorRechargingKey, "ru", "Генератор заряжается");
+            UpsertUiKey(collection, MergeUiLocalization.GeneratorRechargingKey, "de", "Generator lädt auf");
+            UpsertUiKey(collection, MergeUiLocalization.GeneratorRechargingKey, "es", "El generador se está recargando");
+            UpsertUiKey(collection, MergeUiLocalization.GeneratorRechargingKey, "fr", "Le générateur se recharge");
+            UpsertUiKey(collection, MergeUiLocalization.GeneratorRechargingKey, "pt", "Gerador recarregando");
+            UpsertUiKey(collection, MergeUiLocalization.GeneratorRechargingKey, "tr", "Jeneratör şarj oluyor");
+
+            UpsertUiKey(collection, MergeUiLocalization.NotEnoughEnergyKey, "en", "Not enough energy");
+            UpsertUiKey(collection, MergeUiLocalization.NotEnoughEnergyKey, "ru", "Недостаточно энергии");
+            UpsertUiKey(collection, MergeUiLocalization.NotEnoughEnergyKey, "de", "Nicht genug Energie");
+            UpsertUiKey(collection, MergeUiLocalization.NotEnoughEnergyKey, "es", "Energía insuficiente");
+            UpsertUiKey(collection, MergeUiLocalization.NotEnoughEnergyKey, "fr", "Pas assez d'énergie");
+            UpsertUiKey(collection, MergeUiLocalization.NotEnoughEnergyKey, "pt", "Energia insuficiente");
+            UpsertUiKey(collection, MergeUiLocalization.NotEnoughEnergyKey, "tr", "Yeterli enerji yok");
             AssetDatabase.SaveAssets();
         }
 

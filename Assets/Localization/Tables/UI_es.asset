@@ -32,6 +32,10 @@ MonoBehaviour:
     m_Localized: "El generador se est\xE1 recargando"
     m_Metadata:
       m_Items: []
+  - m_Id: 1030742019
+    m_Localized: "Energ\xEDa insuficiente"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

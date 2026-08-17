@@ -75,6 +75,17 @@ namespace SanIsland.Merge
         public bool IsItemPresentationSuppressed => _itemPresentationSuppressed;
         public bool IsItemHiddenForDrag => _hideItemForDrag;
 
+        public string DebugDescribePresentation()
+        {
+            var blockerOn = blockerImage != null && blockerImage.gameObject.activeSelf;
+            var itemOn = itemImage != null && itemImage.gameObject.activeSelf;
+            var cobwebOn = lockOverlayImage != null && lockOverlayImage.gameObject.activeSelf;
+            return
+                $"boxReveal={_boxRevealing} boxBreak={_boxBreaking} cobwebBreak={_cobwebBreaking} " +
+                $"suppressed={_itemPresentationSuppressed} hideDrag={_hideItemForDrag} " +
+                $"transient={IsTransientAnimationRunning()} itemOn={itemOn} blockerOn={blockerOn} cobwebOn={cobwebOn}";
+        }
+
         public void SetIndex(int cellIndex)
         {
             index = cellIndex;

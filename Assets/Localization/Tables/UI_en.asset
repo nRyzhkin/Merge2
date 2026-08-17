@@ -32,6 +32,10 @@ MonoBehaviour:
     m_Localized: Generator is recharging
     m_Metadata:
       m_Items: []
+  - m_Id: 1030742019
+    m_Localized: Not enough energy
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

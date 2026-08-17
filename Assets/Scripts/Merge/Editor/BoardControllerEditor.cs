@@ -53,6 +53,43 @@ namespace SanIsland.Merge.Editor
             {
                 EditorGUILayout.HelpBox("Reset Development Board is available in Play Mode.", MessageType.Info);
             }
+
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("Energy Debug", EditorStyles.boldLabel);
+            using (new EditorGUI.DisabledScope(!Application.isPlaying))
+            {
+                var current = Application.isPlaying ? controller.GetCurrentEnergy() : EnergyService.DefaultMaxNaturalEnergy;
+                var untilNext = Application.isPlaying ? controller.GetSecondsUntilNextEnergy() : 0f;
+                EditorGUILayout.LabelField("Current Energy", current.ToString());
+                EditorGUILayout.LabelField("Seconds Until Next", untilNext.ToString("0.0"));
+
+                EditorGUILayout.BeginHorizontal();
+                if (GUILayout.Button("Energy 100"))
+                {
+                    controller.DebugSetEnergy(100);
+                }
+
+                if (GUILayout.Button("Energy 10"))
+                {
+                    controller.DebugSetEnergy(10);
+                }
+
+                if (GUILayout.Button("Energy 1"))
+                {
+                    controller.DebugSetEnergy(1);
+                }
+
+                if (GUILayout.Button("Energy 0"))
+                {
+                    controller.DebugSetEnergy(0);
+                }
+                EditorGUILayout.EndHorizontal();
+
+                if (GUILayout.Button("Advance Energy Time +120s"))
+                {
+                    controller.DebugAdvanceEnergyTime(120d);
+                }
+            }
         }
     }
 }

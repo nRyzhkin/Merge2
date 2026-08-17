@@ -40,6 +40,8 @@ namespace SanIsland.Merge
         [SerializeField] int debugSelectedItemId = BoardCellState.EmptyItemId;
         [SerializeField] string debugSelectedInternalKey;
         [SerializeField] int debugDiscoveredCount;
+        [SerializeField] int debugCurrentEnergy;
+        [SerializeField] float debugSecondsUntilNextEnergy;
 
         BoardState _state;
         MergeDiscoveryState _discovery;
@@ -47,8 +49,10 @@ namespace SanIsland.Merge
         readonly List<int> _orthogonalScratch = new List<int>(4);
         readonly List<BoxRevealResult> _boxRevealScratch = new List<BoxRevealResult>(4);
         readonly GeneratorInstanceService _generatorInstances = new GeneratorInstanceService();
-        readonly IGameTimeProvider _gameTimeProvider = new GameTimeProvider();
+        readonly GameTimeProvider _gameTimeProvider = new GameTimeProvider();
         readonly IGeneratorRandom _generatorRandom = new GeneratorRandomService();
+        EnergySystem _energySystem;
+        EnergyService _energy;
         int _selectedCellIndex = NoSelectionIndex;
         int _selectionRevision;
         BoardDragController _dragController;
@@ -76,6 +80,7 @@ namespace SanIsland.Merge
         public BoardDragController DragController => _dragController;
         public BoardSelectionView SelectionView => selectionView;
         public ItemInfoView ItemInfoView => itemInfoView;
+        public EnergyService Energy => _energy;
         public BoardState State => _state;
         public MergeDiscoveryState Discovery => _discovery;
         public BoardInteractionLockService InteractionLocks => _interactionLocks;
@@ -94,6 +99,27 @@ namespace SanIsland.Merge
             return _interactionLocks.IsLocked(index);
         }
 
+        public string DebugDescribeCell(int index)
+        {
+            var row = -1;
+            var col = -1;
+            var stateText = "invalid";
+            if (_state != null && _state.IsValidIndex(index))
+            {
+                _state.GetCoordinates(index, out row, out col);
+                var cell = _state.GetCell(index);
+                stateText = cell == null
+                    ? "null"
+                    : $"id={cell.ItemId} empty={cell.IsEmpty} box={cell.IsBox} itemLocked={cell.ItemLocked} block={cell.BlockType} concealed={cell.ConcealedItemId}";
+            }
+
+            var view = boardView != null ? boardView.GetCellView(index) : null;
+            var viewText = view != null ? view.DebugDescribePresentation() : "view=null";
+            var lockedCells = _interactionLocks.DebugDescribeLockedCells();
+            return
+                $"cell={index}[{row},{col}] interactionLocked={IsCellInteractionLocked(index)} {stateText} {viewText} lockedCells={lockedCells}";
+        }
+
         public event Action<int> ItemDiscovered;
         public event Action MergeImpact;
         public event Action NewItemAppeared;
@@ -108,6 +134,7 @@ namespace SanIsland.Merge
             _state = null;
             _selectedCellIndex = NoSelectionIndex;
             _discovery = new MergeDiscoveryState();
+            EnsureEnergySystem();
             if (selectionView != null)
             {
                 selectionView.Hide();
@@ -128,6 +155,7 @@ namespace SanIsland.Merge
 
             boardView.BindInteraction(this, animationConfig, uiFeedbackConfig);
             EnsureDrag();
+            EnsureEnergySystem();
 
             if (useDevelopmentBoardState)
             {
@@ -955,6 +983,14 @@ namespace SanIsland.Merge
                     messagePresenter?.ShowGeneratorRecharging(pointerScreenPosition);
                 }
 
+                else if (result.InsufficientEnergy)
+                {
+                    EnsureMessagesReady();
+                    messagePresenter?.ShowNotEnoughEnergy(pointerScreenPosition);
+                    EnsureEnergySystem();
+                    _energySystem?.NotifySpendRejected();
+                }
+
                 return result;
             }
 
@@ -1027,6 +1063,11 @@ namespace SanIsland.Merge
                 return GeneratorSpawnResult.Failed(generatorIndex, recharging: true);
             }
 
+            if (_energy == null || !_energy.CanSpend(EnergyService.GeneratorProductionCost))
+            {
+                return GeneratorSpawnResult.Failed(generatorIndex, insufficientEnergy: true);
+            }
+
             var spawnIndex = FindGeneratorSpawnCell(generatorIndex);
             if (spawnIndex == NoSelectionIndex)
             {
@@ -1046,6 +1087,12 @@ namespace SanIsland.Merge
             {
                 _interactionLocks.Release(lockToken);
                 return GeneratorSpawnResult.Failed(generatorIndex, boardFull: true);
+            }
+
+            if (_energy == null || !_energy.TrySpend(EnergyService.GeneratorProductionCost))
+            {
+                _interactionLocks.Release(lockToken);
+                return GeneratorSpawnResult.Failed(generatorIndex, insufficientEnergy: true);
             }
 
             spawnCell.SetItem(outputItemId, locked: false);
@@ -1068,6 +1115,7 @@ namespace SanIsland.Merge
                 Success = true,
                 BoardFull = false,
                 Recharging = false,
+                InsufficientEnergy = false,
                 GeneratorIndex = generatorIndex,
                 SpawnCellIndex = spawnIndex,
                 GeneratedItemId = outputItemId,
@@ -1225,6 +1273,89 @@ namespace SanIsland.Merge
             itemInfoView = view;
         }
 
+        public bool CanSpend(int amount)
+        {
+            EnsureEnergySystem();
+            return _energy != null && _energy.CanSpend(amount);
+        }
+
+        public bool TrySpend(int amount)
+        {
+            EnsureEnergySystem();
+            return _energy != null && _energy.TrySpend(amount);
+        }
+
+        public void AddEnergy(int amount)
+        {
+            EnsureEnergySystem();
+            _energy?.AddEnergy(amount);
+        }
+
+        public void ResolveRegeneration()
+        {
+            EnsureEnergySystem();
+            _energy?.ResolveRegeneration();
+        }
+
+        public int GetCurrentEnergy()
+        {
+            EnsureEnergySystem();
+            return _energy != null ? _energy.GetCurrentEnergy() : 0;
+        }
+
+        public int GetMaxNaturalEnergy()
+        {
+            EnsureEnergySystem();
+            return _energy != null ? _energy.GetMaxNaturalEnergy() : EnergyService.DefaultMaxNaturalEnergy;
+        }
+
+        public float GetSecondsUntilNextEnergy()
+        {
+            EnsureEnergySystem();
+            return _energy != null ? _energy.GetSecondsUntilNextEnergy() : 0f;
+        }
+
+        public float GetNextEnergyProgress()
+        {
+            EnsureEnergySystem();
+            return _energy != null ? _energy.GetNextEnergyProgress() : 0f;
+        }
+
+        public void DebugSetEnergy(int value)
+        {
+            EnsureEnergySystem();
+            _energySystem?.DebugSetEnergy(value);
+            UpdateDebug();
+        }
+
+        public void DebugAdvanceEnergyTime(double seconds)
+        {
+            EnsureEnergySystem();
+            _energySystem?.DebugAdvanceEnergyTime(seconds);
+            UpdateDebug();
+        }
+
+        void EnsureEnergySystem()
+        {
+            if (_energySystem == null)
+            {
+                _energySystem = GetComponent<EnergySystem>();
+            }
+
+            if (_energySystem == null)
+            {
+                _energySystem = EnergySystem.Current;
+            }
+
+            if (_energySystem == null)
+            {
+                _energySystem = gameObject.AddComponent<EnergySystem>();
+            }
+
+            _energySystem.EnsureReady();
+            _energy = _energySystem.Service;
+        }
+
         void BindAndRefresh()
         {
             boardView.Bind(_state, itemDatabase, visualConfig);
@@ -1251,6 +1382,16 @@ namespace SanIsland.Merge
             debugSelectedItemId = BoardCellState.EmptyItemId;
             debugSelectedInternalKey = string.Empty;
             debugDiscoveredCount = _discovery != null ? _discovery.DiscoveredCount : 0;
+            if (_energy != null)
+            {
+                debugCurrentEnergy = _energy.GetCurrentEnergy();
+                debugSecondsUntilNextEnergy = _energy.GetSecondsUntilNextEnergy();
+            }
+            else
+            {
+                debugCurrentEnergy = 0;
+                debugSecondsUntilNextEnergy = 0f;
+            }
 
             var selected = GetSelectedCell();
             if (selected == null || !selected.HasItem)

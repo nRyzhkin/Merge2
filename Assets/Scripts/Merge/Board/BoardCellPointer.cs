@@ -80,13 +80,19 @@ namespace SanIsland.Merge
                 return;
             }
 
-            if (!TryGetItemCell(out _))
+            if (!TryGetItemCell(out var state))
             {
+                if (IsSurprisingPointerDeny(state))
+                {
+                    LogPointerDenied(cellView, "TryGetItemCell");
+                }
+
                 return;
             }
 
             if (cellView != null && boardController != null && boardController.IsCellInteractionLocked(cellView.Index))
             {
+                LogPointerDenied(cellView, "interactionLock");
                 return;
             }
 
@@ -105,6 +111,7 @@ namespace SanIsland.Merge
             if (boardController != null && boardController.DragController != null &&
                 !boardController.DragController.HandlePointerDown(cellView, eventData))
             {
+                LogPointerDenied(cellView, "HandlePointerDown");
                 return;
             }
 
@@ -202,6 +209,33 @@ namespace SanIsland.Merge
 
             cell = boardController.State.GetCell(cellView.Index);
             return cell != null && cell.HasItem && !cell.IsBox;
+        }
+
+        bool IsSurprisingPointerDeny(BoardCellState state)
+        {
+            if (cellView != null && boardController != null && boardController.IsCellInteractionLocked(cellView.Index))
+            {
+                return true;
+            }
+
+            if (cellView != null &&
+                (cellView.IsBoxRevealPlaying || cellView.IsItemPresentationSuppressed || cellView.IsItemHiddenForDrag))
+            {
+                return true;
+            }
+
+            return state != null && state.HasItem;
+        }
+
+        void LogPointerDenied(BoardCellView view, string reason)
+        {
+            if (boardController == null || view == null)
+            {
+                Debug.LogWarning($"[BoardInteract] denied {reason} view={(view != null ? view.Index.ToString() : "null")}");
+                return;
+            }
+
+            Debug.LogWarning($"[BoardInteract] denied {reason} {boardController.DebugDescribeCell(view.Index)}");
         }
     }
 }

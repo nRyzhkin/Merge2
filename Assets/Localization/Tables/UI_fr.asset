@@ -32,6 +32,10 @@ MonoBehaviour:
     m_Localized: "Le g\xE9n\xE9rateur se recharge"
     m_Metadata:
       m_Items: []
+  - m_Id: 1030742019
+    m_Localized: "Pas assez d'\xE9nergie"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

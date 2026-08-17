@@ -32,6 +32,10 @@ MonoBehaviour:
     m_Localized: "Jenerat\xF6r \u015Farj oluyor"
     m_Metadata:
       m_Items: []
+  - m_Id: 1030742019
+    m_Localized: Yeterli enerji yok
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

@@ -27,6 +27,10 @@ MonoBehaviour:
     m_Key: ui.message.generator_recharging
     m_Metadata:
       m_Items: []
+  - m_Id: 1030742019
+    m_Key: ui.message.not_enough_energy
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

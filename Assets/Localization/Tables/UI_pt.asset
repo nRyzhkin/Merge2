@@ -32,6 +32,10 @@ MonoBehaviour:
     m_Localized: Gerador recarregando
     m_Metadata:
       m_Items: []
+  - m_Id: 1030742019
+    m_Localized: Energia insuficiente
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

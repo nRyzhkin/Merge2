@@ -299,11 +299,14 @@ namespace SanIsland.Merge
                 sequence.Fx = null;
             }
 
-            if (sequence.CellView != null && !sequence.CellView.IsItemPresentationSuppressed)
+            if (sequence.CellView != null)
             {
                 sequence.CellView.ClearBoxRevealPresentation();
-                sequence.CellView.SetHideItemForDrag(false);
-                sequence.Animator?.CancelTransientAnimationAndAdoptCurrentVisualState();
+                if (!sequence.CellView.IsItemPresentationSuppressed)
+                {
+                    sequence.CellView.SetHideItemForDrag(false);
+                    sequence.Animator?.CancelTransientAnimationAndAdoptCurrentVisualState();
+                }
             }
 
             if (boardController != null && boardController.BoardView != null &&

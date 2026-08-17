@@ -418,6 +418,62 @@ namespace SanIsland.Merge.Editor
             }
 
             EditorUtility.SetDirty(selectionView);
+            WireEnergy(controller);
+        }
+
+        static void WireEnergy(BoardController controller)
+        {
+            var energySystem = controller.GetComponent<EnergySystem>();
+            if (energySystem == null)
+            {
+                energySystem = Undo.AddComponent<EnergySystem>(controller.gameObject);
+            }
+
+            EditorUtility.SetDirty(energySystem);
+
+            var roots = FindAllHudEnergyRoots();
+            if (roots.Count == 0)
+            {
+                Debug.LogWarning("[MergeBoardSetup] No Resource_Energy widgets found. Add EnergyHudView on each energy widget so it binds its own children.");
+                return;
+            }
+
+            for (var i = 0; i < roots.Count; i++)
+            {
+                BindEnergyHud(roots[i]);
+            }
+        }
+
+        static void BindEnergyHud(RectTransform energyRoot)
+        {
+            if (energyRoot == null)
+            {
+                return;
+            }
+
+            var hud = energyRoot.GetComponent<EnergyHudView>();
+            if (hud == null)
+            {
+                hud = Undo.AddComponent<EnergyHudView>(energyRoot.gameObject);
+            }
+
+            hud.BindLocal();
+            EditorUtility.SetDirty(hud);
+        }
+
+        static List<RectTransform> FindAllHudEnergyRoots()
+        {
+            var transforms = Object.FindObjectsByType<RectTransform>(FindObjectsInactive.Include);
+            var roots = new List<RectTransform>();
+            for (var i = 0; i < transforms.Length; i++)
+            {
+                if (transforms[i] != null && transforms[i].name == EnergyHudView.EnergyRootName)
+                {
+                    roots.Add(transforms[i]);
+                }
+            }
+
+            return roots;
         }
 
         static void WireChainTemplates(RectTransform chainRoot, MergeChainInfoView chainView)

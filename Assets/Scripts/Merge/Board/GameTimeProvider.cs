@@ -4,6 +4,18 @@ namespace SanIsland.Merge
 {
     public sealed class GameTimeProvider : IGameTimeProvider
     {
-        public double UnixTimeNow => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() / 1000.0;
+        double _debugOffsetSeconds;
+
+        public double UnixTimeNow => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() / 1000.0 + _debugOffsetSeconds;
+
+        public void AdvanceDebugOffset(double seconds)
+        {
+            if (seconds <= 0d)
+            {
+                return;
+            }
+
+            _debugOffsetSeconds += seconds;
+        }
     }
 }

@@ -85,6 +85,25 @@ namespace SanIsland.Merge
             _tokenCells.Clear();
         }
 
+        public string DebugDescribeLockedCells()
+        {
+            if (_cellRefCount.Count == 0)
+            {
+                return "none";
+            }
+
+            var parts = new List<string>(_cellRefCount.Count);
+            foreach (var pair in _cellRefCount)
+            {
+                if (pair.Value > 0)
+                {
+                    parts.Add($"{pair.Key}x{pair.Value}");
+                }
+            }
+
+            return parts.Count == 0 ? "none" : string.Join(",", parts);
+        }
+
         void AddCell(int token, List<int> cells, int cellIndex)
         {
             if (cellIndex < 0)
