@@ -9,18 +9,29 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cac109a541fc4b02ab22081bf3519659, type: 3}
-  m_Name: UiInteractionFeedbackConfig
-  m_EditorClassIdentifier: SanIsland.Merge::SanIsland.Merge.UiInteractionFeedbackConfig
-  hoverScale: 1.05
-  hoverEnterDuration: 0.12
-  hoverExitDuration: 0.12
-  hoverEnterCurve:
+  m_Script: {fileID: 11500000, guid: 7c4e91a2b8d34f6e9a1c5d2e8f3b4722, type: 3}
+  m_Name: UIWindowChoreographyConfig
+  m_EditorClassIdentifier: SanIsland.Merge::SanIsland.Merge.UIWindowChoreographyConfig
+  backgroundFadeDuration: 0.24
+  popupBackgroundStartScale: 0.94
+  edgeOffset: 70
+  edgeDuration: 0.36
+  edgeOvershoot: 4
+  edgeCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
       value: 0
+      inSlope: 0
+      outSlope: 2.4
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.78
+      value: 1.06
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -39,12 +50,24 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  hoverExitCurve:
+  centerStartScale: 0.92
+  centerDuration: 0.32
+  centerOvershootScale: 1.012
+  centerCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
       value: 0
+      inSlope: 0
+      outSlope: 2.4
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.78
+      value: 1.06
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -63,17 +86,24 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  pressScale: 0.98
-  pressDuration: 0.07
-  releaseDuration: 0.07
-  pressCurve:
+  edgePhaseDelay: 0.08
+  centerPhaseDelay: 0.16
+  listPhaseDelay: 0.24
+  secondaryPhaseDelay: 0.3
+  intraPhaseStagger: 0.025
+  listItemStartScale: 0.92
+  listItemDuration: 0.28
+  listItemStagger: 0.07
+  listItemOffsetY: 12
+  maxAnimatedListItems: 10
+  listItemCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
       value: 0
       inSlope: 0
-      outSlope: 0
+      outSlope: 2.2
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
@@ -90,28 +120,12 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  releaseCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  useUnscaledTime: 1
+  closeDurationMultiplier: 0.55
+  closeStagger: 0.04
+  closeEdgeOffsetFactor: 0.45
+  maxCloseDuration: 0.42
+  maxFullscreenOpenDuration: 0.9
+  maxPopupOpenDuration: 0.5
+  interactionEnableNormalizedTime: 0.65
+  optionalModalBackgroundAlpha: 0.45
+  modalBackgroundDuration: 0.16

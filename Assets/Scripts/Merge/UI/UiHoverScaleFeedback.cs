@@ -5,7 +5,11 @@ using UnityEngine.UI;
 namespace SanIsland.Merge
 {
     [DisallowMultipleComponent]
-    public class UiHoverScaleFeedback : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+    public class UiHoverScaleFeedback : MonoBehaviour,
+        IPointerEnterHandler,
+        IPointerExitHandler,
+        IPointerDownHandler,
+        IPointerUpHandler
     {
         [SerializeField] UiInteractionFeedbackConfig config;
         [SerializeField] RectTransform target;
@@ -14,6 +18,7 @@ namespace SanIsland.Merge
         Vector3 _baseScale = Vector3.one;
         bool _baseCaptured;
         bool _hovered;
+        bool _pressed;
         bool _transitioning;
         Vector3 _fromScale;
         Vector3 _toScale;
@@ -35,7 +40,7 @@ namespace SanIsland.Merge
             }
 
             CaptureBase();
-            if (!_hovered && !_transitioning)
+            if (!_hovered && !_pressed && !_transitioning)
             {
                 ApplyScale(_baseScale);
             }
@@ -53,7 +58,7 @@ namespace SanIsland.Merge
 
         void OnEnable()
         {
-            if (!_hovered && !_transitioning)
+            if (!_hovered && !_pressed && !_transitioning)
             {
                 CaptureBase();
             }
@@ -62,6 +67,7 @@ namespace SanIsland.Merge
         void OnDisable()
         {
             _hovered = false;
+            _pressed = false;
             _transitioning = false;
             if (_baseCaptured)
             {
@@ -76,19 +82,59 @@ namespace SanIsland.Merge
                 return;
             }
 
-            BeginHover(true);
+            _hovered = true;
+            if (!_pressed)
+            {
+                BeginTransition(ScaledHover(), Motion.HoverEnter);
+            }
         }
 
         public void OnPointerExit(PointerEventData eventData)
         {
-            BeginHover(false);
+            _hovered = false;
+            if (!_pressed)
+            {
+                BeginTransition(_baseScale, Motion.HoverExit);
+            }
+        }
+
+        public void OnPointerDown(PointerEventData eventData)
+        {
+            if (!IsInteractable())
+            {
+                return;
+            }
+
+            _pressed = true;
+            BeginTransition(ScaledPress(), Motion.Press);
+        }
+
+        public void OnPointerUp(PointerEventData eventData)
+        {
+            _pressed = false;
+            if (!IsInteractable())
+            {
+                BeginTransition(_baseScale, Motion.HoverExit);
+                return;
+            }
+
+            if (_hovered)
+            {
+                BeginTransition(ScaledHover(), Motion.Release);
+            }
+            else
+            {
+                BeginTransition(_baseScale, Motion.Release);
+            }
         }
 
         void Update()
         {
-            if (_hovered && !IsInteractable())
+            if ((_hovered || _pressed) && !IsInteractable())
             {
-                BeginHover(false);
+                _hovered = false;
+                _pressed = false;
+                BeginTransition(_baseScale, Motion.HoverExit);
             }
 
             if (!_transitioning || config == null)
@@ -108,24 +154,44 @@ namespace SanIsland.Merge
             }
         }
 
-        void BeginHover(bool hovered)
+        enum Motion
+        {
+            HoverEnter,
+            HoverExit,
+            Press,
+            Release
+        }
+
+        void BeginTransition(Vector3 toScale, Motion motion)
         {
             if (config == null || Target == null)
             {
                 return;
             }
 
-            if (hovered == _hovered && !_transitioning)
+            _fromScale = Target.localScale;
+            _toScale = toScale;
+            _elapsed = 0f;
+            switch (motion)
             {
-                return;
+                case Motion.Press:
+                    _duration = Mathf.Max(0.01f, config.PressDuration);
+                    _curve = config.PressCurve;
+                    break;
+                case Motion.Release:
+                    _duration = Mathf.Max(0.01f, config.ReleaseDuration);
+                    _curve = config.ReleaseCurve;
+                    break;
+                case Motion.HoverEnter:
+                    _duration = Mathf.Max(0.01f, config.HoverEnterDuration);
+                    _curve = config.HoverEnterCurve;
+                    break;
+                default:
+                    _duration = Mathf.Max(0.01f, config.HoverExitDuration);
+                    _curve = config.HoverExitCurve;
+                    break;
             }
 
-            _hovered = hovered;
-            _fromScale = Target.localScale;
-            _toScale = hovered ? ScaledHover() : _baseScale;
-            _elapsed = 0f;
-            _duration = Mathf.Max(0.01f, hovered ? config.HoverEnterDuration : config.HoverExitDuration);
-            _curve = hovered ? config.HoverEnterCurve : config.HoverExitCurve;
             _transitioning = true;
         }
 
@@ -148,6 +214,12 @@ namespace SanIsland.Merge
         Vector3 ScaledHover()
         {
             var scale = config != null ? config.HoverScale : 1.05f;
+            return _baseScale * scale;
+        }
+
+        Vector3 ScaledPress()
+        {
+            var scale = config != null ? config.PressScale : 0.98f;
             return _baseScale * scale;
         }
 

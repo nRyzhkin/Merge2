@@ -9,20 +9,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cac109a541fc4b02ab22081bf3519659, type: 3}
-  m_Name: UiInteractionFeedbackConfig
-  m_EditorClassIdentifier: SanIsland.Merge::SanIsland.Merge.UiInteractionFeedbackConfig
-  hoverScale: 1.05
-  hoverEnterDuration: 0.12
-  hoverExitDuration: 0.12
-  hoverEnterCurve:
+  m_Script: {fileID: 11500000, guid: 7c4e91a2b8d34f6e9a1c5d2e8f3b4710, type: 3}
+  m_Name: UIWindowTransitionConfig
+  m_EditorClassIdentifier: SanIsland.Merge::SanIsland.Merge.UIWindowTransitionConfig
+  openStartScaleX: 0.92
+  openStartScaleY: 0.88
+  openStartOffsetY: 28
+  openEnterDuration: 0.12
+  openEnterCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
       value: 0
       inSlope: 0
-      outSlope: 0
+      outSlope: 2.2
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
@@ -39,14 +40,18 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  hoverExitCurve:
+  openOvershootScaleX: 1.018
+  openOvershootScaleY: 1.03
+  openOvershootOffsetY: -3
+  openSettleDuration: 0.13
+  openSettleCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
       value: 0
       inSlope: 0
-      outSlope: 0
+      outSlope: 2.2
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
@@ -63,17 +68,17 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  pressScale: 0.98
-  pressDuration: 0.07
-  releaseDuration: 0.07
-  pressCurve:
+  fadeInDuration: 0.08
+  closeAnticipationScale: 1.012
+  closeAnticipationDuration: 0.045
+  closeAnticipationCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
       value: 0
       inSlope: 0
-      outSlope: 0
+      outSlope: 2.2
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
@@ -90,7 +95,11 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  releaseCurve:
+  closeEndScaleX: 0.93
+  closeEndScaleY: 0.90
+  closeEndOffsetY: 22
+  closeExitDuration: 0.14
+  closeExitCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
@@ -105,7 +114,7 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 1
       value: 1
-      inSlope: 0
+      inSlope: 2.2
       outSlope: 0
       tangentMode: 0
       weightedMode: 0
@@ -114,4 +123,8 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  useUnscaledTime: 1
+  fadeOutDuration: 0.12
+  contentDelay: 0.04
+  contentOffsetYFactor: 0.3
+  optionalModalBackgroundAlpha: 0.45
+  modalBackgroundDuration: 0.16
