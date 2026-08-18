@@ -162,7 +162,13 @@ namespace SanIsland.Merge
                 return;
             }
 
-            ApplyEnergyNumber(_energy.GetCurrentEnergy());
+            var next = _energy.GetCurrentEnergy();
+            if (_displayedEnergy != int.MinValue && next > _displayedEnergy)
+            {
+                PlayAttentionPulse();
+            }
+
+            ApplyEnergyNumber(next);
             ApplyTimer(_energy.GetSecondsUntilNextEnergy());
         }
 

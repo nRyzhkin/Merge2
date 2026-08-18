@@ -11,9 +11,9 @@ namespace SanIsland.Merge
             return _unlockedFamilies.Contains(family);
         }
 
-        public void UnlockFamily(MergeItemFamily family)
+        public bool UnlockFamily(MergeItemFamily family)
         {
-            _unlockedFamilies.Add(family);
+            return _unlockedFamilies.Add(family);
         }
 
         public void LockFamily(MergeItemFamily family)
@@ -29,8 +29,6 @@ namespace SanIsland.Merge
         public void ResetDevelopment()
         {
             _unlockedFamilies.Clear();
-            UnlockFamily(MergeItemFamily.Tools);
-            UnlockFamily(MergeItemFamily.Cleaning);
         }
     }
 }

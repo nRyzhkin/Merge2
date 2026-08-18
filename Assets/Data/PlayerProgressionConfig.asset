@@ -1,0 +1,90 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c4e91a2b8d34f6e9a1c5d2e8f3b4731, type: 3}
+  m_Name: PlayerProgressionConfig
+  m_EditorClassIdentifier: SanIsland.Merge::SanIsland.Merge.PlayerProgressionConfig
+  ranks:
+  - rank: 1
+    xpRequiredToReachNextRank: 100
+    rewards: []
+    unlocks:
+    - type: 0
+      mergeFamily: 3
+      contentId: 
+    showMilestoneCard: 0
+    milestoneSprite: {fileID: 0}
+    milestoneTitleLocalizationKey: 
+    milestoneDescriptionLocalizationKey: 
+  - rank: 2
+    xpRequiredToReachNextRank: 150
+    rewards:
+    - type: 0
+      amount: 20
+      rewardKey: 
+    unlocks:
+    - type: 0
+      mergeFamily: 2
+      contentId: 
+    showMilestoneCard: 1
+    milestoneSprite: {fileID: 0}
+    milestoneTitleLocalizationKey: ui.rank.milestone.cleaning.title
+    milestoneDescriptionLocalizationKey: ui.rank.milestone.cleaning.description
+  - rank: 3
+    xpRequiredToReachNextRank: 220
+    rewards:
+    - type: 1
+      amount: 100
+      rewardKey: 
+    unlocks:
+    - type: 0
+      mergeFamily: 1
+      contentId: 
+    showMilestoneCard: 1
+    milestoneSprite: {fileID: 0}
+    milestoneTitleLocalizationKey: ui.rank.milestone.tools.title
+    milestoneDescriptionLocalizationKey: ui.rank.milestone.tools.description
+  - rank: 4
+    xpRequiredToReachNextRank: 300
+    rewards:
+    - type: 0
+      amount: 30
+      rewardKey: 
+    unlocks: []
+    showMilestoneCard: 0
+    milestoneSprite: {fileID: 0}
+    milestoneTitleLocalizationKey: 
+    milestoneDescriptionLocalizationKey: 
+  - rank: 5
+    xpRequiredToReachNextRank: 400
+    rewards:
+    - type: 2
+      amount: 1
+      rewardKey: dev_gift_1
+    unlocks:
+    - type: 2
+      mergeFamily: 1
+      contentId: battle_pass
+    showMilestoneCard: 1
+    milestoneSprite: {fileID: 0}
+    milestoneTitleLocalizationKey: ui.rank.milestone.battle_pass.title
+    milestoneDescriptionLocalizationKey: ui.rank.milestone.battle_pass.description
+  - rank: 6
+    xpRequiredToReachNextRank: 0
+    rewards:
+    - type: 1
+      amount: 200
+      rewardKey: 
+    unlocks: []
+    showMilestoneCard: 0
+    milestoneSprite: {fileID: 0}
+    milestoneTitleLocalizationKey: 
+    milestoneDescriptionLocalizationKey: 

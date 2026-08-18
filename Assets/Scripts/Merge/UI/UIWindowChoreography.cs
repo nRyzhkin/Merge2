@@ -1039,6 +1039,12 @@ namespace SanIsland.Merge
                 return true;
             }
 
+            var ignoreLayout = child.GetComponent<LayoutElement>();
+            if (ignoreLayout != null && ignoreLayout.ignoreLayout)
+            {
+                return true;
+            }
+
             var parent = child.parent as RectTransform;
             if (parent != null && child.GetComponent<Mask>() != null && IsStretchFillRelative(child, parent))
             {

@@ -52,6 +52,66 @@ MonoBehaviour:
     m_Localized: Required items are missing
     m_Metadata:
       m_Items: []
+  - m_Id: 1030742024
+    m_Localized: Cleaning
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742025
+    m_Localized: Unlocks the Cleaning merge family
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742026
+    m_Localized: Tools
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742027
+    m_Localized: Unlocks the Tools merge family
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742028
+    m_Localized: Battle Pass
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742029
+    m_Localized: Unlocks the seasonal Battle Pass
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742030
+    m_Localized: Unlocked
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742031
+    m_Localized: Locked
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742032
+    m_Localized: Claim
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742033
+    m_Localized: "Energy +{0}"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742034
+    m_Localized: "Coins +{0}"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742035
+    m_Localized: Gift
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742036
+    m_Localized: "{0}/{1}"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742037
+    m_Localized: MAX
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742038
+    m_Localized: Battle Pass is coming soon
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

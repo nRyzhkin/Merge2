@@ -148,6 +148,7 @@ namespace SanIsland.Merge
             _runtimeOrders.Clear();
             _generatedSlotOrderIds = null;
             _progression.ResetDevelopment();
+            PlayerProgressionController.Current?.ApplyReachedUnlocks(_progression);
             EnsureGenerator();
             if (UseProceduralGeneration)
             {
@@ -677,8 +678,7 @@ namespace SanIsland.Merge
             var progression = _progression;
             if (progression.GetUnlockedFamilies().Count == 0)
             {
-                progression = new GameProgressionState();
-                progression.ResetDevelopment();
+                PlayerProgressionController.Current?.ApplyReachedUnlocks(progression);
             }
 
             var items = boardController != null ? boardController.ItemDatabase : null;

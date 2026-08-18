@@ -47,6 +47,66 @@ MonoBehaviour:
     m_Key: ui.message.order_items_missing
     m_Metadata:
       m_Items: []
+  - m_Id: 1030742024
+    m_Key: ui.rank.milestone.cleaning.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742025
+    m_Key: ui.rank.milestone.cleaning.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742026
+    m_Key: ui.rank.milestone.tools.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742027
+    m_Key: ui.rank.milestone.tools.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742028
+    m_Key: ui.rank.milestone.battle_pass.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742029
+    m_Key: ui.rank.milestone.battle_pass.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742030
+    m_Key: ui.rank.milestone.unlocked
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742031
+    m_Key: ui.rank.milestone.locked
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742032
+    m_Key: ui.rank.reward.claim
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742033
+    m_Key: ui.rank.reward.energy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742034
+    m_Key: ui.rank.reward.coins
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742035
+    m_Key: ui.rank.reward.gift
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742036
+    m_Key: ui.rank.xp_progress
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742037
+    m_Key: ui.rank.max
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742038
+    m_Key: ui.rank.battle_pass.dev
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

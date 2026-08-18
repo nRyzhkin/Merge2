@@ -3,6 +3,11 @@ using UnityEngine;
 
 namespace SanIsland.Merge
 {
+    public interface IUIWindowWillOpen
+    {
+        void OnWindowWillOpen();
+    }
+
     [DisallowMultipleComponent]
     public class UIWindow : MonoBehaviour
     {
@@ -64,6 +69,7 @@ namespace SanIsland.Merge
 
         public void Show()
         {
+            NotifyWillOpen();
             var choreography = EnsureChoreography();
             choreography.Initialize(windowRoot, canvasGroup, ResolveConfig());
             var wasActive = gameObject.activeSelf;
@@ -103,6 +109,15 @@ namespace SanIsland.Merge
             _visible = true;
             _closing = true;
             choreography.PlayClose(HandleCloseFinished);
+        }
+
+        void NotifyWillOpen()
+        {
+            var listeners = GetComponents<IUIWindowWillOpen>();
+            for (var i = 0; i < listeners.Length; i++)
+            {
+                listeners[i].OnWindowWillOpen();
+            }
         }
 
         void HandleCloseFinished()
