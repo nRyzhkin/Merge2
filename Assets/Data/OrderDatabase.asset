@@ -1,0 +1,112 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8d3f02a5c495e7fb2d16e93a40c85f2, type: 3}
+  m_Name: OrderDatabase
+  m_EditorClassIdentifier: SanIsland.Merge::SanIsland.Merge.OrderDatabase
+  orders:
+  - id: 10001
+    internalKey: order_001
+    localizationKey: 
+    requirements:
+    - itemId: 1002
+      amount: 1
+    coinReward: 100
+    nextOrderId: 10003
+    enabled: 1
+  - id: 10002
+    internalKey: order_002
+    localizationKey: 
+    requirements:
+    - itemId: 2002
+      amount: 1
+    coinReward: 120
+    nextOrderId: 10004
+    enabled: 1
+  - id: 10003
+    internalKey: order_003
+    localizationKey: 
+    requirements:
+    - itemId: 3003
+      amount: 1
+    coinReward: 180
+    nextOrderId: 10005
+    enabled: 1
+  - id: 10004
+    internalKey: order_004
+    localizationKey: 
+    requirements:
+    - itemId: 1003
+      amount: 1
+    - itemId: 2002
+      amount: 1
+    coinReward: 250
+    nextOrderId: -1
+    enabled: 1
+  - id: 10005
+    internalKey: order_005
+    localizationKey: 
+    requirements:
+    - itemId: 3004
+      amount: 1
+    coinReward: 300
+    nextOrderId: -1
+    enabled: 1
+  maxActiveOrders: 6
+  flightDuration: 0.76
+  flightStagger: 0.1
+  flightArcHeight: 118
+  flightLift: 26
+  flightCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.5
+      value: 0.5
+      inSlope: 0.95
+      outSlope: 0.95
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  completePunchScale: 1.03
+  completePunchDuration: 0.3
+  readyPulseScale: 1.025
+  readyPulseDuration: 1.2
+  cardAppearDuration: 0.32
+  cardHideDuration: 0.48
+  cardSlideDuration: 0.4
+  cardSlideStartDelay: 0.22
+  cardSlideStagger: 0.08
+  cardAppearScale: 0.9
+  completeOverlayDuration: 0.22
+  useUnscaledTime: 1

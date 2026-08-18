@@ -36,7 +36,11 @@ namespace SanIsland.Merge
 
             Attach(selectionBack, cell.transform, 0);
             Attach(selectionFront, cell.transform, cell.transform.childCount - 1);
-            cell.ApplyContentSiblingOrder(selectionBack, selectionFront);
+            cell.ApplyContentSiblingOrder(
+                selectionBack,
+                selectionFront,
+                FindNamedChild(cell.transform, BoardOrderMarkerView.MarkerName),
+                FindNamedChild(cell.transform, BoardOrderMarkerView.MarkName));
             selectionBack.gameObject.SetActive(true);
             selectionFront.gameObject.SetActive(true);
         }
@@ -79,6 +83,25 @@ namespace SanIsland.Merge
             rect.localScale = Vector3.one;
             rect.localRotation = Quaternion.identity;
             rect.SetSiblingIndex(Mathf.Clamp(siblingIndex, 0, parent.childCount - 1));
+        }
+
+        static RectTransform FindNamedChild(Transform parent, string childName)
+        {
+            if (parent == null || string.IsNullOrEmpty(childName))
+            {
+                return null;
+            }
+
+            for (var i = 0; i < parent.childCount; i++)
+            {
+                var child = parent.GetChild(i) as RectTransform;
+                if (child != null && child.name == childName)
+                {
+                    return child;
+                }
+            }
+
+            return null;
         }
 
         static void DisableRaycasts(RectTransform root)

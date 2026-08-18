@@ -48,6 +48,10 @@ MonoBehaviour:
     m_Localized: No space to restore item
     m_Metadata:
       m_Items: []
+  - m_Id: 1030742023
+    m_Localized: Required items are missing
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace SanIsland.Merge
@@ -10,6 +11,8 @@ namespace SanIsland.Merge
         readonly Dictionary<int, int> _cellRefCount = new Dictionary<int, int>(8);
         readonly Dictionary<int, List<int>> _tokenCells = new Dictionary<int, List<int>>(8);
         int _nextToken;
+
+        public event Action Changed;
 
         public bool IsLocked(int cellIndex)
         {
@@ -37,6 +40,7 @@ namespace SanIsland.Merge
             }
 
             _tokenCells[token] = cells;
+            Changed?.Invoke();
             return token;
         }
 
@@ -62,6 +66,8 @@ namespace SanIsland.Merge
             {
                 _tokenCells.Remove(token);
             }
+
+            Changed?.Invoke();
         }
 
         public void Release(int token)
@@ -77,12 +83,14 @@ namespace SanIsland.Merge
             }
 
             _tokenCells.Remove(token);
+            Changed?.Invoke();
         }
 
         public void ReleaseAll()
         {
             _cellRefCount.Clear();
             _tokenCells.Clear();
+            Changed?.Invoke();
         }
 
         public string DebugDescribeLockedCells()

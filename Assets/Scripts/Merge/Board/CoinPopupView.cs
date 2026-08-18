@@ -98,8 +98,14 @@ namespace SanIsland.Merge
 
         public bool Tick(float dt)
         {
-            if (!_playing || _config == null)
+            if (!_playing)
             {
+                return false;
+            }
+
+            if (_config == null)
+            {
+                HideImmediate();
                 return false;
             }
 

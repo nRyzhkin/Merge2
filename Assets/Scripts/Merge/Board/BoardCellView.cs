@@ -475,17 +475,24 @@ namespace SanIsland.Merge
             return t * t * (3f - 2f * t);
         }
 
-        public void ApplyContentSiblingOrder(RectTransform selectionBack, RectTransform selectionFront)
+        public void ApplyContentSiblingOrder(
+            RectTransform selectionBack,
+            RectTransform selectionFront,
+            RectTransform orderedHighlight = null,
+            RectTransform orderedMark = null)
         {
             var order = 0;
             SetSibling(selectionBack, ref order);
+            SetSibling(orderedHighlight, ref order);
             SetSibling(itemImage != null ? itemImage.rectTransform : null, ref order);
+            SetSibling(orderedMark, ref order);
             SetSibling(blockerImage != null ? blockerImage.rectTransform : null, ref order);
             SetSibling(lockOverlayImage != null ? lockOverlayImage.rectTransform : null, ref order);
             if (generatorChargeIndicator != null && generatorChargeIndicator.RechargeSlider != null)
             {
                 SetSibling(generatorChargeIndicator.RechargeSlider.transform as RectTransform, ref order);
             }
+
             SetSibling(selectionFront, ref order);
             SetSibling(fxRoot, ref order);
         }

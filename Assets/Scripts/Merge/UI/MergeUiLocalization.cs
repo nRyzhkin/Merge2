@@ -12,6 +12,7 @@ namespace SanIsland.Merge
         public const string SellActionKey = "ui.action.sell";
         public const string UndoActionKey = "ui.action.undo";
         public const string UndoNoSpaceKey = "ui.message.undo_no_space";
+        public const string OrderItemsMissingKey = "ui.message.order_items_missing";
 
         public static string GetLevelLabel(int level)
         {

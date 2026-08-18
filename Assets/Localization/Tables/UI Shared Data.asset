@@ -43,6 +43,10 @@ MonoBehaviour:
     m_Key: ui.message.undo_no_space
     m_Metadata:
       m_Items: []
+  - m_Id: 1030742023
+    m_Key: ui.message.order_items_missing
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

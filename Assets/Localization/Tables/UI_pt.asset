@@ -48,6 +48,10 @@ MonoBehaviour:
     m_Localized: "Sem espa\xE7o para restaurar"
     m_Metadata:
       m_Items: []
+  - m_Id: 1030742023
+    m_Localized: Itens necess\xE1rios ausentes
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

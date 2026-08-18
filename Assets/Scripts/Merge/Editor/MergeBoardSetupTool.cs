@@ -21,6 +21,7 @@ namespace SanIsland.Merge.Editor
         public const string GeneratorProductionDatabasePath = "Assets/Data/GeneratorProductionDatabase.asset";
         public const string EconomyConfigPath = "Assets/Data/EconomyConfig.asset";
         public const string IconCatalogPath = "Assets/Data/IconCatalog.asset";
+        public const string OrderDatabasePath = "Assets/Data/OrderDatabase.asset";
         public const string CoinPopupPrefabPath = "Assets/Prefabs/Merge/CoinPopup.prefab";
         public const string CoinIconPath = "Assets/Layer Lab/GUI-LifeGame/ResourcesData/Sprites/icon_money_bundle_128.png";
         public const string EnergyIconPath = "Assets/Layer Lab/GUI-LifeGame/ResourcesData/Sprites/icon_energy_lightning_128.png";
@@ -426,6 +427,7 @@ namespace SanIsland.Merge.Editor
             WireEnergy(controller);
             WireIcons(controller);
             WireEconomy(controller);
+            WireOrders(controller);
         }
 
         static void WireEnergy(BoardController controller)
@@ -547,6 +549,111 @@ namespace SanIsland.Merge.Editor
 
             sellButton.BindLocal();
             EditorUtility.SetDirty(sellButton);
+        }
+
+        static void WireOrders(BoardController controller)
+        {
+            var database = EnsureOrderDatabase(controller.ItemDatabase);
+            var orders = controller.GetComponent<OrderSystem>();
+            if (orders == null)
+            {
+                orders = Undo.AddComponent<OrderSystem>(controller.gameObject);
+            }
+
+            orders.Configure(controller, database);
+            EditorUtility.SetDirty(orders);
+
+            var hudRoot = FindNamedTransform(OrdersHudView.OrdersRootName);
+            OrdersHudView hud = null;
+            if (hudRoot == null)
+            {
+                Debug.LogWarning("[MergeBoardSetup] Group_Orders was not found. Scene already expected to contain the designer Order UI.");
+            }
+            else
+            {
+                hud = hudRoot.GetComponent<OrdersHudView>();
+                if (hud == null)
+                {
+                    hud = Undo.AddComponent<OrdersHudView>(hudRoot.gameObject);
+                }
+
+                for (var i = 0; i < hudRoot.childCount; i++)
+                {
+                    var child = hudRoot.GetChild(i);
+                    if (child == null || !child.name.StartsWith("Order"))
+                    {
+                        continue;
+                    }
+
+                    var card = child.GetComponent<OrderCardView>();
+                    if (card == null)
+                    {
+                        card = Undo.AddComponent<OrderCardView>(child.gameObject);
+                    }
+
+                    if (child.GetComponent<Button>() == null)
+                    {
+                        var button = Undo.AddComponent<Button>(child.gameObject);
+                        button.transition = Selectable.Transition.None;
+                    }
+
+                    var nestedComplete = child.GetComponentsInChildren<Button>(true);
+                    for (var b = 0; b < nestedComplete.Length; b++)
+                    {
+                        if (nestedComplete[b] != null && nestedComplete[b].gameObject != child.gameObject)
+                        {
+                            nestedComplete[b].enabled = false;
+                        }
+                    }
+
+                    card.BindLocal();
+                    EditorUtility.SetDirty(card);
+                }
+
+                hud.BindLocal();
+                EditorUtility.SetDirty(hud);
+            }
+
+            var presenter = controller.GetComponent<BoardOrderPresenter>();
+            if (presenter == null)
+            {
+                presenter = Undo.AddComponent<BoardOrderPresenter>(controller.gameObject);
+            }
+
+            presenter.Configure(controller, controller.DragView, database, LoadCoinPopupPrefab(), hud);
+            EditorUtility.SetDirty(presenter);
+
+            var markers = controller.GetComponent<BoardOrderMarkerView>();
+            if (markers == null)
+            {
+                markers = Undo.AddComponent<BoardOrderMarkerView>(controller.gameObject);
+            }
+
+            var ordered = FindNamedTransform(BoardOrderMarkerView.MarkerName);
+            if (ordered == null)
+            {
+                Debug.LogWarning("[MergeBoardSetup] Ordered was not found. Ready-order cell markers will be skipped until the designer object exists.");
+            }
+            else
+            {
+                markers.Bind(ordered);
+                EditorUtility.SetDirty(markers);
+            }
+        }
+
+        static OrderDatabase EnsureOrderDatabase(MergeItemDatabase items)
+        {
+            EnsureFolder("Assets/Data");
+            var database = AssetDatabase.LoadAssetAtPath<OrderDatabase>(OrderDatabasePath);
+            if (database == null)
+            {
+                database = ScriptableObject.CreateInstance<OrderDatabase>();
+                AssetDatabase.CreateAsset(database, OrderDatabasePath);
+            }
+
+            database.EnsureDevelopmentOrders(items);
+            EditorUtility.SetDirty(database);
+            return database;
         }
 
         static List<RectTransform> FindNamedHudRoots(string objectName)

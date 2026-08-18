@@ -48,6 +48,8 @@ namespace SanIsland.Merge
         readonly BoardInteractionLockService _interactionLocks = new BoardInteractionLockService();
         readonly List<int> _orthogonalScratch = new List<int>(4);
         readonly List<BoxRevealResult> _boxRevealScratch = new List<BoxRevealResult>(4);
+        readonly bool[] _orderCellUsed = new bool[BoardState.CellCount];
+        readonly List<ConsumedBoardItem> _orderCollectScratch = new List<ConsumedBoardItem>(8);
         readonly GeneratorInstanceService _generatorInstances = new GeneratorInstanceService();
         readonly GameTimeProvider _gameTimeProvider = new GameTimeProvider();
         readonly IGeneratorRandom _generatorRandom = new GeneratorRandomService();
@@ -128,6 +130,7 @@ namespace SanIsland.Merge
         public event Action BoxItemRevealed;
         public event Action GeneratorProduced;
         public event Action<int, int> GeneratorRareDrop;
+        public event Action BoardContentsChanged;
 
         void Awake()
         {
@@ -158,6 +161,7 @@ namespace SanIsland.Merge
             EnsureEnergySystem();
             EnsureIcons();
             EnsureSell();
+            EnsureOrders();
 
             if (useDevelopmentBoardState)
             {
@@ -213,6 +217,10 @@ namespace SanIsland.Merge
             sellPresenter?.AbortAll();
             var sellSystem = GetComponent<SellSystem>();
             sellSystem?.ClearLastSale();
+            var orderPresenter = GetComponent<BoardOrderPresenter>();
+            orderPresenter?.AbortAll();
+            var orderSystem = GetComponent<OrderSystem>();
+            orderSystem?.ResetDevelopment();
 
             _interactionLocks.ReleaseAll();
 
@@ -230,6 +238,7 @@ namespace SanIsland.Merge
             BindAndRefresh();
             UpdateDebug();
             BoardLayoutValidator.Validate(_state, itemDatabase);
+            NotifyBoardContentsChanged();
         }
 
         public void SelectCell(int index)
@@ -363,6 +372,7 @@ namespace SanIsland.Merge
 
             ClearSelection();
             UpdateDebug();
+            NotifyBoardContentsChanged();
             return true;
         }
 
@@ -396,6 +406,7 @@ namespace SanIsland.Merge
 
             SelectCell(placedIndex);
             UpdateDebug();
+            NotifyBoardContentsChanged();
             return true;
         }
 
@@ -579,6 +590,7 @@ namespace SanIsland.Merge
             }
 
             UpdateDebug();
+            NotifyBoardContentsChanged();
             return true;
         }
 
@@ -738,6 +750,7 @@ namespace SanIsland.Merge
             }
 
             UpdateDebug();
+            NotifyBoardContentsChanged();
             return new DisplaceResult
             {
                 Success = true,
@@ -992,6 +1005,7 @@ namespace SanIsland.Merge
             }
 
             UpdateDebug();
+            NotifyBoardContentsChanged();
             return result;
         }
 
@@ -1087,6 +1101,7 @@ namespace SanIsland.Merge
             UpdateDebug();
             MergeCommitted?.Invoke(toIndex, nextItemId);
             RevealAdjacentBoxes(toIndex);
+            NotifyBoardContentsChanged();
             return result;
         }
 
@@ -1136,6 +1151,7 @@ namespace SanIsland.Merge
             {
                 EnsureBoxReady();
                 boxRevealPresenter?.Play(_boxRevealScratch);
+                NotifyBoardContentsChanged();
             }
 
             return _boxRevealScratch;
@@ -1225,6 +1241,7 @@ namespace SanIsland.Merge
             EnsureGeneratorReady();
             generatorPresenter?.Play(result);
             NotifyGeneratorProduced();
+            NotifyBoardContentsChanged();
             if (itemDatabase != null &&
                 itemDatabase.TryGetById(result.GeneratedItemId, out var outputItem) &&
                 outputItem != null &&
@@ -1338,6 +1355,7 @@ namespace SanIsland.Merge
             // Do NOT RefreshCell here — BoardState owns the item, GeneratorFlightView owns visuals
             // until BoardGeneratorPresenter hands off.
             UpdateDebug();
+            NotifyBoardContentsChanged();
             return new GeneratorSpawnResult
             {
                 Success = true,
@@ -1628,6 +1646,328 @@ namespace SanIsland.Merge
             }
 
             presenter.Configure(this, dragView, sell.Config);
+        }
+
+        void EnsureOrders()
+        {
+            EnsureSell();
+            var orders = GetComponent<OrderSystem>();
+            if (orders == null)
+            {
+                orders = OrderSystem.Current;
+            }
+
+            if (orders == null)
+            {
+                orders = gameObject.AddComponent<OrderSystem>();
+            }
+
+            orders.Configure(this, orders.Database);
+            var presenter = GetComponent<BoardOrderPresenter>();
+            if (presenter == null)
+            {
+                presenter = gameObject.AddComponent<BoardOrderPresenter>();
+            }
+
+            presenter.Configure(this, dragView, orders.Database, null, presenter.HudView);
+            EnsureOrderMarkers();
+        }
+
+        void EnsureOrderMarkers()
+        {
+            var markers = GetComponent<BoardOrderMarkerView>();
+            if (markers == null)
+            {
+                markers = gameObject.AddComponent<BoardOrderMarkerView>();
+            }
+
+            if (markers.HasTemplate)
+            {
+                return;
+            }
+
+            var selection = selectionView != null ? selectionView : GetComponent<BoardSelectionView>();
+            var searchParent = selection != null && selection.SelectionBack != null
+                ? selection.SelectionBack.parent
+                : null;
+            if (searchParent == null)
+            {
+                return;
+            }
+
+            for (var i = 0; i < searchParent.childCount; i++)
+            {
+                var child = searchParent.GetChild(i) as RectTransform;
+                if (child != null && child.name == BoardOrderMarkerView.MarkerName)
+                {
+                    markers.Bind(child);
+                    return;
+                }
+            }
+        }
+
+        void NotifyBoardContentsChanged()
+        {
+            BoardContentsChanged?.Invoke();
+        }
+
+        public bool CanFulfillOrderRequirements(IReadOnlyList<OrderRequirement> requirements)
+        {
+            return TryCollectOrderItems(requirements, _orderCollectScratch, NoSelectionIndex, resetUsed: true);
+        }
+
+        public int CountAvailableOrderItems(int itemId)
+        {
+            var count = 0;
+            if (_state == null || itemId == BoardCellState.EmptyItemId)
+            {
+                return 0;
+            }
+
+            for (var i = 0; i < BoardState.CellCount; i++)
+            {
+                if (CanCountCellForOrder(i) && _state.GetCell(i).ItemId == itemId)
+                {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+
+        public bool TryConsumeOrderItems(
+            IReadOnlyList<OrderRequirement> requirements,
+            List<ConsumedBoardItem> consumed,
+            int preferredCellIndex = NoSelectionIndex)
+        {
+            if (consumed == null)
+            {
+                return false;
+            }
+
+            consumed.Clear();
+            if (!TryCollectOrderItems(requirements, consumed, preferredCellIndex, resetUsed: true))
+            {
+                return false;
+            }
+
+            var consumedSelected = false;
+            for (var i = 0; i < consumed.Count; i++)
+            {
+                var entry = consumed[i];
+                var view = boardView != null ? boardView.GetCellView(entry.CellIndex) : null;
+                if (view != null && _dragController != null)
+                {
+                    _dragController.PrepareCellForPossiblePickup(view);
+                }
+
+                if (!CanCountCellForOrder(entry.CellIndex) ||
+                    _state.GetCell(entry.CellIndex).ItemId != entry.ItemId)
+                {
+                    consumed.Clear();
+                    return false;
+                }
+
+                view = boardView != null ? boardView.GetCellView(entry.CellIndex) : null;
+                if (view != null && view.ItemImage != null)
+                {
+                    entry.Sprite = view.ItemImage.sprite;
+                    var rectSize = view.ItemImage.rectTransform.rect.size;
+                    entry.Size = rectSize.x > 1f && rectSize.y > 1f ? rectSize : new Vector2(170f, 170f);
+                }
+                else if (itemDatabase != null && itemDatabase.TryGetById(entry.ItemId, out var data) && data != null)
+                {
+                    entry.Sprite = data.Icon;
+                    entry.Size = new Vector2(170f, 170f);
+                }
+
+                if (entry.Sprite == null &&
+                    _dragController != null &&
+                    _dragController.IsBusyWithCell(entry.CellIndex) &&
+                    dragView != null &&
+                    dragView.TryCaptureVisualSnapshot(out var dragSprite, out var dragSize, out _, out _, out _, out _))
+                {
+                    entry.Sprite = dragSprite;
+                    entry.Size = dragSize.x > 1f && dragSize.y > 1f ? dragSize : new Vector2(170f, 170f);
+                }
+
+                consumed[i] = entry;
+                if (_selectedCellIndex == entry.CellIndex)
+                {
+                    consumedSelected = true;
+                }
+            }
+
+            for (var i = 0; i < consumed.Count; i++)
+            {
+                _state.GetCell(consumed[i].CellIndex).Clear();
+                if (boardView != null)
+                {
+                    boardView.RefreshCell(consumed[i].CellIndex);
+                }
+            }
+
+            if (consumedSelected)
+            {
+                ClearSelection();
+            }
+
+            UpdateDebug();
+            NotifyBoardContentsChanged();
+            return true;
+        }
+
+        public void CollectReadyOrderHighlightCells(
+            IReadOnlyList<int> activeOrderIds,
+            HashSet<int> readyOrderIds,
+            OrderDatabase database,
+            List<int> cells)
+        {
+            if (cells == null)
+            {
+                return;
+            }
+
+            cells.Clear();
+            if (activeOrderIds == null || readyOrderIds == null || database == null)
+            {
+                return;
+            }
+
+            for (var i = 0; i < _orderCellUsed.Length; i++)
+            {
+                _orderCellUsed[i] = false;
+            }
+
+            for (var i = 0; i < activeOrderIds.Count; i++)
+            {
+                var orderId = activeOrderIds[i];
+                if (!readyOrderIds.Contains(orderId) ||
+                    !database.TryGetById(orderId, out var order) ||
+                    order == null)
+                {
+                    continue;
+                }
+
+                if (!TryCollectOrderItems(order.requirements, _orderCollectScratch, NoSelectionIndex, resetUsed: false))
+                {
+                    continue;
+                }
+
+                for (var c = 0; c < _orderCollectScratch.Count; c++)
+                {
+                    var index = _orderCollectScratch[c].CellIndex;
+                    if (!cells.Contains(index))
+                    {
+                        cells.Add(index);
+                    }
+                }
+            }
+        }
+
+        bool TryCollectOrderItems(
+            IReadOnlyList<OrderRequirement> requirements,
+            List<ConsumedBoardItem> collected,
+            int preferredCellIndex,
+            bool resetUsed)
+        {
+            collected.Clear();
+            if (requirements == null || _state == null || requirements.Count == 0)
+            {
+                return false;
+            }
+
+            if (resetUsed)
+            {
+                for (var i = 0; i < _orderCellUsed.Length; i++)
+                {
+                    _orderCellUsed[i] = false;
+                }
+            }
+
+            for (var r = 0; r < requirements.Count; r++)
+            {
+                var requirement = requirements[r];
+                if (requirement == null || requirement.itemId == BoardCellState.EmptyItemId || requirement.amount < 1)
+                {
+                    collected.Clear();
+                    return false;
+                }
+
+                var remaining = requirement.amount;
+                if (TryTakeOrderCell(preferredCellIndex, requirement.itemId, r, collected))
+                {
+                    remaining--;
+                }
+
+                for (var i = 0; i < BoardState.CellCount && remaining > 0; i++)
+                {
+                    if (TryTakeOrderCell(i, requirement.itemId, r, collected))
+                    {
+                        remaining--;
+                    }
+                }
+
+                if (remaining > 0)
+                {
+                    collected.Clear();
+                    return false;
+                }
+            }
+
+            return collected.Count > 0;
+        }
+
+        bool TryTakeOrderCell(int index, int itemId, int requirementIndex, List<ConsumedBoardItem> collected)
+        {
+            if (index == NoSelectionIndex ||
+                _state == null ||
+                !_state.IsValidIndex(index) ||
+                _orderCellUsed[index] ||
+                !CanCountCellForOrder(index))
+            {
+                return false;
+            }
+
+            if (_state.GetCell(index).ItemId != itemId)
+            {
+                return false;
+            }
+
+            _orderCellUsed[index] = true;
+            collected.Add(new ConsumedBoardItem
+            {
+                CellIndex = index,
+                ItemId = itemId,
+                RequirementIndex = requirementIndex
+            });
+            return true;
+        }
+
+        bool CanCountCellForOrder(int index)
+        {
+            if (_state == null || !_state.IsValidIndex(index))
+            {
+                return false;
+            }
+
+            if (IsCellInteractionLocked(index))
+            {
+                return false;
+            }
+
+            var cell = _state.GetCell(index);
+            if (cell == null || !cell.HasItem || cell.IsBox || cell.ItemLocked)
+            {
+                return false;
+            }
+
+            if (itemDatabase == null || !itemDatabase.TryGetById(cell.ItemId, out var data) || data == null)
+            {
+                return false;
+            }
+
+            return data.Kind == MergeItemKind.Normal;
         }
 
         void BindAndRefresh()

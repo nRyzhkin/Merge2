@@ -159,6 +159,14 @@ namespace SanIsland.Merge.Editor
             UpsertUiKey(collection, MergeUiLocalization.UndoNoSpaceKey, "fr", "Pas de place pour restaurer");
             UpsertUiKey(collection, MergeUiLocalization.UndoNoSpaceKey, "pt", "Sem espaço para restaurar");
             UpsertUiKey(collection, MergeUiLocalization.UndoNoSpaceKey, "tr", "Geri koymak için yer yok");
+
+            UpsertUiKey(collection, MergeUiLocalization.OrderItemsMissingKey, "en", "Required items are missing");
+            UpsertUiKey(collection, MergeUiLocalization.OrderItemsMissingKey, "ru", "Нужные предметы отсутствуют");
+            UpsertUiKey(collection, MergeUiLocalization.OrderItemsMissingKey, "de", "Benötigte Gegenstände fehlen");
+            UpsertUiKey(collection, MergeUiLocalization.OrderItemsMissingKey, "es", "Faltan los objetos requeridos");
+            UpsertUiKey(collection, MergeUiLocalization.OrderItemsMissingKey, "fr", "Objets requis manquants");
+            UpsertUiKey(collection, MergeUiLocalization.OrderItemsMissingKey, "pt", "Itens necessários ausentes");
+            UpsertUiKey(collection, MergeUiLocalization.OrderItemsMissingKey, "tr", "Gerekli eşyalar eksik");
             AssetDatabase.SaveAssets();
         }
 

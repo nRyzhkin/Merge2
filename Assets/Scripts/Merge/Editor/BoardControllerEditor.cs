@@ -120,6 +120,23 @@ namespace SanIsland.Merge.Editor
                 }
                 EditorGUILayout.EndHorizontal();
             }
+
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("Orders Debug", EditorStyles.boldLabel);
+            var orders = controller.GetComponent<OrderSystem>();
+            using (new EditorGUI.DisabledScope(!Application.isPlaying || orders == null))
+            {
+                var active = Application.isPlaying && orders != null ? string.Join(",", orders.State.activeOrderIds) : string.Empty;
+                var queued = Application.isPlaying && orders != null ? string.Join(",", orders.State.queuedOrderIds) : string.Empty;
+                var completed = Application.isPlaying && orders != null ? string.Join(",", orders.State.completedOrderIds) : string.Empty;
+                EditorGUILayout.LabelField("Active", active);
+                EditorGUILayout.LabelField("Queued", queued);
+                EditorGUILayout.LabelField("Completed", completed);
+                if (GUILayout.Button("Reset Development Orders"))
+                {
+                    orders.ResetDevelopment();
+                }
+            }
         }
     }
 }

@@ -251,6 +251,54 @@ namespace SanIsland.Merge
             }
         }
 
+        public void CompleteDropAsConsumed()
+        {
+            ClearInteractionPreviews();
+            _waitingDisplaceADrop = false;
+            if (dragView != null)
+            {
+                dragView.HideImmediate();
+            }
+
+            ResetToIdle();
+        }
+
+        bool TryCompleteReadyOrderAtPointer()
+        {
+            if (_itemId == BoardCellState.EmptyItemId || !IsPointerRightOfBoard())
+            {
+                return false;
+            }
+
+            var orders = OrderSystem.Current;
+            if (orders == null || !orders.TryGetReadyOrderIdForItem(_itemId, out var orderId))
+            {
+                return false;
+            }
+
+            return orders.TryCompleteOrder(orderId);
+        }
+
+        bool IsPointerRightOfBoard()
+        {
+            if (boardController == null || boardController.BoardRoot == null)
+            {
+                return false;
+            }
+
+            var root = boardController.BoardRoot;
+            var canvas = root.GetComponentInParent<Canvas>();
+            var camera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay
+                ? canvas.worldCamera
+                : null;
+            var corners = new Vector3[4];
+            root.GetWorldCorners(corners);
+            var right = Mathf.Max(
+                RectTransformUtility.WorldToScreenPoint(camera, corners[2]).x,
+                RectTransformUtility.WorldToScreenPoint(camera, corners[3]).x);
+            return _pointerScreen.x > right;
+        }
+
         void Update()
         {
             if (_phase == BoardDragPhase.Idle || config == null || dragView == null)
@@ -473,7 +521,14 @@ namespace SanIsland.Merge
                 return;
             }
 
-            // 3) Directional throw-to-merge assist (priority over displacement).
+            // 3) Drop to the right of the board onto a ready order that needs this item.
+            if (underIndex == BoardController.NoSelectionIndex &&
+                TryCompleteReadyOrderAtPointer())
+            {
+                return;
+            }
+
+            // 4) Directional throw-to-merge assist (priority over displacement).
             if (TryFindDirectionalMergeAssist(out var assistIndex, out var assistCobweb))
             {
                 if (assistCobweb)
@@ -488,7 +543,7 @@ namespace SanIsland.Merge
                 return;
             }
 
-            // 4) Occupied movable displacement — A keeps the cell, B yields.
+            // 5) Occupied movable displacement — A keeps the cell, B yields.
             if (underIndex != BoardController.NoSelectionIndex &&
                 boardController != null &&
                 boardController.CanDisplaceOccupiedTarget(underIndex) &&
@@ -503,7 +558,7 @@ namespace SanIsland.Merge
                 }
             }
 
-            // 5–6) Source return / nearest-empty fallback.
+            // 6) Source return / nearest-empty fallback.
             BeginMoveOrReturn(ResolveDropIndex());
         }
 
