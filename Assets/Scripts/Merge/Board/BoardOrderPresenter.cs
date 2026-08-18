@@ -237,7 +237,9 @@ namespace SanIsland.Merge
             {
                 reward = order.coinReward;
             }
-            else if (database != null && database.TryGetById(sequence.OrderId, out var found) && found != null)
+            else if (OrderSystem.Current != null &&
+                     OrderSystem.Current.TryGetOrder(sequence.OrderId, out var found) &&
+                     found != null)
             {
                 reward = found.coinReward;
             }

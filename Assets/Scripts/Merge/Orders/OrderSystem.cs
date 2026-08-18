@@ -12,10 +12,18 @@ namespace SanIsland.Merge
 
         [SerializeField] BoardController boardController;
         [SerializeField] OrderDatabase database;
+        [SerializeField] OrderGenerationConfig generationConfig;
+        [SerializeField] bool useProceduralGeneration = true;
 
         readonly OrderState _state = new OrderState();
         readonly HashSet<int> _readyOrderIds = new HashSet<int>();
         readonly List<ConsumedBoardItem> _consumeScratch = new List<ConsumedBoardItem>(8);
+        readonly Dictionary<int, OrderDefinition> _runtimeOrders = new Dictionary<int, OrderDefinition>(16);
+        readonly List<OrderDefinition> _activeOrderScratch = new List<OrderDefinition>(8);
+        readonly GameProgressionState _progression = new GameProgressionState();
+        ProceduralOrderGenerator _generator;
+        int[] _generatedSlotOrderIds;
+        int _nextGeneratedId = 200000;
         bool _wasDragBusy;
 
         public OrderState State => _state;
@@ -30,6 +38,8 @@ namespace SanIsland.Merge
 
         public event Action Changed;
         public event Action<int> Completed;
+        public GameProgressionState Progression => _progression;
+        public bool UseProceduralGeneration => useProceduralGeneration && generationConfig != null;
 
         void Awake()
         {
@@ -83,11 +93,16 @@ namespace SanIsland.Merge
             RecalculateReadiness();
         }
 
-        public void Configure(BoardController controller, OrderDatabase orderDatabase)
+        public void Configure(BoardController controller, OrderDatabase orderDatabase, OrderGenerationConfig generation = null)
         {
             UnsubscribeBoard();
             boardController = controller;
             database = orderDatabase;
+            if (generation != null)
+            {
+                generationConfig = generation;
+            }
+
             EnsureReady();
             SubscribeBoard();
             if (_state.activeOrderIds.Count == 0 &&
@@ -130,6 +145,17 @@ namespace SanIsland.Merge
 
             _state.Clear();
             _readyOrderIds.Clear();
+            _runtimeOrders.Clear();
+            _generatedSlotOrderIds = null;
+            _progression.ResetDevelopment();
+            EnsureGenerator();
+            if (UseProceduralGeneration)
+            {
+                FillEmptyGeneratedSlots();
+                RecalculateReadiness();
+                return;
+            }
+
             if (database == null)
             {
                 Changed?.Invoke();
@@ -172,7 +198,7 @@ namespace SanIsland.Merge
         public bool TryGetReadyOrderIdForItem(int itemId, out int orderId)
         {
             orderId = 0;
-            if (itemId == BoardCellState.EmptyItemId || database == null)
+            if (itemId == BoardCellState.EmptyItemId)
             {
                 return false;
             }
@@ -181,7 +207,7 @@ namespace SanIsland.Merge
             {
                 var candidateId = _state.activeOrderIds[i];
                 if (!_readyOrderIds.Contains(candidateId) ||
-                    !database.TryGetById(candidateId, out var order) ||
+                    !TryGetOrder(candidateId, out var order) ||
                     order == null ||
                     !OrderRequiresItem(order, itemId))
                 {
@@ -203,18 +229,30 @@ namespace SanIsland.Merge
             }
 
             cells.Clear();
-            if (boardController == null || database == null)
+            if (boardController == null)
             {
                 return;
             }
 
-            boardController.CollectReadyOrderHighlightCells(_state.activeOrderIds, _readyOrderIds, database, cells);
+            _activeOrderScratch.Clear();
+            for (var i = 0; i < _state.activeOrderIds.Count; i++)
+            {
+                var orderId = _state.activeOrderIds[i];
+                if (!_readyOrderIds.Contains(orderId) || !TryGetOrder(orderId, out var order) || order == null)
+                {
+                    continue;
+                }
+
+                _activeOrderScratch.Add(order);
+            }
+
+            boardController.CollectReadyOrderHighlightCells(_activeOrderScratch, cells);
         }
 
         public bool TryActivateOrder(int orderId)
         {
             EnsureReady();
-            if (database == null || !database.TryGetById(orderId, out var order) || order == null || !order.enabled)
+            if (!TryGetOrder(orderId, out var order) || order == null || !order.enabled)
             {
                 return false;
             }
@@ -240,7 +278,7 @@ namespace SanIsland.Merge
         public bool TryCompleteOrder(int orderId)
         {
             EnsureReady();
-            if (boardController == null || database == null || !database.TryGetById(orderId, out var order) || order == null)
+            if (boardController == null || !TryGetOrder(orderId, out var order) || order == null)
             {
                 return false;
             }
@@ -315,6 +353,7 @@ namespace SanIsland.Merge
 
             EnqueueNext(order.nextOrderId);
             DrainQueue();
+            FillEmptyGeneratedSlots();
             RecalculateReadiness();
             Completed?.Invoke(orderId);
             return true;
@@ -323,7 +362,7 @@ namespace SanIsland.Merge
         public void RecalculateReadiness()
         {
             _readyOrderIds.Clear();
-            if (database == null || boardController == null)
+            if (boardController == null)
             {
                 Changed?.Invoke();
                 return;
@@ -332,7 +371,7 @@ namespace SanIsland.Merge
             for (var i = 0; i < _state.activeOrderIds.Count; i++)
             {
                 var orderId = _state.activeOrderIds[i];
-                if (database.TryGetById(orderId, out var order) && EvaluateReady(order))
+                if (TryGetOrder(orderId, out var order) && EvaluateReady(order))
                 {
                     _readyOrderIds.Add(orderId);
                 }
@@ -353,12 +392,12 @@ namespace SanIsland.Merge
 
         void EnqueueNext(int nextOrderId)
         {
-            if (nextOrderId == OrderDefinition.NoNextOrderId || database == null)
+            if (nextOrderId == OrderDefinition.NoNextOrderId)
             {
                 return;
             }
 
-            if (!database.TryGetById(nextOrderId, out var next) || next == null || !next.enabled)
+            if (!TryGetOrder(nextOrderId, out var next) || next == null || !next.enabled)
             {
                 return;
             }
@@ -373,11 +412,6 @@ namespace SanIsland.Merge
 
         void DrainQueue()
         {
-            if (database == null)
-            {
-                return;
-            }
-
             var maxActive = GetMaxActiveOrders();
             while (_state.activeOrderIds.Count < maxActive && _state.queuedOrderIds.Count > 0)
             {
@@ -388,7 +422,7 @@ namespace SanIsland.Merge
                     continue;
                 }
 
-                if (!database.TryGetById(nextId, out var next) || next == null || !next.enabled)
+                if (!TryGetOrder(nextId, out var next) || next == null || !next.enabled)
                 {
                     continue;
                 }
@@ -397,9 +431,168 @@ namespace SanIsland.Merge
             }
         }
 
+        public bool TryGetOrder(int orderId, out OrderDefinition order)
+        {
+            if (_runtimeOrders.TryGetValue(orderId, out order) && order != null)
+            {
+                return true;
+            }
+
+            if (database != null)
+            {
+                return database.TryGetById(orderId, out order);
+            }
+
+            order = null;
+            return false;
+        }
+
+        public void FillEmptyGeneratedSlots()
+        {
+            if (!UseProceduralGeneration || boardController == null || boardController.State == null)
+            {
+                return;
+            }
+
+            EnsureGenerator();
+            if (_generator == null)
+            {
+                return;
+            }
+
+            var slotCount = generationConfig.SlotCount;
+            if (_generatedSlotOrderIds == null || _generatedSlotOrderIds.Length != slotCount)
+            {
+                _generatedSlotOrderIds = new int[slotCount];
+            }
+
+            for (var i = 0; i < slotCount; i++)
+            {
+                var boundId = _generatedSlotOrderIds[i];
+                if (boundId != 0 && !_state.activeOrderIds.Contains(boundId))
+                {
+                    _generatedSlotOrderIds[i] = 0;
+                }
+            }
+
+            CopyActiveDefinitions(_activeOrderScratch);
+            var warned = false;
+            for (var i = 0; i < slotCount; i++)
+            {
+                if (_generatedSlotOrderIds[i] != 0 || _state.activeOrderIds.Count >= slotCount)
+                {
+                    continue;
+                }
+
+                var generated = _generator.TryGenerate(
+                    generationConfig.GetSlotDifficulty(i),
+                    _activeOrderScratch,
+                    _progression,
+                    boardController.Discovery,
+                    boardController.ItemDatabase,
+                    boardController.State,
+                    GetEconomyConfig(),
+                    boardController.GeneratorRandom,
+                    out var reason);
+                if (generated == null)
+                {
+                    if (!warned && !string.IsNullOrEmpty(reason))
+                    {
+                        Debug.LogWarning("[OrderGenerator] " + reason);
+                        warned = true;
+                    }
+
+                    continue;
+                }
+
+                var definition = RegisterGenerated(generated);
+                _state.activeOrderIds.Add(definition.id);
+                _generatedSlotOrderIds[i] = definition.id;
+                _activeOrderScratch.Add(definition);
+            }
+        }
+
         int GetMaxActiveOrders()
         {
+            if (UseProceduralGeneration)
+            {
+                return generationConfig.SlotCount;
+            }
+
             return database != null ? database.MaxActiveOrders : OrderDatabase.DefaultMaxActiveOrders;
+        }
+
+        void EnsureGenerator()
+        {
+            if (_generator == null && generationConfig != null)
+            {
+                _generator = new ProceduralOrderGenerator(generationConfig);
+            }
+        }
+
+        OrderDefinition RegisterGenerated(GeneratedOrderData data)
+        {
+            var id = _nextGeneratedId++;
+            var definition = new OrderDefinition
+            {
+                id = id,
+                internalKey = "generated_" + id,
+                localizationKey = string.Empty,
+                coinReward = data != null ? data.coinReward : 0,
+                nextOrderId = OrderDefinition.NoNextOrderId,
+                enabled = true,
+                requirements = new List<OrderRequirement>(2)
+            };
+            if (data != null && data.requirements != null)
+            {
+                for (var i = 0; i < data.requirements.Count; i++)
+                {
+                    var requirement = data.requirements[i];
+                    if (requirement == null)
+                    {
+                        continue;
+                    }
+
+                    definition.requirements.Add(new OrderRequirement
+                    {
+                        itemId = requirement.itemId,
+                        amount = requirement.amount < 1 ? 1 : requirement.amount
+                    });
+                }
+            }
+
+            data.id = definition.id;
+            _runtimeOrders[definition.id] = definition;
+            return definition;
+        }
+
+        void CopyActiveDefinitions(List<OrderDefinition> buffer)
+        {
+            buffer.Clear();
+            for (var i = 0; i < _state.activeOrderIds.Count; i++)
+            {
+                if (TryGetOrder(_state.activeOrderIds[i], out var order) && order != null)
+                {
+                    buffer.Add(order);
+                }
+            }
+        }
+
+        EconomyConfig GetEconomyConfig()
+        {
+            var sell = GetComponent<SellSystem>();
+            if (sell == null)
+            {
+                sell = SellSystem.Current;
+            }
+
+            return sell != null ? sell.Config : null;
+        }
+
+        void OnBoardContentsChanged()
+        {
+            FillEmptyGeneratedSlots();
+            RecalculateReadiness();
         }
 
         static bool OrderRequiresItem(OrderDefinition order, int itemId)
@@ -456,7 +649,7 @@ namespace SanIsland.Merge
                 return;
             }
 
-            boardController.BoardContentsChanged += RecalculateReadiness;
+            boardController.BoardContentsChanged += OnBoardContentsChanged;
             boardController.InteractionLocks.Changed += RecalculateReadiness;
         }
 
@@ -467,8 +660,38 @@ namespace SanIsland.Merge
                 return;
             }
 
-            boardController.BoardContentsChanged -= RecalculateReadiness;
+            boardController.BoardContentsChanged -= OnBoardContentsChanged;
             boardController.InteractionLocks.Changed -= RecalculateReadiness;
         }
+
+#if UNITY_EDITOR
+        public void DebugGenerateOrders(int count)
+        {
+            EnsureGenerator();
+            if (_generator == null)
+            {
+                Debug.LogWarning("[OrderGenerator] DebugGenerateOrders: no generator/config.");
+                return;
+            }
+
+            var progression = _progression;
+            if (progression.GetUnlockedFamilies().Count == 0)
+            {
+                progression = new GameProgressionState();
+                progression.ResetDevelopment();
+            }
+
+            var items = boardController != null ? boardController.ItemDatabase : null;
+            var report = _generator.DebugSimulateOrders(
+                count,
+                progression,
+                boardController != null ? boardController.Discovery : null,
+                items,
+                boardController != null ? boardController.State : null,
+                GetEconomyConfig(),
+                new GeneratorRandomService());
+            Debug.Log(report);
+        }
+#endif
     }
 }

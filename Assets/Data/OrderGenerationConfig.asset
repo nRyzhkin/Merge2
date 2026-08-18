@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c53f8ea40b126f9cc6e3daf27f48b512, type: 3}
+  m_Name: OrderGenerationConfig
+  m_EditorClassIdentifier: SanIsland.Merge::SanIsland.Merge.OrderGenerationConfig
+  slotDifficulties:
+  - 0
+  - 1
+  - 1
+  families:
+  - family: 1
+    enabledForOrders: 1
+    weight: 70
+  - family: 2
+    enabledForOrders: 1
+    weight: 70
+  - family: 3
+    enabledForOrders: 1
+    weight: 100
+  easy:
+    minCost: 2
+    maxCost: 6
+    minRequirements: 1
+    maxRequirements: 1
+    multiFamilyChance: 0
+    rewardMultiplier: 16
+  medium:
+    minCost: 7
+    maxCost: 16
+    minRequirements: 1
+    maxRequirements: 2
+    multiFamilyChance: 0.25
+    rewardMultiplier: 14
+  hard:
+    minCost: 17
+    maxCost: 32
+    minRequirements: 1
+    maxRequirements: 2
+    multiFamilyChance: 0.25
+    rewardMultiplier: 12
+  maxGenerationAttempts: 24
+  maxAmountPerRequirement: 2
+  minimumOrderVsSellMultiplier: 1.25

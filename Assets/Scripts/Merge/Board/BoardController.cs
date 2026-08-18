@@ -219,8 +219,6 @@ namespace SanIsland.Merge
             sellSystem?.ClearLastSale();
             var orderPresenter = GetComponent<BoardOrderPresenter>();
             orderPresenter?.AbortAll();
-            var orderSystem = GetComponent<OrderSystem>();
-            orderSystem?.ResetDevelopment();
 
             _interactionLocks.ReleaseAll();
 
@@ -236,6 +234,7 @@ namespace SanIsland.Merge
             _discovery.DiscoverFromBoard(_state);
             SyncGeneratorInstancesFromBoard();
             BindAndRefresh();
+            GetComponent<OrderSystem>()?.ResetDevelopment();
             UpdateDebug();
             BoardLayoutValidator.Validate(_state, itemDatabase);
             NotifyBoardContentsChanged();
@@ -1818,9 +1817,7 @@ namespace SanIsland.Merge
         }
 
         public void CollectReadyOrderHighlightCells(
-            IReadOnlyList<int> activeOrderIds,
-            HashSet<int> readyOrderIds,
-            OrderDatabase database,
+            IReadOnlyList<OrderDefinition> readyOrders,
             List<int> cells)
         {
             if (cells == null)
@@ -1829,7 +1826,7 @@ namespace SanIsland.Merge
             }
 
             cells.Clear();
-            if (activeOrderIds == null || readyOrderIds == null || database == null)
+            if (readyOrders == null)
             {
                 return;
             }
@@ -1839,12 +1836,10 @@ namespace SanIsland.Merge
                 _orderCellUsed[i] = false;
             }
 
-            for (var i = 0; i < activeOrderIds.Count; i++)
+            for (var i = 0; i < readyOrders.Count; i++)
             {
-                var orderId = activeOrderIds[i];
-                if (!readyOrderIds.Contains(orderId) ||
-                    !database.TryGetById(orderId, out var order) ||
-                    order == null)
+                var order = readyOrders[i];
+                if (order == null || order.requirements == null)
                 {
                     continue;
                 }

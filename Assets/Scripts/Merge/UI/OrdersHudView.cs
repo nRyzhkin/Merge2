@@ -209,6 +209,7 @@ namespace SanIsland.Merge
                 }
             }
 
+            var deferIncoming = animate && _hasPresented && HasOutgoingCard(assigned, wasActive);
             if (active != null)
             {
                 for (var a = 0; a < active.Count; a++)
@@ -216,6 +217,12 @@ namespace SanIsland.Merge
                     var orderId = active[a];
                     if (taken.Contains(orderId))
                     {
+                        continue;
+                    }
+
+                    if (deferIncoming)
+                    {
+                        _fillAfterMotion = true;
                         continue;
                     }
 
@@ -276,7 +283,10 @@ namespace SanIsland.Merge
                 }
 
                 OrderDefinition order = null;
-                database?.TryGetById(assigned[i], out order);
+                if (_orders != null)
+                {
+                    _orders.TryGetOrder(assigned[i], out order);
+                }
                 var ready = _orders != null && _orders.IsOrderReady(assigned[i]);
                 var isNew = card.BoundOrderId != assigned[i] || !wasActive[i];
                 if (card.HoldsCompletedVisual && card.BoundOrderId == assigned[i])
@@ -390,6 +400,30 @@ namespace SanIsland.Merge
 
             var presenter = _orders.GetComponent<BoardOrderPresenter>();
             return presenter != null && presenter.IsPresenting;
+        }
+
+        bool HasOutgoingCard(int[] assigned, bool[] wasActive)
+        {
+            for (var i = 0; i < cards.Length; i++)
+            {
+                var card = cards[i];
+                if (card == null)
+                {
+                    continue;
+                }
+
+                if (card.IsExiting || card.HoldsCompletedVisual)
+                {
+                    return true;
+                }
+
+                if (wasActive[i] && assigned[i] == 0)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         int FindFreeCard(int[] assigned, bool[] wasActive, bool preferEmpty)

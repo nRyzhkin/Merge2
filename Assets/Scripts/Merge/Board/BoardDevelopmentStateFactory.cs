@@ -74,11 +74,11 @@ namespace SanIsland.Merge
             SetBox(state, database, 4, 9, "cleaning_l01");
             SetBox(state, 5, 8);
 
-            // Row 5 — coffee generator with empty neighbors + sparse boxes
+            // Row 5 — cleaning generator with empty neighbors + sparse boxes
             SetBox(state, 5, 0);
             SetBox(state, 5, 1);
-            SetItem(state, database, 5, 4, "coffee_g01");
-            // (5,3)/(5,5)/(4,4) empty around coffee_g01 for production
+            SetItem(state, database, 5, 4, "cleaning_g01");
+            // (5,3)/(5,5)/(4,4) empty around cleaning_g01 for production
         }
 
         public static void SetItem(BoardState state, MergeItemDatabase database, int row, int column, string internalKey)

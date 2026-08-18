@@ -22,6 +22,7 @@ namespace SanIsland.Merge.Editor
         public const string EconomyConfigPath = "Assets/Data/EconomyConfig.asset";
         public const string IconCatalogPath = "Assets/Data/IconCatalog.asset";
         public const string OrderDatabasePath = "Assets/Data/OrderDatabase.asset";
+        public const string OrderGenerationConfigPath = "Assets/Data/OrderGenerationConfig.asset";
         public const string CoinPopupPrefabPath = "Assets/Prefabs/Merge/CoinPopup.prefab";
         public const string CoinIconPath = "Assets/Layer Lab/GUI-LifeGame/ResourcesData/Sprites/icon_money_bundle_128.png";
         public const string EnergyIconPath = "Assets/Layer Lab/GUI-LifeGame/ResourcesData/Sprites/icon_energy_lightning_128.png";
@@ -554,13 +555,14 @@ namespace SanIsland.Merge.Editor
         static void WireOrders(BoardController controller)
         {
             var database = EnsureOrderDatabase(controller.ItemDatabase);
+            var generation = EnsureOrderGenerationConfig();
             var orders = controller.GetComponent<OrderSystem>();
             if (orders == null)
             {
                 orders = Undo.AddComponent<OrderSystem>(controller.gameObject);
             }
 
-            orders.Configure(controller, database);
+            orders.Configure(controller, database, generation);
             EditorUtility.SetDirty(orders);
 
             var hudRoot = FindNamedTransform(OrdersHudView.OrdersRootName);
@@ -654,6 +656,20 @@ namespace SanIsland.Merge.Editor
             database.EnsureDevelopmentOrders(items);
             EditorUtility.SetDirty(database);
             return database;
+        }
+
+        static OrderGenerationConfig EnsureOrderGenerationConfig()
+        {
+            EnsureFolder("Assets/Data");
+            var config = AssetDatabase.LoadAssetAtPath<OrderGenerationConfig>(OrderGenerationConfigPath);
+            if (config == null)
+            {
+                config = ScriptableObject.CreateInstance<OrderGenerationConfig>();
+                AssetDatabase.CreateAsset(config, OrderGenerationConfigPath);
+            }
+
+            EditorUtility.SetDirty(config);
+            return config;
         }
 
         static List<RectTransform> FindNamedHudRoots(string objectName)

@@ -136,6 +136,73 @@ namespace SanIsland.Merge.Editor
                 {
                     orders.ResetDevelopment();
                 }
+
+                if (GUILayout.Button("Fill Empty Generated Slots"))
+                {
+                    orders.FillEmptyGeneratedSlots();
+                    orders.RecalculateReadiness();
+                }
+
+                DrawFamilyUnlockDebug(orders);
+            }
+        }
+
+        static void DrawFamilyUnlockDebug(OrderSystem orders)
+        {
+            if (orders == null || orders.Progression == null)
+            {
+                return;
+            }
+
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("Family Progression Debug", EditorStyles.boldLabel);
+            var families = (MergeItemFamily[])System.Enum.GetValues(typeof(MergeItemFamily));
+            for (var i = 0; i < families.Length; i++)
+            {
+                var family = families[i];
+                var unlocked = orders.Progression.IsFamilyUnlocked(family);
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.LabelField(family.ToString(), unlocked ? "Unlocked" : "Locked");
+                if (unlocked)
+                {
+                    if (GUILayout.Button("Lock", GUILayout.Width(70f)))
+                    {
+                        orders.Progression.LockFamily(family);
+                    }
+                }
+                else if (GUILayout.Button("Unlock", GUILayout.Width(70f)))
+                {
+                    orders.Progression.UnlockFamily(family);
+                }
+
+                EditorGUILayout.EndHorizontal();
+            }
+
+            EditorGUILayout.HelpBox(
+                "Unlock does not replace active orders. Complete a slot to generate a new order from the expanded family pool.",
+                MessageType.Info);
+
+            if (GUILayout.Button("Complete First Ready Order"))
+            {
+                CompleteFirstReadyOrder(orders);
+            }
+
+            if (GUILayout.Button("Debug Generate 1000 Orders"))
+            {
+                orders.DebugGenerateOrders(1000);
+            }
+        }
+
+        static void CompleteFirstReadyOrder(OrderSystem orders)
+        {
+            var active = orders.State.activeOrderIds;
+            for (var i = 0; i < active.Count; i++)
+            {
+                if (orders.IsOrderReady(active[i]))
+                {
+                    orders.TryCompleteOrder(active[i]);
+                    return;
+                }
             }
         }
     }

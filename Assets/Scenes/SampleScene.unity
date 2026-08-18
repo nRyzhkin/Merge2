@@ -77736,6 +77736,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: SanIsland.Merge::SanIsland.Merge.OrderSystem
   boardController: {fileID: 5193127447459430515}
   database: {fileID: 11400000, guid: 36fb78a234c1d6f73a59e61b2c8ead1a, type: 2}
+  generationConfig: {fileID: 11400000, guid: e7510ac62d3481bee805fc14916ad734, type: 2}
+  useProceduralGeneration: 1
 --- !u!114 &5193127447459430529
 MonoBehaviour:
   m_ObjectHideFlags: 0
