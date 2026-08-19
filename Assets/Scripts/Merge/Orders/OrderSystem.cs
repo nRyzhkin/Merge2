@@ -276,6 +276,17 @@ namespace SanIsland.Merge
             return true;
         }
 
+        public void InspectRequirement(int itemId)
+        {
+            EnsureReady();
+            if (boardController == null || itemId == BoardCellState.EmptyItemId)
+            {
+                return;
+            }
+
+            boardController.InspectItem(itemId);
+        }
+
         public bool TryCompleteOrder(int orderId)
         {
             EnsureReady();

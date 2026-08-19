@@ -265,7 +265,7 @@ namespace SanIsland.Merge
 
             if (itemDatabase.TryGetById(cell.ItemId, out var data))
             {
-                ShowItemInfo(data);
+                ShowItemInfo(data, allowSell: data.Kind == MergeItemKind.Normal && CanSellSelected());
                 if (data.Kind == MergeItemKind.Generator &&
                     TryGetGeneratorPresentationInfo(index, out var generatorInfo))
                 {
@@ -294,6 +294,24 @@ namespace SanIsland.Merge
                 itemInfoView.Hide();
             }
 
+            UpdateDebug();
+        }
+
+        public void InspectItem(int itemId)
+        {
+            if (itemDatabase == null || !itemDatabase.TryGetById(itemId, out var data) || data == null)
+            {
+                return;
+            }
+
+            _selectedCellIndex = NoSelectionIndex;
+            _selectionRevision++;
+            if (selectionView != null)
+            {
+                selectionView.Hide();
+            }
+
+            ShowItemInfo(data, allowSell: false, force: true);
             UpdateDebug();
         }
 
@@ -1158,13 +1176,7 @@ namespace SanIsland.Merge
 
         public void ShowMergedItemInfo(MergeItemData data)
         {
-            if (itemInfoView == null || data == null)
-            {
-                return;
-            }
-
-            itemInfoView.Configure(itemDatabase, _discovery);
-            itemInfoView.Show(data);
+            ShowItemInfo(data, allowSell: CanSellSelected(), force: true);
         }
 
         public void NotifyMergeImpact()
@@ -1462,7 +1474,7 @@ namespace SanIsland.Merge
             _selectedCellIndex = sourceIndex;
             if (itemDatabase != null && itemDatabase.TryGetById(cell.ItemId, out var data))
             {
-                ShowItemInfo(data);
+                ShowItemInfo(data, allowSell: data.Kind == MergeItemKind.Normal && CanSellSelected());
             }
 
             UpdateDebug();
@@ -2015,7 +2027,7 @@ namespace SanIsland.Merge
             }
         }
 
-        void ShowItemInfo(MergeItemData data)
+        void ShowItemInfo(MergeItemData data, bool allowSell, bool force = false)
         {
             if (itemInfoView == null || data == null)
             {
@@ -2023,10 +2035,12 @@ namespace SanIsland.Merge
             }
 
             itemInfoView.Configure(itemDatabase, _discovery);
-            if (!itemInfoView.IsShowing(data.Id))
+            if (force || !itemInfoView.IsShowing(data.Id))
             {
                 itemInfoView.Show(data);
             }
+
+            itemInfoView.SetSellVisible(allowSell);
         }
 
         void EnsureDrag()

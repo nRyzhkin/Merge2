@@ -21,6 +21,7 @@ namespace SanIsland.Merge.Editor
             try
             {
                 Rebuild();
+                GeneratorProductionDatabaseTools.Rebuild();
                 EditorApplication.Exit(0);
             }
             catch (Exception exception)

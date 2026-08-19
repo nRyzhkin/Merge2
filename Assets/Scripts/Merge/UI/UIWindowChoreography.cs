@@ -629,6 +629,11 @@ namespace SanIsland.Merge
                     continue;
                 }
 
+                if (child.GetComponent<UIAnimatedElement>() != null)
+                {
+                    continue;
+                }
+
                 candidates.Add(child);
             }
 
@@ -646,7 +651,7 @@ namespace SanIsland.Merge
                 var nearVisible = !window.gameObject.activeInHierarchy ||
                                   viewport == null ||
                                   IsNearVisible(child, viewport);
-                var instant = animated >= max || !nearVisible;
+                var overflow = animated >= max || !nearVisible;
                 var order = PhaseList * 100 + i;
                 AddUnit(
                     child,
@@ -657,9 +662,9 @@ namespace SanIsland.Merge
                     CanAnimateScale(child),
                     false);
                 var unit = _units[_units.Count - 1];
-                unit.ListIndex = instant ? -1 : animated;
-                unit.Instant = instant;
-                if (!instant)
+                unit.ListIndex = overflow ? Mathf.Max(0, animated - 1) : animated;
+                unit.Instant = false;
+                if (!overflow)
                 {
                     animated++;
                 }
@@ -1035,12 +1040,6 @@ namespace SanIsland.Merge
         static bool ShouldSkipListItem(RectTransform child)
         {
             if (child.GetComponent<Scrollbar>() != null)
-            {
-                return true;
-            }
-
-            var ignoreLayout = child.GetComponent<LayoutElement>();
-            if (ignoreLayout != null && ignoreLayout.ignoreLayout)
             {
                 return true;
             }

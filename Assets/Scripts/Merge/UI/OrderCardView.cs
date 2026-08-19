@@ -96,6 +96,7 @@ namespace SanIsland.Merge
             }
 
             EnsureSlots();
+            EnsureSlotClicks();
             EnsureClickBound();
         }
 
@@ -164,6 +165,7 @@ namespace SanIsland.Merge
                 cardButton.interactable = false;
             }
 
+            SetSlotPointerEnabled(false);
             SetCompleteVisual(true, animate: false);
             SetLayoutIgnored(true);
             _motion = Motion.Exit;
@@ -262,6 +264,7 @@ namespace SanIsland.Merge
                 cardButton.interactable = false;
             }
 
+            SetSlotPointerEnabled(false);
             SetCompleteVisual(true, animate: false);
             enabled = true;
         }
@@ -381,6 +384,7 @@ namespace SanIsland.Merge
 
         void OnDestroy()
         {
+            UnsubscribeSlotClicks();
             if (cardButton != null && _boundClick)
             {
                 cardButton.onClick.RemoveListener(OnCompleteClicked);
@@ -444,7 +448,7 @@ namespace SanIsland.Merge
                     icon = item.Icon;
                 }
 
-                slot.Show(icon, requirement.amount);
+                slot.Show(icon, requirement.amount, requirement.itemId);
             }
 
             if (rewardText != null)
@@ -481,6 +485,8 @@ namespace SanIsland.Merge
             {
                 cardButton.interactable = ready && !_holdCompleteVisual;
             }
+
+            SetSlotPointerEnabled(!ready && !_holdCompleteVisual);
 
             if (completeOutline != null)
             {
@@ -779,10 +785,18 @@ namespace SanIsland.Merge
             var graphics = GetComponentsInChildren<Graphic>(true);
             for (var i = 0; i < graphics.Length; i++)
             {
-                if (graphics[i] != null && graphics[i].gameObject != gameObject)
+                var graphic = graphics[i];
+                if (graphic == null || graphic.gameObject == gameObject)
                 {
-                    graphics[i].raycastTarget = false;
+                    continue;
                 }
+
+                if (graphic.GetComponentInParent<OrderRequirementSlotView>() != null)
+                {
+                    continue;
+                }
+
+                graphic.raycastTarget = false;
             }
         }
 
@@ -903,6 +917,65 @@ namespace SanIsland.Merge
             for (var i = 0; i < count; i++)
             {
                 slots[i] = found[i];
+            }
+        }
+
+        void EnsureSlotClicks()
+        {
+            if (slots == null)
+            {
+                return;
+            }
+
+            for (var i = 0; i < slots.Length; i++)
+            {
+                var slot = slots[i];
+                if (slot == null)
+                {
+                    continue;
+                }
+
+                slot.Clicked -= OnRequirementClicked;
+                slot.Clicked += OnRequirementClicked;
+            }
+        }
+
+        void UnsubscribeSlotClicks()
+        {
+            if (slots == null)
+            {
+                return;
+            }
+
+            for (var i = 0; i < slots.Length; i++)
+            {
+                if (slots[i] != null)
+                {
+                    slots[i].Clicked -= OnRequirementClicked;
+                }
+            }
+        }
+
+        void OnRequirementClicked(OrderRequirementSlotView slot)
+        {
+            if (slot == null || slot.ItemId == 0 || _ready || _holdCompleteVisual || _motion == Motion.Exit)
+            {
+                return;
+            }
+
+            OrderSystem.Current?.InspectRequirement(slot.ItemId);
+        }
+
+        void SetSlotPointerEnabled(bool enabled)
+        {
+            if (slots == null)
+            {
+                return;
+            }
+
+            for (var i = 0; i < slots.Length; i++)
+            {
+                slots[i]?.SetPointerEnabled(enabled);
             }
         }
 

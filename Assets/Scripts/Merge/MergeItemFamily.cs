@@ -8,6 +8,9 @@ namespace SanIsland.Merge
     {
         Tools = 1,
         Cleaning = 2,
-        Coffee = 3
+        Coffee = 3,
+        Bakery = 4,
+        Beach = 5,
+        Cocktails = 6
     }
 }

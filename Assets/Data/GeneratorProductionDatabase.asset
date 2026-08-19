@@ -133,3 +133,111 @@ MonoBehaviour:
       weight: 1
     capacityDrops: 28
     cooldownSeconds: 60
+  - generatorId: 4101
+    dropTable:
+    - outputItemId: 4001
+      weight: 100
+    capacityDrops: 16
+    cooldownSeconds: 60
+  - generatorId: 4102
+    dropTable:
+    - outputItemId: 4001
+      weight: 82
+    - outputItemId: 4002
+      weight: 18
+    capacityDrops: 20
+    cooldownSeconds: 60
+  - generatorId: 4103
+    dropTable:
+    - outputItemId: 4001
+      weight: 68
+    - outputItemId: 4002
+      weight: 28
+    - outputItemId: 4003
+      weight: 4
+    capacityDrops: 24
+    cooldownSeconds: 60
+  - generatorId: 4104
+    dropTable:
+    - outputItemId: 4001
+      weight: 55
+    - outputItemId: 4002
+      weight: 35
+    - outputItemId: 4003
+      weight: 9
+    - outputItemId: 4004
+      weight: 1
+    capacityDrops: 28
+    cooldownSeconds: 60
+  - generatorId: 5101
+    dropTable:
+    - outputItemId: 5001
+      weight: 100
+    capacityDrops: 16
+    cooldownSeconds: 60
+  - generatorId: 5102
+    dropTable:
+    - outputItemId: 5001
+      weight: 82
+    - outputItemId: 5002
+      weight: 18
+    capacityDrops: 20
+    cooldownSeconds: 60
+  - generatorId: 5103
+    dropTable:
+    - outputItemId: 5001
+      weight: 68
+    - outputItemId: 5002
+      weight: 28
+    - outputItemId: 5003
+      weight: 4
+    capacityDrops: 24
+    cooldownSeconds: 60
+  - generatorId: 5104
+    dropTable:
+    - outputItemId: 5001
+      weight: 55
+    - outputItemId: 5002
+      weight: 35
+    - outputItemId: 5003
+      weight: 9
+    - outputItemId: 5004
+      weight: 1
+    capacityDrops: 28
+    cooldownSeconds: 60
+  - generatorId: 6101
+    dropTable:
+    - outputItemId: 6001
+      weight: 100
+    capacityDrops: 16
+    cooldownSeconds: 60
+  - generatorId: 6102
+    dropTable:
+    - outputItemId: 6001
+      weight: 82
+    - outputItemId: 6002
+      weight: 18
+    capacityDrops: 20
+    cooldownSeconds: 60
+  - generatorId: 6103
+    dropTable:
+    - outputItemId: 6001
+      weight: 68
+    - outputItemId: 6002
+      weight: 28
+    - outputItemId: 6003
+      weight: 4
+    capacityDrops: 24
+    cooldownSeconds: 60
+  - generatorId: 6104
+    dropTable:
+    - outputItemId: 6001
+      weight: 55
+    - outputItemId: 6002
+      weight: 35
+    - outputItemId: 6003
+      weight: 9
+    - outputItemId: 6004
+      weight: 1
+    capacityDrops: 28
+    cooldownSeconds: 60

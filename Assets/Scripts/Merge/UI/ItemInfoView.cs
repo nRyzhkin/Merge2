@@ -13,6 +13,7 @@ namespace SanIsland.Merge
         [SerializeField] TMP_Text nameText;
         [SerializeField] TMP_Text levelText;
         [SerializeField] MergeChainInfoView chainInfoView;
+        [SerializeField] GameObject sellRoot;
 
         MergeItemDatabase _database;
         MergeDiscoveryState _discovery;
@@ -72,6 +73,15 @@ namespace SanIsland.Merge
             if (chainInfoView != null && _database != null)
             {
                 chainInfoView.Show(_database.GetChain(data.Family, data.Kind), data.Id, _discovery);
+            }
+        }
+
+        public void SetSellVisible(bool visible)
+        {
+            EnsureSellRoot();
+            if (sellRoot != null && sellRoot.activeSelf != visible)
+            {
+                sellRoot.SetActive(visible);
             }
         }
 
@@ -151,6 +161,20 @@ namespace SanIsland.Merge
             else
             {
                 generatorIcon.enabled = false;
+            }
+        }
+
+        void EnsureSellRoot()
+        {
+            if (sellRoot != null)
+            {
+                return;
+            }
+
+            var sell = transform.Find(SellButtonView.SellRootName);
+            if (sell != null)
+            {
+                sellRoot = sell.gameObject;
             }
         }
 

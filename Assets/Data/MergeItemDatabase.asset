@@ -341,3 +341,387 @@ MonoBehaviour:
     level: 4
     icon: {fileID: 21300000, guid: 841c81ff4b7724849b68697b47b11532, type: 3}
     nextItemId: -1
+  - id: 4001
+    internalKey: bakery_l01
+    localizationKey: item.bakery.l01.name
+    family: 4
+    kind: 0
+    level: 1
+    icon: {fileID: 21300000, guid: 684b403a3d081492f9f7608f06e6ff05, type: 3}
+    nextItemId: 4002
+  - id: 4002
+    internalKey: bakery_l02
+    localizationKey: item.bakery.l02.name
+    family: 4
+    kind: 0
+    level: 2
+    icon: {fileID: 21300000, guid: 842e5ba2ddb754b078c207393f170c6b, type: 3}
+    nextItemId: 4003
+  - id: 4003
+    internalKey: bakery_l03
+    localizationKey: item.bakery.l03.name
+    family: 4
+    kind: 0
+    level: 3
+    icon: {fileID: 21300000, guid: c03b1ba2192734bcea7c89f11bd3008d, type: 3}
+    nextItemId: 4004
+  - id: 4004
+    internalKey: bakery_l04
+    localizationKey: item.bakery.l04.name
+    family: 4
+    kind: 0
+    level: 4
+    icon: {fileID: 21300000, guid: 6579d4b8470684929a57ae0f4911dd7f, type: 3}
+    nextItemId: 4005
+  - id: 4005
+    internalKey: bakery_l05
+    localizationKey: item.bakery.l05.name
+    family: 4
+    kind: 0
+    level: 5
+    icon: {fileID: 21300000, guid: 1257a8a28686f49daa45b3a542334fe0, type: 3}
+    nextItemId: 4006
+  - id: 4006
+    internalKey: bakery_l06
+    localizationKey: item.bakery.l06.name
+    family: 4
+    kind: 0
+    level: 6
+    icon: {fileID: 21300000, guid: 89e84747c0eba45909c24f6532fc3046, type: 3}
+    nextItemId: 4007
+  - id: 4007
+    internalKey: bakery_l07
+    localizationKey: item.bakery.l07.name
+    family: 4
+    kind: 0
+    level: 7
+    icon: {fileID: 21300000, guid: 0d3d4afb62a3f49f8bf06965b90fe304, type: 3}
+    nextItemId: 4008
+  - id: 4008
+    internalKey: bakery_l08
+    localizationKey: item.bakery.l08.name
+    family: 4
+    kind: 0
+    level: 8
+    icon: {fileID: 21300000, guid: a5531e140146c41e0b33bf5581078c50, type: 3}
+    nextItemId: 4009
+  - id: 4009
+    internalKey: bakery_l09
+    localizationKey: item.bakery.l09.name
+    family: 4
+    kind: 0
+    level: 9
+    icon: {fileID: 21300000, guid: 30f2ad840b8074754a0e8cb4722b5e55, type: 3}
+    nextItemId: 4010
+  - id: 4010
+    internalKey: bakery_l10
+    localizationKey: item.bakery.l10.name
+    family: 4
+    kind: 0
+    level: 10
+    icon: {fileID: 21300000, guid: 90654c3e61b514e6384b1b9fc543e201, type: 3}
+    nextItemId: 4011
+  - id: 4011
+    internalKey: bakery_l11
+    localizationKey: item.bakery.l11.name
+    family: 4
+    kind: 0
+    level: 11
+    icon: {fileID: 21300000, guid: dd84584b884b54732b944423d6008e05, type: 3}
+    nextItemId: 4012
+  - id: 4012
+    internalKey: bakery_l12
+    localizationKey: item.bakery.l12.name
+    family: 4
+    kind: 0
+    level: 12
+    icon: {fileID: 21300000, guid: 71de4c67067c54f0995e5f495910d877, type: 3}
+    nextItemId: -1
+  - id: 4101
+    internalKey: bakery_g01
+    localizationKey: item.bakery.g01.name
+    family: 4
+    kind: 1
+    level: 1
+    icon: {fileID: 21300000, guid: 68143632734834a588b4fbcf2501560d, type: 3}
+    nextItemId: 4102
+  - id: 4102
+    internalKey: bakery_g02
+    localizationKey: item.bakery.g02.name
+    family: 4
+    kind: 1
+    level: 2
+    icon: {fileID: 21300000, guid: 1c9e82c4697da465e91b0fce4160d817, type: 3}
+    nextItemId: 4103
+  - id: 4103
+    internalKey: bakery_g03
+    localizationKey: item.bakery.g03.name
+    family: 4
+    kind: 1
+    level: 3
+    icon: {fileID: 21300000, guid: 3cd76882695f94f37affda76a5dab296, type: 3}
+    nextItemId: 4104
+  - id: 4104
+    internalKey: bakery_g04
+    localizationKey: item.bakery.g04.name
+    family: 4
+    kind: 1
+    level: 4
+    icon: {fileID: 21300000, guid: 63c4733fb688842edb01d7cd694df7a3, type: 3}
+    nextItemId: -1
+  - id: 5001
+    internalKey: beach_l01
+    localizationKey: item.beach.l01.name
+    family: 5
+    kind: 0
+    level: 1
+    icon: {fileID: 21300000, guid: 2881a231ecfac48ab92fde7a9109ea29, type: 3}
+    nextItemId: 5002
+  - id: 5002
+    internalKey: beach_l02
+    localizationKey: item.beach.l02.name
+    family: 5
+    kind: 0
+    level: 2
+    icon: {fileID: 21300000, guid: 6235b9e23eeda43c9b277a70580957b2, type: 3}
+    nextItemId: 5003
+  - id: 5003
+    internalKey: beach_l03
+    localizationKey: item.beach.l03.name
+    family: 5
+    kind: 0
+    level: 3
+    icon: {fileID: 21300000, guid: ec515f207505f4538b599d7128a4410b, type: 3}
+    nextItemId: 5004
+  - id: 5004
+    internalKey: beach_l04
+    localizationKey: item.beach.l04.name
+    family: 5
+    kind: 0
+    level: 4
+    icon: {fileID: 21300000, guid: c7efeec6f79af49ebabbdda19af6022c, type: 3}
+    nextItemId: 5005
+  - id: 5005
+    internalKey: beach_l05
+    localizationKey: item.beach.l05.name
+    family: 5
+    kind: 0
+    level: 5
+    icon: {fileID: 21300000, guid: 26d26bad473f04ce7be8f210c392df2d, type: 3}
+    nextItemId: 5006
+  - id: 5006
+    internalKey: beach_l06
+    localizationKey: item.beach.l06.name
+    family: 5
+    kind: 0
+    level: 6
+    icon: {fileID: 21300000, guid: 45c340c6d863c462aa468c93d9f84392, type: 3}
+    nextItemId: 5007
+  - id: 5007
+    internalKey: beach_l07
+    localizationKey: item.beach.l07.name
+    family: 5
+    kind: 0
+    level: 7
+    icon: {fileID: 21300000, guid: bf21cbbd2a31f4ab49a4261e5bf38a35, type: 3}
+    nextItemId: 5008
+  - id: 5008
+    internalKey: beach_l08
+    localizationKey: item.beach.l08.name
+    family: 5
+    kind: 0
+    level: 8
+    icon: {fileID: 21300000, guid: 119cd972941ee4982bf920a998b9ff62, type: 3}
+    nextItemId: 5009
+  - id: 5009
+    internalKey: beach_l09
+    localizationKey: item.beach.l09.name
+    family: 5
+    kind: 0
+    level: 9
+    icon: {fileID: 21300000, guid: 6ee88a2dc66d0494eaf10ae52032da54, type: 3}
+    nextItemId: 5010
+  - id: 5010
+    internalKey: beach_l10
+    localizationKey: item.beach.l10.name
+    family: 5
+    kind: 0
+    level: 10
+    icon: {fileID: 21300000, guid: 999097d4736e44e198367882c8ab5532, type: 3}
+    nextItemId: 5011
+  - id: 5011
+    internalKey: beach_l11
+    localizationKey: item.beach.l11.name
+    family: 5
+    kind: 0
+    level: 11
+    icon: {fileID: 21300000, guid: d5817cc388daa4e2a82ca949de332e87, type: 3}
+    nextItemId: 5012
+  - id: 5012
+    internalKey: beach_l12
+    localizationKey: item.beach.l12.name
+    family: 5
+    kind: 0
+    level: 12
+    icon: {fileID: 21300000, guid: 6f6f2a4662bc74c07a0d058886585ad0, type: 3}
+    nextItemId: -1
+  - id: 5101
+    internalKey: beach_g01
+    localizationKey: item.beach.g01.name
+    family: 5
+    kind: 1
+    level: 1
+    icon: {fileID: 21300000, guid: 19e7259e8a33749ee89e6ecd28501540, type: 3}
+    nextItemId: 5102
+  - id: 5102
+    internalKey: beach_g02
+    localizationKey: item.beach.g02.name
+    family: 5
+    kind: 1
+    level: 2
+    icon: {fileID: 21300000, guid: 58505e304978847cbb0ecfab00b16852, type: 3}
+    nextItemId: 5103
+  - id: 5103
+    internalKey: beach_g03
+    localizationKey: item.beach.g03.name
+    family: 5
+    kind: 1
+    level: 3
+    icon: {fileID: 21300000, guid: 1eeb3aaee584e479291de983e05f06dc, type: 3}
+    nextItemId: 5104
+  - id: 5104
+    internalKey: beach_g04
+    localizationKey: item.beach.g04.name
+    family: 5
+    kind: 1
+    level: 4
+    icon: {fileID: 21300000, guid: a084c65edb3d9446680c4e89a5994f0c, type: 3}
+    nextItemId: -1
+  - id: 6001
+    internalKey: cocktails_l01
+    localizationKey: item.cocktails.l01.name
+    family: 6
+    kind: 0
+    level: 1
+    icon: {fileID: 21300000, guid: 1c176967c9e3144c4a18f95d74c89317, type: 3}
+    nextItemId: 6002
+  - id: 6002
+    internalKey: cocktails_l02
+    localizationKey: item.cocktails.l02.name
+    family: 6
+    kind: 0
+    level: 2
+    icon: {fileID: 21300000, guid: 075f1262aa23f4285b8012b8c12cb8ec, type: 3}
+    nextItemId: 6003
+  - id: 6003
+    internalKey: cocktails_l03
+    localizationKey: item.cocktails.l03.name
+    family: 6
+    kind: 0
+    level: 3
+    icon: {fileID: 21300000, guid: 521cfc79aff04463b822a3abb3585bd8, type: 3}
+    nextItemId: 6004
+  - id: 6004
+    internalKey: cocktails_l04
+    localizationKey: item.cocktails.l04.name
+    family: 6
+    kind: 0
+    level: 4
+    icon: {fileID: 21300000, guid: e5ed898e590984e65a787d5762c61349, type: 3}
+    nextItemId: 6005
+  - id: 6005
+    internalKey: cocktails_l05
+    localizationKey: item.cocktails.l05.name
+    family: 6
+    kind: 0
+    level: 5
+    icon: {fileID: 21300000, guid: 237c326fe30e74785968163e89d86eac, type: 3}
+    nextItemId: 6006
+  - id: 6006
+    internalKey: cocktails_l06
+    localizationKey: item.cocktails.l06.name
+    family: 6
+    kind: 0
+    level: 6
+    icon: {fileID: 21300000, guid: ec0e36eca6bc9439fb77fb30e7098c50, type: 3}
+    nextItemId: 6007
+  - id: 6007
+    internalKey: cocktails_l07
+    localizationKey: item.cocktails.l07.name
+    family: 6
+    kind: 0
+    level: 7
+    icon: {fileID: 21300000, guid: a7c25030317d146de836ac7a11a1ca42, type: 3}
+    nextItemId: 6008
+  - id: 6008
+    internalKey: cocktails_l08
+    localizationKey: item.cocktails.l08.name
+    family: 6
+    kind: 0
+    level: 8
+    icon: {fileID: 21300000, guid: d4fac21b8fca6441ba58af3274d41ef2, type: 3}
+    nextItemId: 6009
+  - id: 6009
+    internalKey: cocktails_l09
+    localizationKey: item.cocktails.l09.name
+    family: 6
+    kind: 0
+    level: 9
+    icon: {fileID: 21300000, guid: 74427fc89a8454e11a27bc60f459caa8, type: 3}
+    nextItemId: 6010
+  - id: 6010
+    internalKey: cocktails_l10
+    localizationKey: item.cocktails.l10.name
+    family: 6
+    kind: 0
+    level: 10
+    icon: {fileID: 21300000, guid: 0e99c7fa481ad42d1a82fb6e7e3eddcb, type: 3}
+    nextItemId: 6011
+  - id: 6011
+    internalKey: cocktails_l11
+    localizationKey: item.cocktails.l11.name
+    family: 6
+    kind: 0
+    level: 11
+    icon: {fileID: 21300000, guid: 731f30d3c6a3e43cda1feea196c13d8b, type: 3}
+    nextItemId: 6012
+  - id: 6012
+    internalKey: cocktails_l12
+    localizationKey: item.cocktails.l12.name
+    family: 6
+    kind: 0
+    level: 12
+    icon: {fileID: 21300000, guid: 8571b8b4c4655493e88a624afa53af8a, type: 3}
+    nextItemId: -1
+  - id: 6101
+    internalKey: cocktails_g01
+    localizationKey: item.cocktails.g01.name
+    family: 6
+    kind: 1
+    level: 1
+    icon: {fileID: 21300000, guid: f9659d86abf514890892c96b24f1a603, type: 3}
+    nextItemId: 6102
+  - id: 6102
+    internalKey: cocktails_g02
+    localizationKey: item.cocktails.g02.name
+    family: 6
+    kind: 1
+    level: 2
+    icon: {fileID: 21300000, guid: afbc4c0bf970447d5adc09eac7a4a17d, type: 3}
+    nextItemId: 6103
+  - id: 6103
+    internalKey: cocktails_g03
+    localizationKey: item.cocktails.g03.name
+    family: 6
+    kind: 1
+    level: 3
+    icon: {fileID: 21300000, guid: 350e9cc23789a430aa0e704f425a8ffc, type: 3}
+    nextItemId: 6104
+  - id: 6104
+    internalKey: cocktails_g04
+    localizationKey: item.cocktails.g04.name
+    family: 6
+    kind: 1
+    level: 4
+    icon: {fileID: 21300000, guid: a55ecde1d9bce4eae981ac71c3d47736, type: 3}
+    nextItemId: -1

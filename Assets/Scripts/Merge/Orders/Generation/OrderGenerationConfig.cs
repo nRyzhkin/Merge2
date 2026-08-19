@@ -45,7 +45,10 @@ namespace SanIsland.Merge
         {
             new FamilyOrderSettings { family = MergeItemFamily.Tools, enabledForOrders = true, weight = 70 },
             new FamilyOrderSettings { family = MergeItemFamily.Cleaning, enabledForOrders = true, weight = 70 },
-            new FamilyOrderSettings { family = MergeItemFamily.Coffee, enabledForOrders = true, weight = 100 }
+            new FamilyOrderSettings { family = MergeItemFamily.Coffee, enabledForOrders = true, weight = 100 },
+            new FamilyOrderSettings { family = MergeItemFamily.Bakery, enabledForOrders = true, weight = 70 },
+            new FamilyOrderSettings { family = MergeItemFamily.Beach, enabledForOrders = true, weight = 70 },
+            new FamilyOrderSettings { family = MergeItemFamily.Cocktails, enabledForOrders = true, weight = 70 }
         };
 
         [SerializeField] OrderDifficultyBand easy = new OrderDifficultyBand

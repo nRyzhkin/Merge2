@@ -7,7 +7,8 @@ namespace SanIsland.Merge
     /// family * 1000 + kindOffset + level
     /// Tools Normal 1001-1099, Tools Generator 1101-1199,
     /// Cleaning Normal 2001-2099, Cleaning Generator 2101-2199,
-    /// Coffee Normal 3001-3099, Coffee Generator 3101-3199.
+    /// Coffee Normal 3001-3099, Coffee Generator 3101-3199,
+    /// Bakery 4001/4101, Beach 5001/5101, Cocktails 6001/6101.
     /// </summary>
     public static class MergeItemIdUtility
     {

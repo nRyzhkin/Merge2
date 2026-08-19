@@ -179,6 +179,198 @@ MonoBehaviour:
     m_Key: item.tools.l08.name
     m_Metadata:
       m_Items: []
+  - m_Id: 3283083303
+    m_Key: item.bakery.l01.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083304
+    m_Key: item.bakery.l02.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083305
+    m_Key: item.bakery.l03.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083306
+    m_Key: item.bakery.l04.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083307
+    m_Key: item.bakery.l05.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083308
+    m_Key: item.bakery.l06.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083309
+    m_Key: item.bakery.l07.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083310
+    m_Key: item.bakery.l08.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083311
+    m_Key: item.bakery.l09.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083312
+    m_Key: item.bakery.l10.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083313
+    m_Key: item.bakery.l11.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083314
+    m_Key: item.bakery.l12.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083315
+    m_Key: item.bakery.g01.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083316
+    m_Key: item.bakery.g02.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083317
+    m_Key: item.bakery.g03.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083318
+    m_Key: item.bakery.g04.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083319
+    m_Key: item.beach.l01.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083320
+    m_Key: item.beach.l02.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083321
+    m_Key: item.beach.l03.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083322
+    m_Key: item.beach.l04.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083323
+    m_Key: item.beach.l05.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083324
+    m_Key: item.beach.l06.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083325
+    m_Key: item.beach.l07.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083326
+    m_Key: item.beach.l08.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083327
+    m_Key: item.beach.l09.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083328
+    m_Key: item.beach.l10.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083329
+    m_Key: item.beach.l11.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083330
+    m_Key: item.beach.l12.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083331
+    m_Key: item.beach.g01.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083332
+    m_Key: item.beach.g02.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083333
+    m_Key: item.beach.g03.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083334
+    m_Key: item.beach.g04.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083335
+    m_Key: item.cocktails.l01.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083336
+    m_Key: item.cocktails.l02.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083337
+    m_Key: item.cocktails.l03.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083338
+    m_Key: item.cocktails.l04.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083339
+    m_Key: item.cocktails.l05.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083340
+    m_Key: item.cocktails.l06.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083341
+    m_Key: item.cocktails.l07.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083342
+    m_Key: item.cocktails.l08.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083343
+    m_Key: item.cocktails.l09.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083344
+    m_Key: item.cocktails.l10.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083345
+    m_Key: item.cocktails.l11.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083346
+    m_Key: item.cocktails.l12.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083347
+    m_Key: item.cocktails.g01.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083348
+    m_Key: item.cocktails.g02.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083349
+    m_Key: item.cocktails.g03.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083350
+    m_Key: item.cocktails.g04.name
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

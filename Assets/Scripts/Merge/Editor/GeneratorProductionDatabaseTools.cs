@@ -42,10 +42,13 @@ namespace SanIsland.Merge.Editor
 
         static List<GeneratorData> BuildStarterEntries(MergeItemDatabase itemDatabase)
         {
-            var entries = new List<GeneratorData>(13);
+            var entries = new List<GeneratorData>(25);
             AddToolsFamily(entries, itemDatabase);
             AddFourTierFamily(entries, itemDatabase, MergeItemFamily.Cleaning);
             AddFourTierFamily(entries, itemDatabase, MergeItemFamily.Coffee);
+            AddFourTierFamily(entries, itemDatabase, MergeItemFamily.Bakery);
+            AddFourTierFamily(entries, itemDatabase, MergeItemFamily.Beach);
+            AddFourTierFamily(entries, itemDatabase, MergeItemFamily.Cocktails);
             return entries;
         }
 

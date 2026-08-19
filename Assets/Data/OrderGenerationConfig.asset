@@ -26,6 +26,15 @@ MonoBehaviour:
   - family: 3
     enabledForOrders: 1
     weight: 100
+  - family: 4
+    enabledForOrders: 1
+    weight: 70
+  - family: 5
+    enabledForOrders: 1
+    weight: 70
+  - family: 6
+    enabledForOrders: 1
+    weight: 70
   easy:
     minCost: 2
     maxCost: 6
