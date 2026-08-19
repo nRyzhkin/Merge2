@@ -16,6 +16,9 @@ MonoBehaviour:
   - index: 0
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 3
     hidden:
       type: 2
@@ -23,6 +26,9 @@ MonoBehaviour:
   - index: 1
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
@@ -30,6 +36,9 @@ MonoBehaviour:
   - index: 2
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
@@ -37,6 +46,9 @@ MonoBehaviour:
   - index: 3
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 1
     hidden:
       type: 2
@@ -44,6 +56,9 @@ MonoBehaviour:
   - index: 4
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 1
     hidden:
       type: 2
@@ -51,6 +66,9 @@ MonoBehaviour:
   - index: 5
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
@@ -58,6 +76,9 @@ MonoBehaviour:
   - index: 6
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 13
     hidden:
       type: 2
@@ -65,6 +86,9 @@ MonoBehaviour:
   - index: 7
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
@@ -72,6 +96,9 @@ MonoBehaviour:
   - index: 8
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
@@ -79,6 +106,9 @@ MonoBehaviour:
   - index: 9
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
@@ -86,6 +116,9 @@ MonoBehaviour:
   - index: 10
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 1
     hidden:
       type: 2
@@ -93,6 +126,9 @@ MonoBehaviour:
   - index: 11
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
@@ -100,6 +136,9 @@ MonoBehaviour:
   - index: 12
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
@@ -107,6 +146,9 @@ MonoBehaviour:
   - index: 13
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
@@ -114,6 +156,9 @@ MonoBehaviour:
   - index: 14
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
@@ -121,6 +166,9 @@ MonoBehaviour:
   - index: 15
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
@@ -128,6 +176,9 @@ MonoBehaviour:
   - index: 16
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
@@ -135,6 +186,9 @@ MonoBehaviour:
   - index: 17
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
@@ -142,6 +196,9 @@ MonoBehaviour:
   - index: 18
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 7
     hidden:
       type: 2
@@ -149,6 +206,9 @@ MonoBehaviour:
   - index: 19
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
@@ -156,6 +216,9 @@ MonoBehaviour:
   - index: 20
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
@@ -163,6 +226,9 @@ MonoBehaviour:
   - index: 21
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
@@ -170,13 +236,19 @@ MonoBehaviour:
   - index: 22
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 3
     hidden:
       type: 2
-      itemId: 4007
+      itemId: 4008
   - index: 23
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
@@ -184,6 +256,9 @@ MonoBehaviour:
   - index: 24
     state: 1
     itemId: 4001
+    blockType: 0
+    locked: 0
+    cobweb: 0
     boxVisualIndex: 0
     hidden:
       type: 0
@@ -191,6 +266,9 @@ MonoBehaviour:
   - index: 25
     state: 1
     itemId: 4001
+    blockType: 0
+    locked: 0
+    cobweb: 0
     boxVisualIndex: 0
     hidden:
       type: 0
@@ -198,6 +276,9 @@ MonoBehaviour:
   - index: 26
     state: 3
     itemId: 4002
+    blockType: 0
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 0
@@ -205,13 +286,19 @@ MonoBehaviour:
   - index: 27
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
-      itemId: 4005
+      itemId: 4006
   - index: 28
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 1
     hidden:
       type: 2
@@ -219,6 +306,9 @@ MonoBehaviour:
   - index: 29
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 3
     hidden:
       type: 2
@@ -226,6 +316,9 @@ MonoBehaviour:
   - index: 30
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
@@ -233,6 +326,9 @@ MonoBehaviour:
   - index: 31
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
@@ -240,6 +336,9 @@ MonoBehaviour:
   - index: 32
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
@@ -247,6 +346,9 @@ MonoBehaviour:
   - index: 33
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
@@ -254,13 +356,19 @@ MonoBehaviour:
   - index: 34
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
-      itemId: 4003
+      itemId: 4004
   - index: 35
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
@@ -268,20 +376,29 @@ MonoBehaviour:
   - index: 36
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 1
     hidden:
       type: 2
-      itemId: 4005
+      itemId: 4006
   - index: 37
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
-      itemId: 4007
+      itemId: 4008
   - index: 38
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
@@ -289,6 +406,9 @@ MonoBehaviour:
   - index: 39
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
@@ -296,6 +416,9 @@ MonoBehaviour:
   - index: 40
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 3
     hidden:
       type: 2
@@ -303,6 +426,9 @@ MonoBehaviour:
   - index: 41
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 1
     hidden:
       type: 2
@@ -310,6 +436,9 @@ MonoBehaviour:
   - index: 42
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
@@ -317,6 +446,9 @@ MonoBehaviour:
   - index: 43
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
@@ -324,6 +456,9 @@ MonoBehaviour:
   - index: 44
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
@@ -331,6 +466,9 @@ MonoBehaviour:
   - index: 45
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 0
+    cobweb: 0
     boxVisualIndex: 21
     hidden:
       type: 0
@@ -338,6 +476,9 @@ MonoBehaviour:
   - index: 46
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
@@ -345,6 +486,9 @@ MonoBehaviour:
   - index: 47
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
@@ -352,6 +496,9 @@ MonoBehaviour:
   - index: 48
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
@@ -359,6 +506,9 @@ MonoBehaviour:
   - index: 49
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 3
     hidden:
       type: 2
@@ -366,6 +516,9 @@ MonoBehaviour:
   - index: 50
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
@@ -373,6 +526,9 @@ MonoBehaviour:
   - index: 51
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
@@ -380,6 +536,9 @@ MonoBehaviour:
   - index: 52
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 3
     hidden:
       type: 2
@@ -387,6 +546,9 @@ MonoBehaviour:
   - index: 53
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
@@ -394,6 +556,9 @@ MonoBehaviour:
   - index: 54
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
@@ -401,6 +566,9 @@ MonoBehaviour:
   - index: 55
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
@@ -408,6 +576,9 @@ MonoBehaviour:
   - index: 56
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
@@ -415,6 +586,9 @@ MonoBehaviour:
   - index: 57
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 0
     hidden:
       type: 2
@@ -422,6 +596,9 @@ MonoBehaviour:
   - index: 58
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 1
     hidden:
       type: 2
@@ -429,6 +606,9 @@ MonoBehaviour:
   - index: 59
     state: 4
     itemId: -1
+    blockType: 1
+    locked: 1
+    cobweb: 1
     boxVisualIndex: 1
     hidden:
       type: 2
