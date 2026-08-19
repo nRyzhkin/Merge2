@@ -14,6 +14,7 @@ namespace SanIsland.Merge
         public const string SellActionKey = "ui.action.sell";
         public const string DetailsActionKey = "ui.action.details";
         public const string ItemDescriptionPlaceholderKey = "ui.item.description_placeholder";
+        public const string GeneratorDescriptionKey = "ui.item.generator_description";
         public const string UndoActionKey = "ui.action.undo";
         public const string UndoNoSpaceKey = "ui.message.undo_no_space";
         public const string OrderItemsMissingKey = "ui.message.order_items_missing";

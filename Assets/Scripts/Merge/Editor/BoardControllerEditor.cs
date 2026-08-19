@@ -60,6 +60,16 @@ namespace SanIsland.Merge.Editor
             }
 
             EditorGUILayout.Space();
+            EditorGUILayout.LabelField("Generator Instance Debug", EditorStyles.boldLabel);
+            using (new EditorGUI.DisabledScope(true))
+            {
+                EditorGUILayout.IntField("Available Drops", controller.DebugGeneratorAvailableDrops);
+                EditorGUILayout.IntField("Max Drops", controller.DebugGeneratorMaxDrops);
+                EditorGUILayout.FloatField("Recharge Progress", controller.DebugGeneratorRechargeProgress);
+                EditorGUILayout.FloatField("Seconds Until Next Charge", controller.DebugGeneratorSecondsUntilNextCharge);
+            }
+
+            EditorGUILayout.Space();
             EditorGUILayout.LabelField("Energy Debug", EditorStyles.boldLabel);
             using (new EditorGUI.DisabledScope(!Application.isPlaying))
             {

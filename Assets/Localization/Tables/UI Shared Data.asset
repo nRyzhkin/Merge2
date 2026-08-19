@@ -131,6 +131,10 @@ MonoBehaviour:
     m_Key: ui.item.level_word
     m_Metadata:
       m_Items: []
+  - m_Id: 1030742045
+    m_Key: ui.item.generator_description
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

@@ -191,6 +191,14 @@ namespace SanIsland.Merge.Editor
             UpsertUiKey(collection, MergeUiLocalization.TimeSecondsKey, "fr", "{0} s");
             UpsertUiKey(collection, MergeUiLocalization.TimeSecondsKey, "pt", "{0} s");
             UpsertUiKey(collection, MergeUiLocalization.TimeSecondsKey, "tr", "{0} sn");
+
+            UpsertUiKey(collection, MergeUiLocalization.GeneratorDescriptionKey, "en", "This generator contains items. It recharges after running out.");
+            UpsertUiKey(collection, MergeUiLocalization.GeneratorDescriptionKey, "ru", "В этом генераторе есть предметы. Он перезаряжается, когда они заканчиваются.");
+            UpsertUiKey(collection, MergeUiLocalization.GeneratorDescriptionKey, "de", "Dieser Generator enthält Gegenstände. Er lädt sich auf, wenn sie aufgebraucht sind.");
+            UpsertUiKey(collection, MergeUiLocalization.GeneratorDescriptionKey, "es", "Este generador contiene objetos. Se recarga cuando se agotan.");
+            UpsertUiKey(collection, MergeUiLocalization.GeneratorDescriptionKey, "fr", "Ce générateur contient des objets. Il se recharge une fois vide.");
+            UpsertUiKey(collection, MergeUiLocalization.GeneratorDescriptionKey, "pt", "Este gerador contém itens. Ele recarrega quando acaba.");
+            UpsertUiKey(collection, MergeUiLocalization.GeneratorDescriptionKey, "tr", "Bu jeneratör eşya içerir. Bitince yeniden şarj olur.");
             AssetDatabase.SaveAssets();
         }
 

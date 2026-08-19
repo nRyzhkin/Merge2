@@ -136,6 +136,10 @@ MonoBehaviour:
     m_Localized: "N\xEDvel"
     m_Metadata:
       m_Items: []
+  - m_Id: 1030742045
+    m_Localized: Este gerador contém itens. Ele recarrega quando acaba.
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

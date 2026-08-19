@@ -19,7 +19,9 @@ namespace SanIsland.Merge
 
         MergeItemDatabase _database;
         MergeDiscoveryState _discovery;
+        BoardController _board;
         MergeItemData _current;
+        int _sourceCellIndex = BoardController.NoSelectionIndex;
         LocalizedString _nameString;
         UIWindow _detailUiWindow;
 
@@ -59,10 +61,11 @@ namespace SanIsland.Merge
             }
         }
 
-        public void Configure(MergeItemDatabase database, MergeDiscoveryState discovery)
+        public void Configure(MergeItemDatabase database, MergeDiscoveryState discovery, BoardController board = null)
         {
             _database = database;
             _discovery = discovery;
+            _board = board;
         }
 
         void OnEnable()
@@ -85,9 +88,10 @@ namespace SanIsland.Merge
             ClearNameSubscription();
         }
 
-        public void Show(MergeItemData data)
+        public void Show(MergeItemData data, int boardCellIndex = BoardController.NoSelectionIndex)
         {
             _current = data;
+            _sourceCellIndex = boardCellIndex;
             if (data == null)
             {
                 Hide();
@@ -124,8 +128,8 @@ namespace SanIsland.Merge
                 return;
             }
 
-            itemDetailWindow.Configure(_database, _discovery);
-            itemDetailWindow.Prepare(_current);
+            itemDetailWindow.Configure(_database, _discovery, _board);
+            itemDetailWindow.Prepare(_current, _sourceCellIndex);
             if (_detailUiWindow == null)
             {
                 _detailUiWindow = itemDetailWindow.GetComponent<UIWindow>();
@@ -149,6 +153,7 @@ namespace SanIsland.Merge
         public void Hide()
         {
             _current = null;
+            _sourceCellIndex = BoardController.NoSelectionIndex;
             ClearNameSubscription();
             if (chainInfoView != null)
             {
@@ -165,7 +170,7 @@ namespace SanIsland.Merge
         {
             if (_current != null)
             {
-                Show(_current);
+                Show(_current, _sourceCellIndex);
             }
         }
 
@@ -241,9 +246,7 @@ namespace SanIsland.Merge
 
         public void ApplyGeneratorPresentation(GeneratorPresentationInfo info)
         {
-            // Reserved for future Item Info TMP fields:
-            // Available: info.AvailableDrops / info.CapacityDrops
-            // Cooldown remaining: info.CooldownRemainingSeconds
+            // Available drops live in ItemDetail resourceParent.
         }
     }
 }

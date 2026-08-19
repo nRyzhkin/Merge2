@@ -35,6 +35,10 @@ namespace SanIsland.Merge
         [Header("Generator Debug")]
         [SerializeField] bool useDebugCooldownOverride;
         [SerializeField] float debugCooldownSeconds = 5f;
+        [HideInInspector] [SerializeField] int debugGeneratorAvailableDrops;
+        [HideInInspector] [SerializeField] int debugGeneratorMaxDrops;
+        [HideInInspector] [SerializeField] float debugGeneratorRechargeProgress;
+        [HideInInspector] [SerializeField] float debugGeneratorSecondsUntilNextCharge;
 
         [Header("Debug")]
         [SerializeField] int debugSelectedCellIndex = NoSelectionIndex;
@@ -91,6 +95,10 @@ namespace SanIsland.Merge
         public bool UseDevelopmentBoardState => useDevelopmentBoardState;
         public bool UseDebugCooldownOverride => useDebugCooldownOverride;
         public float DebugCooldownSeconds => debugCooldownSeconds;
+        public int DebugGeneratorAvailableDrops => debugGeneratorAvailableDrops;
+        public int DebugGeneratorMaxDrops => debugGeneratorMaxDrops;
+        public float DebugGeneratorRechargeProgress => debugGeneratorRechargeProgress;
+        public float DebugGeneratorSecondsUntilNextCharge => debugGeneratorSecondsUntilNextCharge;
         public GeneratorInstanceService GeneratorInstances => _generatorInstances;
         public IGameTimeProvider GameTimeProvider => _gameTimeProvider;
         public IGeneratorRandom GeneratorRandom => _generatorRandom;
@@ -172,6 +180,27 @@ namespace SanIsland.Merge
             else
             {
                 LoadInitialBoard();
+            }
+        }
+
+        void LateUpdate()
+        {
+            if (_selectedCellIndex == NoSelectionIndex)
+            {
+                return;
+            }
+
+            var selected = GetSelectedCell();
+            if (selected == null || !selected.HasItem || itemDatabase == null)
+            {
+                return;
+            }
+
+            if (itemDatabase.TryGetById(selected.ItemId, out var data) &&
+                data != null &&
+                data.Kind == MergeItemKind.Generator)
+            {
+                UpdateDebug();
             }
         }
 
@@ -1456,13 +1485,8 @@ namespace SanIsland.Merge
             }
 
             var now = _gameTimeProvider.UnixTimeNow;
-            var cooldownSeconds = GetEffectiveCooldownSeconds(productionData);
-            _generatorInstances.ResolveCooldown(runtime, productionData, now);
-            if (_generatorInstances.IsOnCooldown(runtime, now))
-            {
-                return GeneratorSpawnResult.Failed(generatorIndex, recharging: true);
-            }
-
+            var rechargeSeconds = GetEffectiveRechargeSeconds(productionData);
+            _generatorInstances.ApplyRecharge(runtime, productionData, now, rechargeSeconds);
             if (runtime.AvailableDrops <= 0)
             {
                 return GeneratorSpawnResult.Failed(generatorIndex, recharging: true);
@@ -1501,7 +1525,7 @@ namespace SanIsland.Merge
             }
 
             spawnCell.SetItem(outputItemId, locked: false);
-            _generatorInstances.OnDropConsumed(runtime, productionData, now, cooldownSeconds);
+            _generatorInstances.OnDropConsumed(runtime, productionData, now, rechargeSeconds);
             var newlyDiscovered = _discovery != null && _discovery.Discover(outputItemId);
             if (newlyDiscovered)
             {
@@ -2152,6 +2176,10 @@ namespace SanIsland.Merge
             debugSelectedItemId = BoardCellState.EmptyItemId;
             debugSelectedInternalKey = string.Empty;
             debugDiscoveredCount = _discovery != null ? _discovery.DiscoveredCount : 0;
+            debugGeneratorAvailableDrops = 0;
+            debugGeneratorMaxDrops = 0;
+            debugGeneratorRechargeProgress = 0f;
+            debugGeneratorSecondsUntilNextCharge = 0f;
             if (_energy != null)
             {
                 debugCurrentEnergy = _energy.GetCurrentEnergy();
@@ -2173,6 +2201,14 @@ namespace SanIsland.Merge
             if (itemDatabase != null && itemDatabase.TryGetById(selected.ItemId, out var data))
             {
                 debugSelectedInternalKey = data.InternalKey;
+                if (data.Kind == MergeItemKind.Generator &&
+                    TryGetGeneratorPresentationInfo(_selectedCellIndex, out var generatorInfo))
+                {
+                    debugGeneratorAvailableDrops = generatorInfo.AvailableDrops;
+                    debugGeneratorMaxDrops = generatorInfo.MaxDrops;
+                    debugGeneratorRechargeProgress = generatorInfo.RechargeProgress;
+                    debugGeneratorSecondsUntilNextCharge = generatorInfo.SecondsUntilNextCharge;
+                }
             }
         }
 
@@ -2183,10 +2219,10 @@ namespace SanIsland.Merge
                 return;
             }
 
-            itemInfoView.Configure(itemDatabase, _discovery);
+            itemInfoView.Configure(itemDatabase, _discovery, this);
             if (force || !itemInfoView.IsShowing(data.Id))
             {
-                itemInfoView.Show(data);
+                itemInfoView.Show(data, _selectedCellIndex);
             }
 
             itemInfoView.SetSellVisible(allowSell);
@@ -2366,9 +2402,14 @@ namespace SanIsland.Merge
 
         public float GetEffectiveCooldownSeconds(GeneratorData definition)
         {
+            return GetEffectiveRechargeSeconds(definition);
+        }
+
+        public float GetEffectiveRechargeSeconds(GeneratorData definition)
+        {
             if (definition == null)
             {
-                return 60f;
+                return 120f;
             }
 
             if (useDebugCooldownOverride)
@@ -2376,7 +2417,7 @@ namespace SanIsland.Merge
                 return debugCooldownSeconds;
             }
 
-            return definition.CooldownSeconds;
+            return definition.RechargeSecondsPerCharge;
         }
 
         public int GetAvailableDrops(int cellIndex)
@@ -2391,7 +2432,7 @@ namespace SanIsland.Merge
                 return 0;
             }
 
-            return productionData.CapacityDrops;
+            return productionData.MaxAvailableDrops;
         }
 
         public float GetCooldownRemaining(int cellIndex)
@@ -2402,7 +2443,7 @@ namespace SanIsland.Merge
             }
 
             var now = _gameTimeProvider.UnixTimeNow;
-            _generatorInstances.ResolveCooldown(runtime, productionData, now);
+            _generatorInstances.ApplyRecharge(runtime, productionData, now, GetEffectiveRechargeSeconds(productionData));
             return _generatorInstances.GetCooldownRemaining(runtime, now);
         }
 
@@ -2415,13 +2456,14 @@ namespace SanIsland.Merge
             }
 
             var now = _gameTimeProvider.UnixTimeNow;
-            _generatorInstances.ResolveCooldown(runtime, productionData, now);
+            _generatorInstances.ApplyRecharge(runtime, productionData, now, GetEffectiveRechargeSeconds(productionData));
             info = new GeneratorPresentationInfo
             {
                 IsValid = true,
                 AvailableDrops = runtime.AvailableDrops,
-                CapacityDrops = productionData.CapacityDrops,
-                CooldownRemainingSeconds = _generatorInstances.GetCooldownRemaining(runtime, now)
+                MaxDrops = productionData.MaxAvailableDrops,
+                RechargeProgress = _generatorInstances.GetNextChargeProgress(runtime, now),
+                SecondsUntilNextCharge = _generatorInstances.GetSecondsUntilNextCharge(runtime, now)
             };
             return true;
         }
@@ -2507,7 +2549,7 @@ namespace SanIsland.Merge
                 return;
             }
 
-            cell.GeneratorInstanceId = _generatorInstances.CreateFullInstance(generatorItemId, productionData.CapacityDrops);
+            cell.GeneratorInstanceId = _generatorInstances.CreateFullInstance(generatorItemId, productionData.MaxAvailableDrops);
         }
 
         void RemoveGeneratorInstance(int instanceId)

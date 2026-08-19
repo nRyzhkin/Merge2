@@ -136,6 +136,10 @@ MonoBehaviour:
     m_Localized: Stufe
     m_Metadata:
       m_Items: []
+  - m_Id: 1030742045
+    m_Localized: Dieser Generator enthält Gegenstände. Er lädt sich auf, wenn sie aufgebraucht sind.
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

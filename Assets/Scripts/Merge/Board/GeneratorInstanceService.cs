@@ -5,6 +5,8 @@ namespace SanIsland.Merge
 {
     public sealed class GeneratorInstanceService
     {
+        const int MaxChargeCatchup = 64;
+
         readonly Dictionary<int, GeneratorInstanceRuntime> _instances = new Dictionary<int, GeneratorInstanceRuntime>(32);
         int _nextInstanceId = 1;
 
@@ -14,16 +16,16 @@ namespace SanIsland.Merge
             _nextInstanceId = 1;
         }
 
-        public int CreateFullInstance(int generatorItemId, int capacityDrops)
+        public int CreateFullInstance(int generatorItemId, int maxAvailableDrops)
         {
             var instanceId = _nextInstanceId++;
             _instances[instanceId] = new GeneratorInstanceRuntime
             {
                 InstanceId = instanceId,
                 GeneratorItemId = generatorItemId,
-                AvailableDrops = capacityDrops,
-                CooldownStartTimestamp = 0d,
-                CooldownEndTimestamp = 0d
+                AvailableDrops = Math.Max(0, maxAvailableDrops),
+                RechargeStartTimestamp = 0d,
+                RechargeEndTimestamp = 0d
             };
             return instanceId;
         }
@@ -49,42 +51,81 @@ namespace SanIsland.Merge
             return _instances.TryGetValue(instanceId, out runtime) && runtime != null;
         }
 
-        public bool ResolveCooldown(GeneratorInstanceRuntime runtime, GeneratorData definition, double now)
+        public bool ApplyRecharge(GeneratorInstanceRuntime runtime, GeneratorData definition, double now, float rechargeSecondsPerCharge)
         {
             if (runtime == null || definition == null)
             {
                 return false;
             }
 
-            if (runtime.AvailableDrops > 0)
-            {
-                ClearCooldown(runtime);
-                return false;
-            }
-
-            if (runtime.CooldownEndTimestamp <= 0d)
+            var max = definition.MaxAvailableDrops;
+            var perCharge = definition.DropsPerCharge;
+            if (max <= 0 || perCharge <= 0)
             {
                 return false;
             }
 
-            if (now < runtime.CooldownEndTimestamp)
+            if (runtime.AvailableDrops >= max)
+            {
+                ClearRecharge(runtime);
+                return false;
+            }
+
+            if (!IsRechargeRunning(runtime))
+            {
+                if (ShouldStartRecharge(runtime.AvailableDrops, max, perCharge))
+                {
+                    StartRecharge(runtime, now, rechargeSecondsPerCharge);
+                }
+
+                return false;
+            }
+
+            if (now < runtime.RechargeEndTimestamp)
             {
                 return false;
             }
 
-            runtime.AvailableDrops = definition.CapacityDrops;
-            ClearCooldown(runtime);
-            return true;
+            var changed = false;
+            var duration = Math.Max(0.01d, rechargeSecondsPerCharge);
+            for (var i = 0; i < MaxChargeCatchup && runtime.AvailableDrops < max; i++)
+            {
+                if (now < runtime.RechargeEndTimestamp)
+                {
+                    break;
+                }
+
+                runtime.AvailableDrops = Math.Min(max, runtime.AvailableDrops + perCharge);
+                changed = true;
+                if (runtime.AvailableDrops >= max)
+                {
+                    ClearRecharge(runtime);
+                    return true;
+                }
+
+                runtime.RechargeStartTimestamp = runtime.RechargeEndTimestamp;
+                runtime.RechargeEndTimestamp = runtime.RechargeStartTimestamp + duration;
+            }
+
+            return changed;
+        }
+
+        public bool ResolveCooldown(GeneratorInstanceRuntime runtime, GeneratorData definition, double now, float rechargeSecondsPerCharge)
+        {
+            return ApplyRecharge(runtime, definition, now, rechargeSecondsPerCharge);
+        }
+
+        public bool IsExhausted(GeneratorInstanceRuntime runtime)
+        {
+            return runtime != null && runtime.AvailableDrops <= 0;
         }
 
         public bool IsOnCooldown(GeneratorInstanceRuntime runtime, double now)
         {
-            return runtime != null &&
-                   runtime.AvailableDrops <= 0 &&
-                   runtime.CooldownEndTimestamp > now;
+            return IsExhausted(runtime) && IsRechargeRunning(runtime) && now < runtime.RechargeEndTimestamp;
         }
 
-        public void OnDropConsumed(GeneratorInstanceRuntime runtime, GeneratorData definition, double now, float cooldownSeconds)
+        public void OnDropConsumed(GeneratorInstanceRuntime runtime, GeneratorData definition, double now, float rechargeSecondsPerCharge)
         {
             if (runtime == null || definition == null)
             {
@@ -92,51 +133,101 @@ namespace SanIsland.Merge
             }
 
             runtime.AvailableDrops = Math.Max(0, runtime.AvailableDrops - 1);
-            if (runtime.AvailableDrops > 0)
+            var max = definition.MaxAvailableDrops;
+            if (runtime.AvailableDrops >= max)
             {
-                ClearCooldown(runtime);
+                ClearRecharge(runtime);
                 return;
             }
 
-            runtime.CooldownStartTimestamp = now;
-            runtime.CooldownEndTimestamp = now + cooldownSeconds;
+            if (IsRechargeRunning(runtime))
+            {
+                return;
+            }
+
+            if (ShouldStartRecharge(runtime.AvailableDrops, max, definition.DropsPerCharge))
+            {
+                StartRecharge(runtime, now, rechargeSecondsPerCharge);
+            }
         }
 
-        public float GetCooldownProgress(GeneratorInstanceRuntime runtime, double now)
+        public float GetNextChargeProgress(GeneratorInstanceRuntime runtime, double now)
         {
-            if (runtime == null || runtime.AvailableDrops > 0)
+            if (runtime == null || !IsRechargeRunning(runtime))
             {
                 return -1f;
             }
 
-            if (runtime.CooldownEndTimestamp <= runtime.CooldownStartTimestamp)
-            {
-                return -1f;
-            }
-
-            if (now >= runtime.CooldownEndTimestamp)
+            if (now >= runtime.RechargeEndTimestamp)
             {
                 return 1f;
             }
 
-            var duration = runtime.CooldownEndTimestamp - runtime.CooldownStartTimestamp;
-            return (float)Math.Clamp((now - runtime.CooldownStartTimestamp) / duration, 0d, 1d);
+            var duration = runtime.RechargeEndTimestamp - runtime.RechargeStartTimestamp;
+            if (duration <= 0d)
+            {
+                return -1f;
+            }
+
+            return (float)Math.Clamp((now - runtime.RechargeStartTimestamp) / duration, 0d, 1d);
         }
 
-        public float GetCooldownRemaining(GeneratorInstanceRuntime runtime, double now)
+        public float GetCooldownProgress(GeneratorInstanceRuntime runtime, double now)
         {
-            if (!IsOnCooldown(runtime, now))
+            if (!IsExhausted(runtime))
+            {
+                return -1f;
+            }
+
+            return GetNextChargeProgress(runtime, now);
+        }
+
+        public float GetSecondsUntilNextCharge(GeneratorInstanceRuntime runtime, double now)
+        {
+            if (runtime == null || !IsRechargeRunning(runtime))
             {
                 return 0f;
             }
 
-            return (float)Math.Max(0d, runtime.CooldownEndTimestamp - now);
+            return (float)Math.Max(0d, runtime.RechargeEndTimestamp - now);
         }
 
-        static void ClearCooldown(GeneratorInstanceRuntime runtime)
+        public float GetCooldownRemaining(GeneratorInstanceRuntime runtime, double now)
         {
-            runtime.CooldownStartTimestamp = 0d;
-            runtime.CooldownEndTimestamp = 0d;
+            if (!IsExhausted(runtime))
+            {
+                return 0f;
+            }
+
+            return GetSecondsUntilNextCharge(runtime, now);
+        }
+
+        public bool IsRechargeRunning(GeneratorInstanceRuntime runtime)
+        {
+            return runtime != null && runtime.RechargeEndTimestamp > 0d;
+        }
+
+        static bool ShouldStartRecharge(int availableDrops, int maxAvailableDrops, int dropsPerCharge)
+        {
+            if (dropsPerCharge <= 0)
+            {
+                return false;
+            }
+
+            return maxAvailableDrops - availableDrops >= dropsPerCharge;
+        }
+
+        static void StartRecharge(GeneratorInstanceRuntime runtime, double now, float rechargeSecondsPerCharge)
+        {
+            var duration = Math.Max(0.01d, rechargeSecondsPerCharge);
+            runtime.RechargeStartTimestamp = now;
+            runtime.RechargeEndTimestamp = now + duration;
+        }
+
+        static void ClearRecharge(GeneratorInstanceRuntime runtime)
+        {
+            runtime.RechargeStartTimestamp = 0d;
+            runtime.RechargeEndTimestamp = 0d;
         }
     }
 }

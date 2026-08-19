@@ -65,7 +65,7 @@ namespace SanIsland.Merge
         void Start()
         {
             EnsureReady();
-            SeedDevBakeryG1();
+            SeedDevFamilyGenerators();
         }
 
         public bool TryAdd(int itemId, int generatorInstanceId = BoardCellState.NoGeneratorInstanceId)
@@ -122,16 +122,20 @@ namespace SanIsland.Merge
             return data.Kind == MergeItemKind.Normal || data.Kind == MergeItemKind.Generator;
         }
 
-        void SeedDevBakeryG1()
+        void SeedDevFamilyGenerators()
         {
             if (state.OccupiedCount > 0 || itemDatabase == null)
             {
                 return;
             }
 
-            if (itemDatabase.TryGetByKey("bakery_g01", out var item) && item != null)
+            var families = (MergeItemFamily[])Enum.GetValues(typeof(MergeItemFamily));
+            for (var i = 0; i < families.Length; i++)
             {
-                TryAdd(item.Id);
+                if (itemDatabase.TryGetLowestGenerator(families[i], out var item) && item != null)
+                {
+                    TryAdd(item.Id);
+                }
             }
         }
 

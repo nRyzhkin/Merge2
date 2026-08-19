@@ -178,8 +178,9 @@ namespace SanIsland.Merge
                 {
                     if (!boardController.IsCellInteractionLocked(cellView.Index))
                     {
+                        var alreadySelected = boardController.SelectedCellIndex == cellView.Index;
                         boardController.SelectCell(cellView.Index);
-                        if (boardController.IsGeneratorCell(cellView.Index))
+                        if (alreadySelected && boardController.IsGeneratorCell(cellView.Index))
                         {
                             boardController.TryActivateGenerator(cellView.Index, eventData.position);
                         }

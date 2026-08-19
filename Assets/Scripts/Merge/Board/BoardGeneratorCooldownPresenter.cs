@@ -83,7 +83,7 @@ namespace SanIsland.Merge
                     continue;
                 }
 
-                _instances.ResolveCooldown(runtime, generatorData, now);
+                _instances.ApplyRecharge(runtime, generatorData, now, _controller.GetEffectiveRechargeSeconds(generatorData));
 
                 if (runtime.AvailableDrops > 0)
                 {

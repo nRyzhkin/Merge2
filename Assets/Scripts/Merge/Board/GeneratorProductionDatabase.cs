@@ -146,14 +146,19 @@ namespace SanIsland.Merge
                     Debug.LogError($"[GeneratorProduction] Duplicate generator id {entry.GeneratorId}.");
                 }
 
-                if (entry.CapacityDrops <= 0)
+                if (entry.DropsPerCharge <= 0)
                 {
-                    Debug.LogError($"[GeneratorProduction] Generator {entry.GeneratorId}: capacityDrops must be > 0.");
+                    Debug.LogError($"[GeneratorProduction] Generator {entry.GeneratorId}: dropsPerCharge must be > 0.");
                 }
 
-                if (entry.CooldownSeconds <= 0f)
+                if (entry.MaxStoredCharges <= 0)
                 {
-                    Debug.LogError($"[GeneratorProduction] Generator {entry.GeneratorId}: cooldownSeconds must be > 0.");
+                    Debug.LogError($"[GeneratorProduction] Generator {entry.GeneratorId}: maxStoredCharges must be > 0.");
+                }
+
+                if (entry.RechargeSecondsPerCharge <= 0f)
+                {
+                    Debug.LogError($"[GeneratorProduction] Generator {entry.GeneratorId}: rechargeSecondsPerCharge must be > 0.");
                 }
 
                 if (entry.DropTable == null || entry.DropTable.Count == 0)

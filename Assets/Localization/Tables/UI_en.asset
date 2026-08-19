@@ -136,6 +136,10 @@ MonoBehaviour:
     m_Localized: Level
     m_Metadata:
       m_Items: []
+  - m_Id: 1030742045
+    m_Localized: This generator contains items. It recharges after running out.
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

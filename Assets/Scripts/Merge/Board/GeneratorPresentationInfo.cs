@@ -4,8 +4,9 @@ namespace SanIsland.Merge
     {
         public bool IsValid;
         public int AvailableDrops;
-        public int CapacityDrops;
-        public float CooldownRemainingSeconds;
+        public int MaxDrops;
+        public float RechargeProgress;
+        public float SecondsUntilNextCharge;
 
         public static GeneratorPresentationInfo Invalid => default;
     }

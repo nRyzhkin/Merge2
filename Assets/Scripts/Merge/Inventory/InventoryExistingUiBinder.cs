@@ -306,7 +306,61 @@ namespace SanIsland.Merge
                 Debug.LogError("[TASK17C] Binding failed: ItemDetail/Label_Grade/Text_2 not found.");
             }
 
-            detail.Bind(itemIcon, nameText, description, chainView, levelValue, levelWord);
+            var resourceParent = FindDescendant(itemDetailRoot, "resourceParent");
+            var resourceEnergy = resourceParent != null ? FindDescendant(resourceParent, EnergyHudView.EnergyRootName) : null;
+            var resourceValue = resourceEnergy != null
+                ? FindChildText(resourceEnergy, EnergyHudView.ValueTextName)
+                : null;
+            var resourceTimer = resourceParent != null ? FindDescendant(resourceParent, EnergyHudView.TimerContainerName) : null;
+            TMP_Text resourceTimerText = null;
+            if (resourceTimer != null)
+            {
+                resourceTimerText = FindChildText(resourceTimer, EnergyHudView.TimerTextName);
+                if (resourceTimerText == null)
+                {
+                    resourceTimerText = resourceTimer.GetComponentInChildren<TMP_Text>(true);
+                }
+            }
+
+            if (resourceParent == null)
+            {
+                Debug.LogError("[TASK17C] Binding failed: ItemDetail/resourceParent not found.");
+            }
+            else if (resourceEnergy == null)
+            {
+                Debug.LogError("[TASK17C] Binding failed: ItemDetail resourceParent/Resource_Energy not found.");
+            }
+
+            if (resourceValue == null)
+            {
+                Debug.LogError("[TASK17C] Binding failed: ItemDetail resource value TMP not found.");
+            }
+
+            if (resourceTimer == null || resourceTimerText == null)
+            {
+                Debug.LogError("[TASK17C] Binding failed: ItemDetail resource timer TMP not found. Not creating a new timer.");
+            }
+
+            if (resourceEnergy != null)
+            {
+                var energyHud = resourceEnergy.GetComponent<EnergyHudView>();
+                if (energyHud != null)
+                {
+                    energyHud.enabled = false;
+                }
+            }
+
+            detail.Bind(
+                itemIcon,
+                nameText,
+                description,
+                chainView,
+                levelValue,
+                levelWord,
+                resourceParent,
+                resourceValue,
+                resourceTimer != null ? resourceTimer.gameObject : null,
+                resourceTimerText);
             return detail;
         }
 

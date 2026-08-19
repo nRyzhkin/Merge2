@@ -136,6 +136,10 @@ MonoBehaviour:
     m_Localized: Seviye
     m_Metadata:
       m_Items: []
+  - m_Id: 1030742045
+    m_Localized: Bu jeneratör eşya içerir. Bitince yeniden şarj olur.
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

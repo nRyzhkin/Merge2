@@ -136,6 +136,10 @@ MonoBehaviour:
     m_Localized: Nivel
     m_Metadata:
       m_Items: []
+  - m_Id: 1030742045
+    m_Localized: Este generador contiene objetos. Se recarga cuando se agotan.
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:
