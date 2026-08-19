@@ -105,11 +105,19 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1030742037
-    m_Localized: MAX
+    m_Localized: "\u041C\u0410\u041A\u0421"
     m_Metadata:
       m_Items: []
   - m_Id: 1030742038
     m_Localized: "Battle Pass \u0441\u043A\u043E\u0440\u043E \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742039
+    m_Localized: "{0}\u043C {1}\u0441"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742040
+    m_Localized: "{0}\u0441"
     m_Metadata:
       m_Items: []
   references:

@@ -111,6 +111,14 @@ MonoBehaviour:
     m_Items: []
   m_KeyGenerator:
     rid: 8013459914571120912
+  - m_Id: 1030742039
+    m_Key: ui.time.minutes_seconds
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742040
+    m_Key: ui.time.seconds
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

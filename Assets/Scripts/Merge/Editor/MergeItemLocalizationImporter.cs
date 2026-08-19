@@ -167,6 +167,22 @@ namespace SanIsland.Merge.Editor
             UpsertUiKey(collection, MergeUiLocalization.OrderItemsMissingKey, "fr", "Objets requis manquants");
             UpsertUiKey(collection, MergeUiLocalization.OrderItemsMissingKey, "pt", "Itens necessários ausentes");
             UpsertUiKey(collection, MergeUiLocalization.OrderItemsMissingKey, "tr", "Gerekli eşyalar eksik");
+
+            UpsertUiKey(collection, MergeUiLocalization.TimeMinutesSecondsKey, "en", "{0}m {1}s");
+            UpsertUiKey(collection, MergeUiLocalization.TimeMinutesSecondsKey, "ru", "{0}м {1}с");
+            UpsertUiKey(collection, MergeUiLocalization.TimeMinutesSecondsKey, "de", "{0} Min. {1} Sek.");
+            UpsertUiKey(collection, MergeUiLocalization.TimeMinutesSecondsKey, "es", "{0} min {1} s");
+            UpsertUiKey(collection, MergeUiLocalization.TimeMinutesSecondsKey, "fr", "{0} min {1} s");
+            UpsertUiKey(collection, MergeUiLocalization.TimeMinutesSecondsKey, "pt", "{0} min {1} s");
+            UpsertUiKey(collection, MergeUiLocalization.TimeMinutesSecondsKey, "tr", "{0} dk {1} sn");
+
+            UpsertUiKey(collection, MergeUiLocalization.TimeSecondsKey, "en", "{0}s");
+            UpsertUiKey(collection, MergeUiLocalization.TimeSecondsKey, "ru", "{0}с");
+            UpsertUiKey(collection, MergeUiLocalization.TimeSecondsKey, "de", "{0} Sek.");
+            UpsertUiKey(collection, MergeUiLocalization.TimeSecondsKey, "es", "{0} s");
+            UpsertUiKey(collection, MergeUiLocalization.TimeSecondsKey, "fr", "{0} s");
+            UpsertUiKey(collection, MergeUiLocalization.TimeSecondsKey, "pt", "{0} s");
+            UpsertUiKey(collection, MergeUiLocalization.TimeSecondsKey, "tr", "{0} sn");
             AssetDatabase.SaveAssets();
         }
 

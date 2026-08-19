@@ -112,6 +112,14 @@ MonoBehaviour:
     m_Localized: Battle Pass is coming soon
     m_Metadata:
       m_Items: []
+  - m_Id: 1030742039
+    m_Localized: "{0}m {1}s"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742040
+    m_Localized: "{0}s"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

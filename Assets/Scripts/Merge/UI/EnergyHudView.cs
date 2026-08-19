@@ -209,11 +209,7 @@ namespace SanIsland.Merge
             }
 
             _displayedTimerSeconds = totalSeconds;
-            var minutes = totalSeconds / 60;
-            var seconds = totalSeconds % 60;
-            timerText.text = minutes > 0
-                ? $"{minutes}м {seconds}с"
-                : $"{seconds}с";
+            timerText.text = MergeUiLocalization.FormatDuration(totalSeconds);
         }
 
         void StartFeedback(float peak, float duration)
