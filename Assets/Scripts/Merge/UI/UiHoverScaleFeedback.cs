@@ -20,11 +20,41 @@ namespace SanIsland.Merge
         bool _hovered;
         bool _pressed;
         bool _transitioning;
+        bool _bounceReturning;
+        RectTransform _bounceTarget;
         Vector3 _fromScale;
         Vector3 _toScale;
         float _elapsed;
         float _duration;
         AnimationCurve _curve;
+
+        public void PlayBounce()
+        {
+            _bounceTarget = FindBagIcon();
+            var bounce = BounceTarget;
+            if (bounce == null)
+            {
+                return;
+            }
+
+            _baseScale = bounce.localScale.x < 0.01f ? Vector3.one : bounce.localScale;
+            _bounceReturning = false;
+            BeginTransition(_baseScale * (config != null ? config.HoverScale * 1.12f : 1.18f), Motion.HoverEnter);
+        }
+
+        RectTransform FindBagIcon()
+        {
+            for (var i = 0; i < transform.childCount; i++)
+            {
+                var child = transform.GetChild(i) as RectTransform;
+                if (child != null && child.GetComponent<Image>() != null)
+                {
+                    return child;
+                }
+            }
+
+            return Target;
+        }
 
         public void Configure(UiInteractionFeedbackConfig feedbackConfig, RectTransform visualRoot = null)
         {
@@ -69,10 +99,13 @@ namespace SanIsland.Merge
             _hovered = false;
             _pressed = false;
             _transitioning = false;
+            _bounceReturning = false;
             if (_baseCaptured)
             {
                 ApplyScale(_baseScale);
             }
+
+            _bounceTarget = null;
         }
 
         public void OnPointerEnter(PointerEventData eventData)
@@ -150,6 +183,15 @@ namespace SanIsland.Merge
             if (t >= 1f)
             {
                 ApplyScale(_toScale);
+                if (_bounceTarget != null && !_bounceReturning)
+                {
+                    _bounceReturning = true;
+                    BeginTransition(_baseScale, Motion.HoverExit);
+                    return;
+                }
+
+                _bounceTarget = null;
+                _bounceReturning = false;
                 _transitioning = false;
             }
         }
@@ -164,12 +206,12 @@ namespace SanIsland.Merge
 
         void BeginTransition(Vector3 toScale, Motion motion)
         {
-            if (config == null || Target == null)
+            if (config == null || BounceTarget == null)
             {
                 return;
             }
 
-            _fromScale = Target.localScale;
+            _fromScale = BounceTarget.localScale;
             _toScale = toScale;
             _elapsed = 0f;
             switch (motion)
@@ -223,6 +265,8 @@ namespace SanIsland.Merge
             return _baseScale * scale;
         }
 
+        RectTransform BounceTarget => _bounceTarget != null ? _bounceTarget : Target;
+
         RectTransform Target
         {
             get
@@ -238,9 +282,9 @@ namespace SanIsland.Merge
 
         void ApplyScale(Vector3 scale)
         {
-            if (Target != null)
+            if (BounceTarget != null)
             {
-                Target.localScale = scale;
+                BounceTarget.localScale = scale;
             }
         }
     }

@@ -11,37 +11,24 @@ namespace SanIsland.Merge
     {
         [SerializeField] Image icon;
         [SerializeField] TMP_Text amountText;
+        [SerializeField] GameObject amountRoot;
 
         int _itemId;
         bool _pointerEnabled;
+        Graphic[] _graphics;
 
         public int ItemId => _itemId;
         public event Action<OrderRequirementSlotView> Clicked;
 
-        public void BindLocal()
+        public void Bind(Image iconImage, TMP_Text amount, GameObject amountHolder)
         {
-            if (icon == null)
-            {
-                var child = transform.Find("Icon");
-                if (child != null)
-                {
-                    icon = child.GetComponent<Image>();
-                }
-            }
-
-            if (amountText == null)
-            {
-                var child = transform.Find("Text_Amount");
-                if (child != null)
-                {
-                    amountText = child.GetComponent<TMP_Text>();
-                }
-            }
+            icon = iconImage;
+            amountText = amount;
+            amountRoot = amountHolder;
         }
 
         public void Show(Sprite sprite, int amount, int itemId)
         {
-            BindLocal();
             _itemId = itemId;
             gameObject.SetActive(true);
             if (icon != null)
@@ -51,16 +38,22 @@ namespace SanIsland.Merge
                 icon.preserveAspect = true;
             }
 
+            var showAmount = amount > 1;
+            if (amountRoot != null && amountRoot.activeSelf != showAmount)
+            {
+                amountRoot.SetActive(showAmount);
+            }
+
             if (amountText != null)
             {
-                if (amount > 1)
+                if (showAmount)
                 {
-                    amountText.gameObject.SetActive(true);
                     amountText.text = amount.ToString();
                 }
-                else
+
+                if (amountRoot == null && amountText.gameObject.activeSelf != showAmount)
                 {
-                    amountText.gameObject.SetActive(false);
+                    amountText.gameObject.SetActive(showAmount);
                 }
             }
 
@@ -105,10 +98,14 @@ namespace SanIsland.Merge
         void ApplyPointerTargets()
         {
             EnsureHitGraphic();
-            var graphics = GetComponentsInChildren<Graphic>(true);
-            for (var i = 0; i < graphics.Length; i++)
+            if (_graphics == null)
             {
-                var graphic = graphics[i];
+                _graphics = GetComponentsInChildren<Graphic>(true);
+            }
+
+            for (var i = 0; i < _graphics.Length; i++)
+            {
+                var graphic = _graphics[i];
                 if (graphic == null)
                 {
                     continue;

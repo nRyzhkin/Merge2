@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace SanIsland.Merge
 {
@@ -15,20 +16,51 @@ namespace SanIsland.Merge
         [SerializeField] RectTransform windowRoot;
         [SerializeField] RectTransform contentRoot;
         [SerializeField] UIWindowChoreographyConfig overrideConfig;
+        [SerializeField] RectTransform overlayRoot;
         [SerializeField] bool closeOnBack = true;
 
         UIWindowChoreographyConfig _defaultConfig;
         UIWindowChoreography _choreography;
+        IUIWindowWillOpen[] _willOpen;
         bool _visible;
         bool _closing;
         bool _hiddenInvoked;
+        bool _prewarmed;
         Action _onHidden;
 
         public bool CloseOnBack => closeOnBack;
         public bool IsOpen => _visible && !_closing;
         public bool IsVisible => _visible;
         public RectTransform ContentRoot => contentRoot;
+        public RectTransform OverlayRoot => overlayRoot;
         public UIWindowChoreography Choreography => EnsureChoreography();
+
+        public const string DimmerObjectSuffix = "_Dimmed";
+
+        public void BindRoots(RectTransform root, CanvasGroup group)
+        {
+            windowRoot = root;
+            canvasGroup = group;
+        }
+
+        public void BindOverlay(RectTransform overlay)
+        {
+            overlayRoot = overlay;
+        }
+
+        public void EnsureOwnDimmer(UIWindowChoreographyConfig config)
+        {
+            if (overlayRoot == null)
+            {
+                overlayRoot = CreateSiblingDimmer();
+            }
+            else
+            {
+                PlaceDimmerBesideWindow(overlayRoot);
+            }
+
+            ConfigureDimmer(overlayRoot, config);
+        }
 
         public void Configure(UIWindowChoreographyConfig defaultConfig)
         {
@@ -45,6 +77,20 @@ namespace SanIsland.Merge
             EnsureChoreography().Initialize(windowRoot, canvasGroup, ResolveConfig());
         }
 
+        public void Prewarm(UIWindowChoreographyConfig defaultConfig)
+        {
+            if (_prewarmed)
+            {
+                return;
+            }
+
+            EnsureOwnDimmer(defaultConfig);
+            Configure(defaultConfig);
+            CacheWillOpen();
+            EnsureChoreography().Prewarm();
+            _prewarmed = true;
+        }
+
         void Awake()
         {
             if (canvasGroup == null)
@@ -53,6 +99,7 @@ namespace SanIsland.Merge
             }
 
             EnsureChoreography();
+            CacheWillOpen();
         }
 
         void OnDisable()
@@ -85,6 +132,7 @@ namespace SanIsland.Merge
 
             if (!wasActive)
             {
+                SetOverlayActive(true);
                 choreography.SnapOpenStart();
                 gameObject.SetActive(true);
             }
@@ -113,10 +161,23 @@ namespace SanIsland.Merge
 
         void NotifyWillOpen()
         {
-            var listeners = GetComponents<IUIWindowWillOpen>();
-            for (var i = 0; i < listeners.Length; i++)
+            CacheWillOpen();
+            if (_willOpen == null)
             {
-                listeners[i].OnWindowWillOpen();
+                return;
+            }
+
+            for (var i = 0; i < _willOpen.Length; i++)
+            {
+                _willOpen[i].OnWindowWillOpen();
+            }
+        }
+
+        void CacheWillOpen()
+        {
+            if (_willOpen == null)
+            {
+                _willOpen = GetComponents<IUIWindowWillOpen>();
             }
         }
 
@@ -129,6 +190,7 @@ namespace SanIsland.Merge
 
             _closing = false;
             _visible = false;
+            SetOverlayActive(false);
             if (gameObject.activeSelf)
             {
                 gameObject.SetActive(false);
@@ -148,6 +210,100 @@ namespace SanIsland.Merge
             var callback = _onHidden;
             _onHidden = null;
             callback?.Invoke();
+        }
+
+        void SetOverlayActive(bool active)
+        {
+            if (overlayRoot == null)
+            {
+                return;
+            }
+
+            if (overlayRoot.IsChildOf(transform) || overlayRoot == transform)
+            {
+                return;
+            }
+
+            if (overlayRoot.gameObject.activeSelf != active)
+            {
+                overlayRoot.gameObject.SetActive(active);
+            }
+        }
+
+        RectTransform CreateSiblingDimmer()
+        {
+            var parent = transform.parent as RectTransform;
+            var host = parent != null ? parent : transform as RectTransform;
+            var name = gameObject.name + DimmerObjectSuffix;
+            var existing = host.Find(name) as RectTransform;
+            if (existing != null)
+            {
+                PlaceDimmerBesideWindow(existing);
+                return existing;
+            }
+
+            var go = new GameObject(name, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(CanvasGroup));
+            go.layer = gameObject.layer;
+            var rect = go.GetComponent<RectTransform>();
+            rect.SetParent(host, false);
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.one;
+            rect.offsetMin = Vector2.zero;
+            rect.offsetMax = Vector2.zero;
+            PlaceDimmerBesideWindow(rect);
+            go.SetActive(false);
+            return rect;
+        }
+
+        void PlaceDimmerBesideWindow(RectTransform dimmer)
+        {
+            if (dimmer == null || dimmer == transform || dimmer.parent != transform.parent)
+            {
+                return;
+            }
+
+            var windowIndex = transform.GetSiblingIndex();
+            var dimmerIndex = dimmer.GetSiblingIndex();
+            if (dimmerIndex == windowIndex - 1)
+            {
+                return;
+            }
+
+            dimmer.SetSiblingIndex(windowIndex);
+        }
+
+        void ConfigureDimmer(RectTransform dimmer, UIWindowChoreographyConfig config)
+        {
+            if (dimmer == null)
+            {
+                return;
+            }
+
+            var alpha = config != null ? config.OptionalModalBackgroundAlpha : 0.62f;
+            var image = dimmer.GetComponent<Image>();
+            if (image == null)
+            {
+                image = dimmer.gameObject.AddComponent<Image>();
+            }
+
+            image.color = new Color(17f / 255f, 37f / 255f, 62f / 255f, alpha);
+            image.raycastTarget = true;
+            var group = dimmer.GetComponent<CanvasGroup>();
+            if (group == null)
+            {
+                group = dimmer.gameObject.AddComponent<CanvasGroup>();
+            }
+
+            group.ignoreParentGroups = true;
+            group.blocksRaycasts = true;
+            group.interactable = true;
+            var click = dimmer.GetComponent<UIWindowModalClick>();
+            if (click == null)
+            {
+                click = dimmer.gameObject.AddComponent<UIWindowModalClick>();
+            }
+
+            click.Bind(this);
         }
 
         UIWindowChoreographyConfig ResolveConfig()

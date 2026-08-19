@@ -491,6 +491,17 @@ namespace SanIsland.Merge
             return new ProductionSequence();
         }
 
+        public GeneratorFlightView BorrowFlight()
+        {
+            EnsurePools();
+            return RentFlight();
+        }
+
+        public void ReleaseFlight(GeneratorFlightView flight)
+        {
+            ReturnFlight(flight);
+        }
+
         GeneratorFlightView RentFlight()
         {
             for (var i = 0; i < _flightPool.Count; i++)

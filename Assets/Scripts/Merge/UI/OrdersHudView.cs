@@ -18,25 +18,34 @@ namespace SanIsland.Merge
         bool _layoutFrozen;
         bool _subscribedCards;
         bool _fillAfterMotion;
+        bool _wired;
 
         public int CardCount => cards != null ? cards.Length : 0;
 
         public void BindLocal()
         {
-            CollectCardsFromChildren();
-            if (_layout == null)
+            if (!_wired)
             {
-                _layout = GetComponent<LayoutGroup>();
-            }
+                if (cards == null || cards.Length == 0)
+                {
+                    CollectCardsFromChildren();
+                }
+                if (_layout == null)
+                {
+                    _layout = GetComponent<LayoutGroup>();
+                }
 
-            if (cards == null)
-            {
+                if (cards != null)
+                {
+                    for (var i = 0; i < cards.Length; i++)
+                    {
+                        cards[i]?.BindLocal();
+                    }
+                }
+
+                SubscribeCards();
+                _wired = true;
                 return;
-            }
-
-            for (var i = 0; i < cards.Length; i++)
-            {
-                cards[i]?.BindLocal();
             }
 
             SubscribeCards();
@@ -594,7 +603,7 @@ namespace SanIsland.Merge
                 var card = child.GetComponent<OrderCardView>();
                 if (card == null)
                 {
-                    card = child.gameObject.AddComponent<OrderCardView>();
+                    continue;
                 }
 
                 found[count] = card;

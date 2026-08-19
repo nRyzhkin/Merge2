@@ -12,21 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4e91b7a2d834f6c8a0e1f5b7392d4a6, type: 3}
   m_Name: EconomyConfig
   m_EditorClassIdentifier: SanIsland.Merge::SanIsland.Merge.EconomyConfig
-  sellPricesByLevel:
-  - 10
-  - 20
-  - 40
-  - 60
-  - 120
-  - 250
-  - 510
-  - 1020
-  - 2050
-  - 4100
-  - 8200
-  - 16400
-  - 32800
-  - 65600
+  sellPricesByLevel: 0a00000000000000140000000000000028000000000000003c000000000000007800000000000000fa00000000000000fe01000000000000fc03000000000000020800000000000004100000000000000820000000000000104000000000000020800000000000004000010000000000
   undoWindowSeconds: 5
   sellAnticipationScale: 1.08
   sellAnticipationDuration: 0.08

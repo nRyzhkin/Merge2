@@ -14,22 +14,49 @@ namespace SanIsland.Merge
         [SerializeField] TMP_Text levelText;
         [SerializeField] MergeChainInfoView chainInfoView;
         [SerializeField] GameObject sellRoot;
+        [SerializeField] Button detailsButton;
+        [SerializeField] ItemDetailWindow itemDetailWindow;
 
         MergeItemDatabase _database;
         MergeDiscoveryState _discovery;
         MergeItemData _current;
         LocalizedString _nameString;
+        UIWindow _detailUiWindow;
 
         public MergeChainInfoView ChainInfoView => chainInfoView;
         public bool IsShowing(int itemId) => _current != null && _current.Id == itemId && gameObject.activeSelf;
 
-        public void Bind(Image generator, Image item, TMP_Text name, TMP_Text level, MergeChainInfoView chain)
+        public void Bind(
+            Image generator,
+            Image item,
+            TMP_Text name,
+            TMP_Text level,
+            MergeChainInfoView chain,
+            Button details,
+            ItemDetailWindow detailWindow)
         {
             generatorIcon = generator;
             itemIcon = item;
             nameText = name;
             levelText = level;
             chainInfoView = chain;
+            detailsButton = details;
+            itemDetailWindow = detailWindow;
+        }
+
+        public void BindDetails(Button details, ItemDetailWindow detailWindow)
+        {
+            if (isActiveAndEnabled && detailsButton != null)
+            {
+                detailsButton.onClick.RemoveListener(OpenDetails);
+            }
+
+            detailsButton = details;
+            itemDetailWindow = detailWindow;
+            if (isActiveAndEnabled && detailsButton != null)
+            {
+                detailsButton.onClick.AddListener(OpenDetails);
+            }
         }
 
         public void Configure(MergeItemDatabase database, MergeDiscoveryState discovery)
@@ -41,11 +68,20 @@ namespace SanIsland.Merge
         void OnEnable()
         {
             LocalizationSettings.SelectedLocaleChanged += OnLocaleChanged;
+            if (detailsButton != null)
+            {
+                detailsButton.onClick.AddListener(OpenDetails);
+            }
         }
 
         void OnDisable()
         {
             LocalizationSettings.SelectedLocaleChanged -= OnLocaleChanged;
+            if (detailsButton != null)
+            {
+                detailsButton.onClick.RemoveListener(OpenDetails);
+            }
+
             ClearNameSubscription();
         }
 
@@ -70,9 +106,34 @@ namespace SanIsland.Merge
             ApplyLevel(data.Level);
             ApplyGeneratorIcon(data);
 
-            if (chainInfoView != null && _database != null)
+            if (chainInfoView != null)
             {
-                chainInfoView.Show(_database.GetChain(data.Family, data.Kind), data.Id, _discovery);
+                chainInfoView.Hide();
+                if (chainInfoView.gameObject.activeSelf)
+                {
+                    chainInfoView.gameObject.SetActive(false);
+                }
+            }
+
+        }
+
+        void OpenDetails()
+        {
+            if (_current == null || itemDetailWindow == null || UIManager.Instance == null)
+            {
+                return;
+            }
+
+            itemDetailWindow.Configure(_database, _discovery);
+            itemDetailWindow.Prepare(_current);
+            if (_detailUiWindow == null)
+            {
+                _detailUiWindow = itemDetailWindow.GetComponent<UIWindow>();
+            }
+
+            if (_detailUiWindow != null)
+            {
+                UIManager.Instance.OpenWindow(_detailUiWindow);
             }
         }
 

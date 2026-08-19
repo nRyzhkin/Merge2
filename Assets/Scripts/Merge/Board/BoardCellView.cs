@@ -521,7 +521,7 @@ namespace SanIsland.Merge
 
                 if (blockerImage != null)
                 {
-                    blockerImage.sprite = visuals != null ? visuals.GetBoxSprite(state.Index) : null;
+                    blockerImage.sprite = visuals != null ? visuals.GetBoxSprite(state.ResolveBoxVisualIndex()) : null;
                     blockerImage.enabled = blockerImage.sprite != null;
                 }
 

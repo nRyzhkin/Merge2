@@ -50,6 +50,11 @@ namespace SanIsland.Merge
             ShowLocalized(MessageKind.Info, MergeUiLocalization.BoardFullKey, screenPosition);
         }
 
+        public void ShowInventoryFull(Vector2 screenPosition)
+        {
+            ShowLocalized(MessageKind.Info, MergeUiLocalization.InventoryFullKey, screenPosition);
+        }
+
         public void ShowGeneratorRecharging(Vector2 screenPosition)
         {
             ShowLocalized(MessageKind.Info, MergeUiLocalization.GeneratorRechargingKey, screenPosition);

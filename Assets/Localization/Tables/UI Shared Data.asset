@@ -115,18 +115,26 @@ MonoBehaviour:
     m_Key: ui.time.seconds
     m_Metadata:
       m_Items: []
+  - m_Id: 1030742041
+    m_Key: ui.message.inventory_full
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742042
+    m_Key: ui.action.details
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742043
+    m_Key: ui.item.description_placeholder
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742044
+    m_Key: ui.item.level_word
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
     rid: 8013459914571120912
-  - m_Id: 1030742039
-    m_Key: ui.time.minutes_seconds
-    m_Metadata:
-      m_Items: []
-  - m_Id: 1030742040
-    m_Key: ui.time.seconds
-    m_Metadata:
-      m_Items: []
   references:
     version: 2
     RefIds:

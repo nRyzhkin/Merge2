@@ -57,7 +57,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1030742025
-    m_Localized: "D\u00E9bloque la cha\u00EEne de fusion Nettoyage"
+    m_Localized: "D\xE9bloque la cha\xEEne de fusion Nettoyage"
     m_Metadata:
       m_Items: []
   - m_Id: 1030742026
@@ -65,7 +65,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1030742027
-    m_Localized: "D\u00E9bloque la cha\u00EEne de fusion Outils"
+    m_Localized: "D\xE9bloque la cha\xEEne de fusion Outils"
     m_Metadata:
       m_Items: []
   - m_Id: 1030742028
@@ -73,27 +73,27 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1030742029
-    m_Localized: "D\u00E9bloque le Battle Pass saisonnier"
+    m_Localized: "D\xE9bloque le Battle Pass saisonnier"
     m_Metadata:
       m_Items: []
   - m_Id: 1030742030
-    m_Localized: "D\u00E9bloqu\u00E9"
+    m_Localized: "D\xE9bloqu\xE9"
     m_Metadata:
       m_Items: []
   - m_Id: 1030742031
-    m_Localized: "Verrouill\u00E9"
+    m_Localized: "Verrouill\xE9"
     m_Metadata:
       m_Items: []
   - m_Id: 1030742032
-    m_Localized: "R\u00E9cup\u00E9rer"
+    m_Localized: "R\xE9cup\xE9rer"
     m_Metadata:
       m_Items: []
   - m_Id: 1030742033
-    m_Localized: "\u00C9nergie +{0}"
+    m_Localized: "\xC9nergie +{0}"
     m_Metadata:
       m_Items: []
   - m_Id: 1030742034
-    m_Localized: "Pi\u00E8ces +{0}"
+    m_Localized: "Pi\xE8ces +{0}"
     m_Metadata:
       m_Items: []
   - m_Id: 1030742035
@@ -101,7 +101,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1030742036
-    m_Localized: "{0}/{1}"
+    m_Localized: '{0}/{1}'
     m_Metadata:
       m_Items: []
   - m_Id: 1030742037
@@ -109,15 +109,31 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1030742038
-    m_Localized: "Le Battle Pass arrive bient\u00F4t"
+    m_Localized: "Le Battle Pass arrive bient\xF4t"
     m_Metadata:
       m_Items: []
   - m_Id: 1030742039
-    m_Localized: "{0} min {1} s"
+    m_Localized: '{0} min {1} s'
     m_Metadata:
       m_Items: []
   - m_Id: 1030742040
-    m_Localized: "{0} s"
+    m_Localized: '{0} s'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742041
+    m_Localized: Inventaire plein
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742042
+    m_Localized: Details
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742043
+    m_Localized: Description a venir
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742044
+    m_Localized: Niveau
     m_Metadata:
       m_Items: []
   references:

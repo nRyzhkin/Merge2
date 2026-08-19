@@ -51,7 +51,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   centerStartScale: 0.92
-  centerDuration: 0.32
+  centerDuration: 0.38
   centerOvershootScale: 1.012
   centerCurve:
     serializedVersion: 2
@@ -93,9 +93,9 @@ MonoBehaviour:
   intraPhaseStagger: 0.025
   listItemStartScale: 0.92
   listItemDuration: 0.28
-  listItemStagger: 0.07
+  listItemStagger: 0.05
   listItemOffsetY: 12
-  maxAnimatedListItems: 10
+  maxAnimatedListItems: 16
   listItemCurve:
     serializedVersion: 2
     m_Curve:
@@ -120,12 +120,12 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  closeDurationMultiplier: 0.55
+  closeDurationMultiplier: 0.68
   closeStagger: 0.04
   closeEdgeOffsetFactor: 0.45
-  maxCloseDuration: 0.42
+  maxCloseDuration: 0.5
   maxFullscreenOpenDuration: 0.9
-  maxPopupOpenDuration: 0.5
+  maxPopupOpenDuration: 0.62
   interactionEnableNormalizedTime: 0.65
-  optionalModalBackgroundAlpha: 0.45
+  optionalModalBackgroundAlpha: 0.62
   modalBackgroundDuration: 0.16

@@ -6,7 +6,7 @@ namespace SanIsland.Merge
     [DisallowMultipleComponent]
     public class GeneratorChargeIndicator : MonoBehaviour
     {
-        public const string SliderObjectName = "Slider_02_Orange";
+        public const string SliderObjectName = "Cooldown Indicator";
 
         [SerializeField] Slider rechargeSlider;
 

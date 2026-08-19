@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using SanIsland.Merge;
+using TMPro;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -137,6 +138,7 @@ namespace SanIsland.Merge.Editor
             controller.SetGeneratorProductionDatabase(EnsureGeneratorProductionDatabase(database));
             WireCellInteraction(cellViews, controller);
             WireHud(controller);
+            MergeBoardTask17Setup.WireExisting(controller, controller.ItemInfoView);
             WireDrag(controller);
             if (controller.BoardView != null && controller.AnimationConfig != null)
             {
@@ -318,14 +320,14 @@ namespace SanIsland.Merge.Editor
             var existing = cellView.transform.Find(GeneratorChargeIndicator.SliderObjectName);
             if (existing == null)
             {
-                Debug.LogWarning($"[MergeBoardSetup] Slider_02_Orange is missing on cell {cellIndex}.");
+                Debug.LogWarning($"[MergeBoardSetup] {GeneratorChargeIndicator.SliderObjectName} is missing on cell {cellIndex}.");
                 return;
             }
 
             var slider = existing.GetComponent<Slider>();
             if (slider == null)
             {
-                Debug.LogWarning($"[MergeBoardSetup] Slider_02_Orange on cell {cellIndex} has no Slider component.");
+                Debug.LogWarning($"[MergeBoardSetup] {GeneratorChargeIndicator.SliderObjectName} on cell {cellIndex} has no Slider component.");
                 return;
             }
 
@@ -415,9 +417,11 @@ namespace SanIsland.Merge.Editor
                 : null;
             var levelLabel = itemInfoRoot.Find("Lvl Label");
             var levelText = levelLabel != null ? levelLabel.GetComponentInChildren<TMPro.TMP_Text>(true) : null;
-            itemInfoView.Bind(generatorIcon, itemIcon, nameText, levelText, chainView);
+            itemInfoView.Bind(generatorIcon, itemIcon, nameText, levelText, chainView, null, null);
             itemInfoView.gameObject.SetActive(true);
             controller.SetItemInfoView(itemInfoView);
+            var initialBoard = InitialBoardEditorWindow.EnsureDefaultDefinition();
+            controller.SetInitialBoard(initialBoard);
             EditorUtility.SetDirty(itemInfoView);
             if (chainView != null)
             {
@@ -429,6 +433,7 @@ namespace SanIsland.Merge.Editor
             WireIcons(controller);
             WireEconomy(controller);
             WireOrders(controller);
+            MergeBoardTask17Setup.WireExisting(controller, itemInfoView);
         }
 
         static void WireEnergy(BoardController controller)
@@ -609,6 +614,7 @@ namespace SanIsland.Merge.Editor
                     }
 
                     card.BindLocal();
+                    BindOrderRequirementSlots(child);
                     EditorUtility.SetDirty(card);
                 }
 
@@ -640,6 +646,66 @@ namespace SanIsland.Merge.Editor
             {
                 markers.Bind(ordered);
                 EditorUtility.SetDirty(markers);
+            }
+        }
+
+        static void BindOrderRequirementSlots(Transform orderCard)
+        {
+            if (orderCard == null)
+            {
+                return;
+            }
+
+            Transform items = null;
+            var children = orderCard.GetComponentsInChildren<Transform>(true);
+            for (var i = 0; i < children.Length; i++)
+            {
+                if (children[i] != null && children[i].name == "OrderItems")
+                {
+                    items = children[i];
+                    break;
+                }
+            }
+
+            if (items == null)
+            {
+                return;
+            }
+
+            for (var i = 0; i < items.childCount; i++)
+            {
+                var child = items.GetChild(i);
+                if (child == null || !child.name.StartsWith("Item"))
+                {
+                    continue;
+                }
+
+                var slot = child.GetComponent<OrderRequirementSlotView>();
+                if (slot == null)
+                {
+                    slot = Undo.AddComponent<OrderRequirementSlotView>(child.gameObject);
+                }
+
+                var iconTransform = child.Find("Icon");
+                var icon = iconTransform != null ? iconTransform.GetComponent<Image>() : null;
+                Transform amountBox = null;
+                var descendants = child.GetComponentsInChildren<Transform>(true);
+                for (var d = 0; d < descendants.Length; d++)
+                {
+                    if (descendants[d] != null && descendants[d].name == "TextBox")
+                    {
+                        amountBox = descendants[d];
+                        break;
+                    }
+                }
+
+                var amountText = amountBox != null ? amountBox.GetComponentInChildren<TMP_Text>(true) : null;
+                var serialized = new SerializedObject(slot);
+                serialized.FindProperty("icon").objectReferenceValue = icon;
+                serialized.FindProperty("amountText").objectReferenceValue = amountText;
+                serialized.FindProperty("amountRoot").objectReferenceValue = amountBox != null ? amountBox.gameObject : null;
+                serialized.ApplyModifiedProperties();
+                EditorUtility.SetDirty(slot);
             }
         }
 
@@ -902,6 +968,7 @@ namespace SanIsland.Merge.Editor
             }
 
             dragController.Configure(controller, controller.DragAnimationConfig, dragView);
+            MergeBoardTask17Setup.WireExisting(controller, controller.ItemInfoView);
             EditorUtility.SetDirty(dragView);
             EditorUtility.SetDirty(dragController);
             EditorUtility.SetDirty(presenter);

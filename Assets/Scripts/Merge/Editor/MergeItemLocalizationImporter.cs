@@ -112,6 +112,14 @@ namespace SanIsland.Merge.Editor
             UpsertUiKey(collection, MergeUiLocalization.LevelShortKey, "pt", "Nv. {0}", smart: true);
             UpsertUiKey(collection, MergeUiLocalization.LevelShortKey, "tr", "Sv. {0}", smart: true);
 
+            UpsertUiKey(collection, MergeUiLocalization.LevelWordKey, "en", "Level");
+            UpsertUiKey(collection, MergeUiLocalization.LevelWordKey, "ru", "Уровень");
+            UpsertUiKey(collection, MergeUiLocalization.LevelWordKey, "de", "Stufe");
+            UpsertUiKey(collection, MergeUiLocalization.LevelWordKey, "es", "Nivel");
+            UpsertUiKey(collection, MergeUiLocalization.LevelWordKey, "fr", "Niveau");
+            UpsertUiKey(collection, MergeUiLocalization.LevelWordKey, "pt", "Nível");
+            UpsertUiKey(collection, MergeUiLocalization.LevelWordKey, "tr", "Seviye");
+
             UpsertUiKey(collection, MergeUiLocalization.BoardFullKey, "en", "Board is full");
             UpsertUiKey(collection, MergeUiLocalization.BoardFullKey, "ru", "Поле заполнено");
             UpsertUiKey(collection, MergeUiLocalization.BoardFullKey, "de", "Spielfeld ist voll");

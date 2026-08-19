@@ -1,0 +1,435 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f1a2b3c4d5e6f708192a3b4c5d6e702, type: 3}
+  m_Name: InitialBoardDefinition
+  m_EditorClassIdentifier: SanIsland.Merge::SanIsland.Merge.InitialBoardDefinition
+  cells:
+  - index: 0
+    state: 4
+    itemId: -1
+    boxVisualIndex: 3
+    hidden:
+      type: 2
+      itemId: 3012
+  - index: 1
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 3011
+  - index: 2
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 5009
+  - index: 3
+    state: 4
+    itemId: -1
+    boxVisualIndex: 1
+    hidden:
+      type: 2
+      itemId: 2008
+  - index: 4
+    state: 4
+    itemId: -1
+    boxVisualIndex: 1
+    hidden:
+      type: 2
+      itemId: 2007
+  - index: 5
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 3008
+  - index: 6
+    state: 4
+    itemId: -1
+    boxVisualIndex: 13
+    hidden:
+      type: 2
+      itemId: 5008
+  - index: 7
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 5011
+  - index: 8
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 6011
+  - index: 9
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 6012
+  - index: 10
+    state: 4
+    itemId: -1
+    boxVisualIndex: 1
+    hidden:
+      type: 2
+      itemId: 5012
+  - index: 11
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 3009
+  - index: 12
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 6008
+  - index: 13
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 2005
+  - index: 14
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 2003
+  - index: 15
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 2001
+  - index: 16
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 3007
+  - index: 17
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 3009
+  - index: 18
+    state: 4
+    itemId: -1
+    boxVisualIndex: 7
+    hidden:
+      type: 2
+      itemId: 5010
+  - index: 19
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 3012
+  - index: 20
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 6010
+  - index: 21
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 4010
+  - index: 22
+    state: 4
+    itemId: -1
+    boxVisualIndex: 3
+    hidden:
+      type: 2
+      itemId: 4007
+  - index: 23
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 4002
+  - index: 24
+    state: 1
+    itemId: 4001
+    boxVisualIndex: 0
+    hidden:
+      type: 0
+      itemId: -1
+  - index: 25
+    state: 1
+    itemId: 4001
+    boxVisualIndex: 0
+    hidden:
+      type: 0
+      itemId: -1
+  - index: 26
+    state: 3
+    itemId: 4002
+    boxVisualIndex: 0
+    hidden:
+      type: 0
+      itemId: -1
+  - index: 27
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 4005
+  - index: 28
+    state: 4
+    itemId: -1
+    boxVisualIndex: 1
+    hidden:
+      type: 2
+      itemId: 4012
+  - index: 29
+    state: 4
+    itemId: -1
+    boxVisualIndex: 3
+    hidden:
+      type: 2
+      itemId: 3011
+  - index: 30
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 5010
+  - index: 31
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 6008
+  - index: 32
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 6007
+  - index: 33
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 5006
+  - index: 34
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 4003
+  - index: 35
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 4003
+  - index: 36
+    state: 4
+    itemId: -1
+    boxVisualIndex: 1
+    hidden:
+      type: 2
+      itemId: 4005
+  - index: 37
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 4007
+  - index: 38
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 3011
+  - index: 39
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 3012
+  - index: 40
+    state: 4
+    itemId: -1
+    boxVisualIndex: 3
+    hidden:
+      type: 2
+      itemId: 5012
+  - index: 41
+    state: 4
+    itemId: -1
+    boxVisualIndex: 1
+    hidden:
+      type: 2
+      itemId: 5007
+  - index: 42
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 5009
+  - index: 43
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 1006
+  - index: 44
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 1004
+  - index: 45
+    state: 4
+    itemId: -1
+    boxVisualIndex: 21
+    hidden:
+      type: 0
+      itemId: -1
+  - index: 46
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 1001
+  - index: 47
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 6010
+  - index: 48
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 4011
+  - index: 49
+    state: 4
+    itemId: -1
+    boxVisualIndex: 3
+    hidden:
+      type: 2
+      itemId: 3012
+  - index: 50
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 5012
+  - index: 51
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 5011
+  - index: 52
+    state: 4
+    itemId: -1
+    boxVisualIndex: 3
+    hidden:
+      type: 2
+      itemId: 6010
+  - index: 53
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 6011
+  - index: 54
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 1008
+  - index: 55
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 5008
+  - index: 56
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 3010
+  - index: 57
+    state: 4
+    itemId: -1
+    boxVisualIndex: 0
+    hidden:
+      type: 2
+      itemId: 6011
+  - index: 58
+    state: 4
+    itemId: -1
+    boxVisualIndex: 1
+    hidden:
+      type: 2
+      itemId: 3011
+  - index: 59
+    state: 4
+    itemId: -1
+    boxVisualIndex: 1
+    hidden:
+      type: 2
+      itemId: 6012

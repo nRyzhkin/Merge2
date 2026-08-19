@@ -41,7 +41,7 @@ namespace SanIsland.Merge
             EnsurePools();
         }
 
-        public void PlaySell(SoldItemSnapshot snapshot, Sprite sprite, Vector2 size)
+        public void PlaySell(SoldItemSnapshot snapshot, Sprite sprite, Vector2 size, Vector2? popupLayerPosition = null)
         {
             if (boardController == null || boardController.BoardView == null || dragView == null)
             {
@@ -57,7 +57,7 @@ namespace SanIsland.Merge
                 Popup = RentPopup()
             };
 
-            var pos = GetCellLayerPosition(snapshot.OriginalCellIndex);
+            var pos = popupLayerPosition ?? GetCellLayerPosition(snapshot.OriginalCellIndex);
             if (sequence.Ghost != null)
             {
                 sequence.Ghost.Play(sprite, size, pos, Vector2.one, Config());

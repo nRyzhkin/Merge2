@@ -34,6 +34,7 @@ namespace SanIsland.Merge
         int _boundOrderId;
         bool _ready;
         bool _boundClick;
+        bool _wired;
         bool _holdCompleteVisual;
         float _readyPulseElapsed;
         float _completeElapsed = -1f;
@@ -69,6 +70,11 @@ namespace SanIsland.Merge
 
         public void BindLocal()
         {
+            if (_wired)
+            {
+                return;
+            }
+
             if (_rect == null)
             {
                 _rect = transform as RectTransform;
@@ -98,6 +104,7 @@ namespace SanIsland.Merge
             EnsureSlots();
             EnsureSlotClicks();
             EnsureClickBound();
+            _wired = true;
         }
 
         public void Present(int orderId, OrderDefinition order, MergeItemDatabase itemDatabase, bool ready)
@@ -876,11 +883,6 @@ namespace SanIsland.Merge
         {
             if (slots != null && slots.Length > 0)
             {
-                for (var i = 0; i < slots.Length; i++)
-                {
-                    slots[i]?.BindLocal();
-                }
-
                 return;
             }
 
@@ -905,10 +907,9 @@ namespace SanIsland.Merge
                 var slot = child.GetComponent<OrderRequirementSlotView>();
                 if (slot == null)
                 {
-                    slot = child.gameObject.AddComponent<OrderRequirementSlotView>();
+                    continue;
                 }
 
-                slot.BindLocal();
                 found[count] = slot;
                 count++;
             }

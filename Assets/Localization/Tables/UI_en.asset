@@ -89,11 +89,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1030742033
-    m_Localized: "Energy +{0}"
+    m_Localized: Energy +{0}
     m_Metadata:
       m_Items: []
   - m_Id: 1030742034
-    m_Localized: "Coins +{0}"
+    m_Localized: Coins +{0}
     m_Metadata:
       m_Items: []
   - m_Id: 1030742035
@@ -101,7 +101,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1030742036
-    m_Localized: "{0}/{1}"
+    m_Localized: '{0}/{1}'
     m_Metadata:
       m_Items: []
   - m_Id: 1030742037
@@ -113,11 +113,27 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1030742039
-    m_Localized: "{0}m {1}s"
+    m_Localized: '{0}m {1}s'
     m_Metadata:
       m_Items: []
   - m_Id: 1030742040
-    m_Localized: "{0}s"
+    m_Localized: '{0}s'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742041
+    m_Localized: Inventory is full
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742042
+    m_Localized: Details
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742043
+    m_Localized: Description coming soon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742044
+    m_Localized: Level
     m_Metadata:
       m_Items: []
   references:

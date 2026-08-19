@@ -139,6 +139,29 @@ namespace SanIsland.Merge
             return true;
         }
 
+        public bool TrySellCell(int cellIndex, bool ignoreDragBusy = false, Vector2? popupLayerPosition = null)
+        {
+            EnsureReady();
+            if (boardController == null || !boardController.TrySellCell(cellIndex, config, out var snapshot, out var sprite, out var size, ignoreDragBusy))
+            {
+                return false;
+            }
+
+            Currency.AddCoins(snapshot.SalePrice);
+            BeginUndoWindow(snapshot);
+            var presenter = GetComponent<BoardSellPresenter>();
+            presenter?.PlaySell(snapshot, sprite, size, popupLayerPosition);
+            Sold?.Invoke(snapshot);
+            Changed?.Invoke();
+            return true;
+        }
+
+        public bool CanSellCell(int cellIndex, bool ignoreDragBusy = false)
+        {
+            EnsureReady();
+            return boardController != null && boardController.CanSellCell(cellIndex, config, ignoreDragBusy);
+        }
+
         public bool TryUndoLastSale()
         {
             EnsureReady();

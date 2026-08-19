@@ -22,12 +22,6 @@ namespace SanIsland.Merge
         [SerializeField] UiInteractionFeedbackConfig interactionFeedbackConfig;
 
         readonly List<UIWindow> _windowStack = new List<UIWindow>(4);
-        float _modalFrom;
-        float _modalTo;
-        float _modalElapsed;
-        float _modalDuration;
-        bool _modalAnimating;
-        AnimationCurve _modalCurve;
 
         public static UIManager Instance { get; private set; }
 
@@ -48,11 +42,16 @@ namespace SanIsland.Merge
             }
 
             Instance = this;
+            if (windowInputBlocker != null && windowInputBlocker.activeSelf)
+            {
+                windowInputBlocker.SetActive(false);
+            }
+
             RegisterInteractiveHierarchy(hudRoot);
             RegisterInteractiveHierarchy(windowRoot);
             RegisterInteractiveHierarchy(popupRoot);
             RefreshBlocker();
-            ApplyModalAlpha(0f);
+            PrewarmWindows();
         }
 
         void OnDestroy()
@@ -65,7 +64,6 @@ namespace SanIsland.Merge
 
         void Update()
         {
-            TickModalBackground();
             if (!WasBackPressed())
             {
                 return;
@@ -90,7 +88,6 @@ namespace SanIsland.Merge
                 return;
             }
 
-            var openingFirst = _windowStack.Count == 0;
             var existing = _windowStack.IndexOf(window);
             if (existing >= 0)
             {
@@ -99,14 +96,8 @@ namespace SanIsland.Merge
 
             _windowStack.Add(window);
             window.Configure(defaultWindowChoreographyConfig);
-            window.transform.SetAsLastSibling();
-            window.Show();
-            RegisterInteractiveHierarchy(window.transform);
             RefreshBlocker();
-            if (openingFirst)
-            {
-                BeginModalFade(true);
-            }
+            window.Show();
         }
 
         public void CloseWindow(UIWindow window)
@@ -116,17 +107,12 @@ namespace SanIsland.Merge
                 return;
             }
 
-            var closingLast = _windowStack.Count == 1 && _windowStack.Contains(window);
             window.Hide(() =>
             {
                 _windowStack.Remove(window);
                 RefreshBlocker();
             });
             RefreshBlocker();
-            if (closingLast)
-            {
-                BeginModalFade(false);
-            }
         }
 
         public void CloseTopWindow()
@@ -153,7 +139,7 @@ namespace SanIsland.Merge
 
             _windowStack.Clear();
             RefreshBlocker();
-            BeginModalFade(false);
+            ResetOverlayAlpha();
         }
 
         public void RegisterInteractiveHierarchy(Transform root)
@@ -182,77 +168,78 @@ namespace SanIsland.Merge
             }
         }
 
+        void PrewarmWindows()
+        {
+            var windows = GetComponentsInChildren<UIWindow>(true);
+            for (var i = 0; i < windows.Length; i++)
+            {
+                if (windows[i] != null)
+                {
+                    windows[i].Prewarm(defaultWindowChoreographyConfig);
+                }
+            }
+        }
+
         void RefreshBlocker()
         {
-            if (windowInputBlocker == null)
+            if (windowInputBlocker != null && windowInputBlocker.activeSelf)
             {
-                return;
-            }
-
-            var shouldBlock = _windowStack.Count > 0;
-            if (windowInputBlocker.activeSelf != shouldBlock)
-            {
-                windowInputBlocker.SetActive(shouldBlock);
+                windowInputBlocker.SetActive(false);
             }
         }
 
-        void BeginModalFade(bool fadeIn)
+        public void BindModalBackground(Image image)
         {
+            modalBackground = image;
+            PrepareOverlayVisual();
+        }
+
+        public void CloseItemDetailFromModal()
+        {
+            CloseTopWindow();
+        }
+
+        void PrepareOverlayVisual()
+        {
+            if (windowInputBlocker == null && modalBackground != null)
+            {
+                windowInputBlocker = modalBackground.gameObject;
+            }
+
+            if (modalBackground == null && windowInputBlocker != null)
+            {
+                modalBackground = windowInputBlocker.GetComponent<Image>();
+            }
+
             if (modalBackground == null)
             {
                 return;
             }
 
-            var target = fadeIn && defaultWindowChoreographyConfig != null
+            var alpha = defaultWindowChoreographyConfig != null
                 ? defaultWindowChoreographyConfig.OptionalModalBackgroundAlpha
-                : 0f;
-            _modalFrom = modalBackground.color.a;
-            _modalTo = target;
-            _modalElapsed = 0f;
-            _modalDuration = defaultWindowChoreographyConfig != null
-                ? Mathf.Max(0.01f, defaultWindowChoreographyConfig.ModalBackgroundDuration)
-                : 0.16f;
-            if (_modalCurve == null)
+                : 0.62f;
+            modalBackground.color = new Color(17f / 255f, 37f / 255f, 62f / 255f, alpha);
+            modalBackground.raycastTarget = true;
+            if (modalBackground.GetComponent<CanvasGroup>() == null)
             {
-                _modalCurve = UIWindowChoreographyConfig.CreateEaseOut();
-            }
-            _modalAnimating = true;
-            if (!modalBackground.gameObject.activeSelf && fadeIn)
-            {
-                modalBackground.gameObject.SetActive(true);
+                modalBackground.gameObject.AddComponent<CanvasGroup>();
             }
         }
 
-        void TickModalBackground()
+        void ResetOverlayAlpha()
         {
-            if (!_modalAnimating || modalBackground == null)
+            var target = windowInputBlocker != null ? windowInputBlocker : modalBackground != null ? modalBackground.gameObject : null;
+            if (target == null)
             {
                 return;
             }
 
-            _modalElapsed += Time.unscaledDeltaTime;
-            var t = _modalDuration <= 0.0001f ? 1f : Mathf.Clamp01(_modalElapsed / _modalDuration);
-            var k = _modalCurve != null ? _modalCurve.Evaluate(t) : t;
-            ApplyModalAlpha(Mathf.LerpUnclamped(_modalFrom, _modalTo, k));
-            if (t < 1f)
+            var group = target.GetComponent<CanvasGroup>();
+            if (group != null)
             {
-                return;
+                group.alpha = 0f;
             }
-
-            _modalAnimating = false;
-            ApplyModalAlpha(_modalTo);
-        }
-
-        void ApplyModalAlpha(float alpha)
-        {
-            if (modalBackground == null)
-            {
-                return;
-            }
-
-            var color = modalBackground.color;
-            color.a = alpha;
-            modalBackground.color = color;
         }
 
         static bool ShouldSkipFeedback(GameObject go)

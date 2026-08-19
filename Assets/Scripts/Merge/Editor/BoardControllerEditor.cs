@@ -43,6 +43,11 @@ namespace SanIsland.Merge.Editor
                     controller.ResetDevelopmentBoard();
                 }
 
+                if (GUILayout.Button("Reset To Initial Board"))
+                {
+                    controller.LoadInitialBoard();
+                }
+
                 if (GUILayout.Button("Validate Board Layout"))
                 {
                     BoardLayoutValidator.Validate(controller.State, controller.ItemDatabase);
@@ -51,7 +56,7 @@ namespace SanIsland.Merge.Editor
 
             if (!Application.isPlaying)
             {
-                EditorGUILayout.HelpBox("Reset Development Board is available in Play Mode.", MessageType.Info);
+                EditorGUILayout.HelpBox("Play Mode: Reset Development Board / Reset To Initial Board. Uncheck Use Development Board State to load the authored board on Play.", MessageType.Info);
             }
 
             EditorGUILayout.Space();

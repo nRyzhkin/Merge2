@@ -104,6 +104,11 @@ namespace SanIsland.Merge
             }
 
             EnsureReady();
+            if (!Application.isPlaying)
+            {
+                return;
+            }
+
             SubscribeBoard();
             if (_state.activeOrderIds.Count == 0 &&
                 _state.queuedOrderIds.Count == 0 &&
@@ -148,7 +153,7 @@ namespace SanIsland.Merge
             _runtimeOrders.Clear();
             _generatedSlotOrderIds = null;
             _progression.ResetDevelopment();
-            PlayerProgressionController.Current?.ApplyReachedUnlocks(_progression);
+            ApplyStartingFamilyUnlocks();
             EnsureGenerator();
             if (UseProceduralGeneration)
             {
@@ -542,6 +547,17 @@ namespace SanIsland.Merge
             }
         }
 
+        void ApplyStartingFamilyUnlocks()
+        {
+            var progression = PlayerProgressionController.Current;
+            if (progression == null)
+            {
+                progression = GetComponent<PlayerProgressionController>();
+            }
+
+            progression?.ApplyReachedUnlocks(_progression);
+        }
+
         OrderDefinition RegisterGenerated(GeneratedOrderData data)
         {
             var id = _nextGeneratedId++;
@@ -689,7 +705,7 @@ namespace SanIsland.Merge
             var progression = _progression;
             if (progression.GetUnlockedFamilies().Count == 0)
             {
-                PlayerProgressionController.Current?.ApplyReachedUnlocks(progression);
+                ApplyStartingFamilyUnlocks();
             }
 
             var items = boardController != null ? boardController.ItemDatabase : null;

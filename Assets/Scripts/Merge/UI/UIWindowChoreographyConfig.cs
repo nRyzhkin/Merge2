@@ -31,7 +31,7 @@ namespace SanIsland.Merge
         [Header("List")]
         [SerializeField] [Range(0.86f, 0.98f)] float listItemStartScale = 0.92f;
         [SerializeField] [Range(0.18f, 0.40f)] float listItemDuration = 0.28f;
-        [SerializeField] [Range(0.04f, 0.12f)] float listItemStagger = 0.07f;
+        [SerializeField] [Range(0.04f, 0.12f)] float listItemStagger = 0.05f;
         [SerializeField] float listItemOffsetY = 12f;
         [SerializeField] [Range(4, 16)] int maxAnimatedListItems = 10;
         [SerializeField] AnimationCurve listItemCurve = CreateEaseOut();
@@ -56,11 +56,11 @@ namespace SanIsland.Merge
         public float EdgeOffset => edgeOffset;
         public float EdgeDuration => edgeDuration;
         public float EdgeOvershoot => edgeOvershoot;
-        public AnimationCurve EdgeCurve => edgeCurve != null && edgeCurve.length > 0 ? edgeCurve : CreateEaseOutBack();
+        public AnimationCurve EdgeCurve => edgeCurve != null && edgeCurve.length > 0 ? edgeCurve : CachedEaseOutBack;
         public float CenterStartScale => centerStartScale;
         public float CenterDuration => centerDuration;
         public float CenterOvershootScale => centerOvershootScale;
-        public AnimationCurve CenterCurve => centerCurve != null && centerCurve.length > 0 ? centerCurve : CreateEaseOutBack();
+        public AnimationCurve CenterCurve => centerCurve != null && centerCurve.length > 0 ? centerCurve : CachedEaseOutBack;
         public float EdgePhaseDelay => edgePhaseDelay;
         public float CenterPhaseDelay => centerPhaseDelay;
         public float ListPhaseDelay => listPhaseDelay;
@@ -71,7 +71,7 @@ namespace SanIsland.Merge
         public float ListItemStagger => listItemStagger;
         public float ListItemOffsetY => listItemOffsetY;
         public int MaxAnimatedListItems => maxAnimatedListItems;
-        public AnimationCurve ListItemCurve => listItemCurve != null && listItemCurve.length > 0 ? listItemCurve : CreateEaseOut();
+        public AnimationCurve ListItemCurve => listItemCurve != null && listItemCurve.length > 0 ? listItemCurve : CachedEaseOut;
         public float CloseDurationMultiplier => closeDurationMultiplier;
         public float CloseStagger => closeStagger;
         public float CloseEdgeOffsetFactor => closeEdgeOffsetFactor;
@@ -81,6 +81,14 @@ namespace SanIsland.Merge
         public float InteractionEnableNormalizedTime => interactionEnableNormalizedTime;
         public float OptionalModalBackgroundAlpha => optionalModalBackgroundAlpha;
         public float ModalBackgroundDuration => modalBackgroundDuration;
+
+        public static AnimationCurve CachedEaseOut => _cachedEaseOut ?? (_cachedEaseOut = CreateEaseOut());
+        public static AnimationCurve CachedEaseIn => _cachedEaseIn ?? (_cachedEaseIn = CreateEaseIn());
+        public static AnimationCurve CachedEaseOutBack => _cachedEaseOutBack ?? (_cachedEaseOutBack = CreateEaseOutBack());
+
+        static AnimationCurve _cachedEaseOut;
+        static AnimationCurve _cachedEaseIn;
+        static AnimationCurve _cachedEaseOutBack;
 
         public static AnimationCurve CreateEaseOut()
         {

@@ -10,6 +10,30 @@ namespace SanIsland.Merge
         [SerializeField] UIWindow targetWindow;
         [SerializeField] Button button;
 
+        public void Bind(UIWindow window, Button clickButton = null)
+        {
+            if (isActiveAndEnabled && button != null)
+            {
+                button.onClick.RemoveListener(HandleClick);
+            }
+
+            targetWindow = window;
+            if (clickButton != null)
+            {
+                button = clickButton;
+            }
+
+            if (button == null)
+            {
+                button = GetComponent<Button>();
+            }
+
+            if (isActiveAndEnabled && button != null)
+            {
+                button.onClick.AddListener(HandleClick);
+            }
+        }
+
         void Awake()
         {
             if (button == null)

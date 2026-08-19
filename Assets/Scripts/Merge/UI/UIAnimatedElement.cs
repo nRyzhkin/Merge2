@@ -28,6 +28,16 @@ namespace SanIsland.Merge
         public RectTransform ItemsRoot => itemsRoot;
         public RectTransform Rect => transform as RectTransform;
 
+        public void Configure(UIAnimationRole animationRole, int order, RectTransform listItemsRoot = null)
+        {
+            role = animationRole;
+            sequenceOrder = order;
+            if (listItemsRoot != null)
+            {
+                itemsRoot = listItemsRoot;
+            }
+        }
+
         public UIAnimationRole ResolveRole()
         {
             if (role != UIAnimationRole.Auto)

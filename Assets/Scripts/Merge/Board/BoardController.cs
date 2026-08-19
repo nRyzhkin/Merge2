@@ -29,6 +29,7 @@ namespace SanIsland.Merge
         [SerializeField] MessagePresenter messagePresenter;
         [SerializeField] BoardSelectionView selectionView;
         [SerializeField] ItemInfoView itemInfoView;
+        [SerializeField] InitialBoardDefinition initialBoard;
         [SerializeField] bool useDevelopmentBoardState = true;
 
         [Header("Generator Debug")]
@@ -82,6 +83,7 @@ namespace SanIsland.Merge
         public BoardDragController DragController => _dragController;
         public BoardSelectionView SelectionView => selectionView;
         public ItemInfoView ItemInfoView => itemInfoView;
+        public InitialBoardDefinition InitialBoard => initialBoard;
         public EnergyService Energy => _energy;
         public BoardState State => _state;
         public MergeDiscoveryState Discovery => _discovery;
@@ -169,10 +171,7 @@ namespace SanIsland.Merge
             }
             else
             {
-                _state = new BoardState();
-                _discovery = new MergeDiscoveryState();
-                BindAndRefresh();
-                ClearSelection();
+                LoadInitialBoard();
             }
         }
 
@@ -183,6 +182,56 @@ namespace SanIsland.Merge
                 return;
             }
 
+            AbortBoardActivity();
+            ClearSelection();
+            _state = BoardDevelopmentStateFactory.Create(itemDatabase);
+            _discovery = new MergeDiscoveryState();
+            _generatorInstances.Clear();
+            _discovery.DiscoverFromBoard(_state);
+            SyncGeneratorInstancesFromBoard();
+            BindAndRefresh();
+            GetComponent<OrderSystem>()?.ResetDevelopment();
+            UpdateDebug();
+            BoardLayoutValidator.Validate(_state, itemDatabase);
+            NotifyBoardContentsChanged();
+        }
+
+        public void LoadInitialBoard()
+        {
+            if (!ValidateDependencies())
+            {
+                return;
+            }
+
+            AbortBoardActivity();
+            ClearSelection();
+            if (initialBoard == null)
+            {
+                Debug.LogError("[BoardController] InitialBoardDefinition is not assigned.");
+                _state = new BoardState();
+            }
+            else
+            {
+                _state = InitialBoardLoader.CreateNewGameBoard(initialBoard, itemDatabase);
+            }
+
+            _discovery = new MergeDiscoveryState();
+            _generatorInstances.Clear();
+            _discovery.DiscoverFromBoard(_state);
+            SyncGeneratorInstancesFromBoard();
+            BindAndRefresh();
+            UpdateDebug();
+            BoardLayoutValidator.Validate(_state, itemDatabase);
+            NotifyBoardContentsChanged();
+        }
+
+        public void SetInitialBoard(InitialBoardDefinition definition)
+        {
+            initialBoard = definition;
+        }
+
+        void AbortBoardActivity()
+        {
             if (_dragController != null)
             {
                 _dragController.AbortImmediate();
@@ -219,25 +268,11 @@ namespace SanIsland.Merge
             sellSystem?.ClearLastSale();
             var orderPresenter = GetComponent<BoardOrderPresenter>();
             orderPresenter?.AbortAll();
-
             _interactionLocks.ReleaseAll();
-
             if (boardView != null)
             {
                 boardView.ClearItemDragHides();
             }
-
-            ClearSelection();
-            _state = BoardDevelopmentStateFactory.Create(itemDatabase);
-            _discovery = new MergeDiscoveryState();
-            _generatorInstances.Clear();
-            _discovery.DiscoverFromBoard(_state);
-            SyncGeneratorInstancesFromBoard();
-            BindAndRefresh();
-            GetComponent<OrderSystem>()?.ResetDevelopment();
-            UpdateDebug();
-            BoardLayoutValidator.Validate(_state, itemDatabase);
-            NotifyBoardContentsChanged();
         }
 
         public void SelectCell(int index)
@@ -334,6 +369,16 @@ namespace SanIsland.Merge
         public long GetSelectedSellPrice(EconomyConfig economy)
         {
             if (!TryGetSellableSelection(economy, _selectedCellIndex, out _, out var price, out _))
+            {
+                return 0;
+            }
+
+            return price;
+        }
+
+        public long GetSellPriceForCell(int cellIndex, EconomyConfig economy, bool ignoreDragBusy = false)
+        {
+            if (!TryGetSellableSelection(economy, cellIndex, out _, out var price, out _, ignoreDragBusy))
             {
                 return 0;
             }
@@ -492,7 +537,7 @@ namespace SanIsland.Merge
             return RectTransformUtility.WorldToScreenPoint(camera, rect.TransformPoint(rect.rect.center));
         }
 
-        bool TryGetSellableSelection(EconomyConfig economy, int cellIndex, out int index, out long price, out MergeItemData data)
+        bool TryGetSellableSelection(EconomyConfig economy, int cellIndex, out int index, out long price, out MergeItemData data, bool ignoreDragBusy = false)
         {
             index = NoSelectionIndex;
             price = 0;
@@ -507,7 +552,7 @@ namespace SanIsland.Merge
                 return false;
             }
 
-            if (_dragController != null && _dragController.IsBusyWithCell(cellIndex))
+            if (!ignoreDragBusy && _dragController != null && _dragController.IsBusyWithCell(cellIndex))
             {
                 return false;
             }
@@ -534,6 +579,194 @@ namespace SanIsland.Merge
             }
 
             index = cellIndex;
+            return true;
+        }
+
+        public bool CanSellCell(int cellIndex, EconomyConfig economy, bool ignoreDragBusy = false)
+        {
+            return TryGetSellableSelection(economy, cellIndex, out _, out _, out _, ignoreDragBusy);
+        }
+
+        public bool TrySellCell(int cellIndex, EconomyConfig economy, out SoldItemSnapshot snapshot, out Sprite sprite, out Vector2 size, bool ignoreDragBusy = false)
+        {
+            snapshot = default;
+            sprite = null;
+            size = Vector2.zero;
+            if (!TryGetSellableSelection(economy, cellIndex, out var index, out var price, out var data, ignoreDragBusy))
+            {
+                return false;
+            }
+
+            var view = boardView != null ? boardView.GetCellView(index) : null;
+            if (view != null && view.ItemImage != null)
+            {
+                sprite = view.ItemImage.sprite;
+                var rectSize = view.ItemImage.rectTransform.rect.size;
+                size = rectSize.x > 1f && rectSize.y > 1f ? rectSize : new Vector2(170f, 170f);
+            }
+
+            var cell = _state.GetCell(index);
+            snapshot = new SoldItemSnapshot
+            {
+                ItemId = cell.ItemId,
+                OriginalCellIndex = index,
+                SalePrice = price,
+                Level = data.Level,
+                ItemLocked = cell.ItemLocked,
+                GeneratorInstanceId = cell.GeneratorInstanceId
+            };
+
+            cell.Clear();
+            if (boardView != null)
+            {
+                boardView.RefreshCell(index);
+            }
+
+            if (_selectedCellIndex == index)
+            {
+                ClearSelection();
+            }
+
+            UpdateDebug();
+            NotifyBoardContentsChanged();
+            return true;
+        }
+
+        public int FindRandomEmptyOpenCell()
+        {
+            if (_state == null)
+            {
+                return NoSelectionIndex;
+            }
+
+            var count = 0;
+            var first = NoSelectionIndex;
+            for (var i = 0; i < BoardState.CellCount; i++)
+            {
+                if (!IsEmptyOpenCell(i))
+                {
+                    continue;
+                }
+
+                count++;
+                if (first == NoSelectionIndex)
+                {
+                    first = i;
+                }
+            }
+
+            if (count == 0)
+            {
+                return NoSelectionIndex;
+            }
+
+            if (count == 1)
+            {
+                return first;
+            }
+
+            var pick = UnityEngine.Random.Range(0, count);
+            for (var i = 0; i < BoardState.CellCount; i++)
+            {
+                if (!IsEmptyOpenCell(i))
+                {
+                    continue;
+                }
+
+                if (pick == 0)
+                {
+                    return i;
+                }
+
+                pick--;
+            }
+
+            return first;
+        }
+
+        public bool TryPlaceInventoryItem(int itemId, int cellIndex, out int lockToken, int generatorInstanceId = BoardCellState.NoGeneratorInstanceId)
+        {
+            lockToken = 0;
+            if (_state == null || !IsEmptyOpenCell(cellIndex) || itemId == BoardCellState.EmptyItemId)
+            {
+                return false;
+            }
+
+            if (itemDatabase == null || !itemDatabase.TryGetById(itemId, out var data) || data == null)
+            {
+                return false;
+            }
+
+            if (data.Kind != MergeItemKind.Normal && data.Kind != MergeItemKind.Generator)
+            {
+                return false;
+            }
+
+            var cell = _state.GetCell(cellIndex);
+            if (cell == null || !cell.IsEmpty)
+            {
+                return false;
+            }
+
+            lockToken = _interactionLocks.Acquire(cellIndex, NoSelectionIndex);
+            cell.SetItem(itemId, locked: false);
+            cell.GeneratorInstanceId = generatorInstanceId;
+            if (data.Kind == MergeItemKind.Generator)
+            {
+                if (cell.GeneratorInstanceId == BoardCellState.NoGeneratorInstanceId ||
+                    !_generatorInstances.TryGetRuntime(cell.GeneratorInstanceId, out _))
+                {
+                    InitializeFullGeneratorOnCell(cell, itemId);
+                }
+            }
+
+            if (_discovery != null && _discovery.Discover(itemId))
+            {
+                ItemDiscovered?.Invoke(itemId);
+            }
+
+            UpdateDebug();
+            NotifyBoardContentsChanged();
+            return true;
+        }
+
+        public bool TryExtractItem(int cellIndex, out int itemId, out int generatorInstanceId)
+        {
+            itemId = BoardCellState.EmptyItemId;
+            generatorInstanceId = BoardCellState.NoGeneratorInstanceId;
+            if (_state == null || !_state.IsValidIndex(cellIndex) || IsCellInteractionLocked(cellIndex))
+            {
+                return false;
+            }
+
+            var cell = _state.GetCell(cellIndex);
+            if (cell == null || !cell.HasItem || cell.IsBox || cell.ItemLocked)
+            {
+                return false;
+            }
+
+            if (itemDatabase != null && itemDatabase.TryGetById(cell.ItemId, out var data) && data != null &&
+                data.Kind != MergeItemKind.Normal && data.Kind != MergeItemKind.Generator)
+            {
+                return false;
+            }
+
+            itemId = cell.ItemId;
+            generatorInstanceId = cell.GeneratorInstanceId;
+            cell.GeneratorInstanceId = BoardCellState.NoGeneratorInstanceId;
+            cell.Clear();
+            if (boardView != null)
+            {
+                boardView.RefreshCell(cellIndex);
+            }
+
+            if (_selectedCellIndex == cellIndex)
+            {
+                ClearSelection();
+            }
+
+            UpdateDebug();
+            NotifyBoardContentsChanged();
             return true;
         }
 
@@ -791,46 +1024,7 @@ namespace SanIsland.Merge
 
         public bool TryGetMergeResultItemId(int fromIndex, int toIndex, out int resultItemId)
         {
-            resultItemId = BoardCellState.EmptyItemId;
-            if (_state == null || itemDatabase == null || fromIndex == toIndex)
-            {
-                return false;
-            }
-
-            if (!_state.IsValidIndex(fromIndex) || !_state.IsValidIndex(toIndex))
-            {
-                return false;
-            }
-
-            var source = _state.GetCell(fromIndex);
-            var target = _state.GetCell(toIndex);
-            if (source == null || target == null || !source.HasItem || !target.HasItem)
-            {
-                return false;
-            }
-
-            if (source.IsBox || target.IsBox || source.ItemLocked)
-            {
-                return false;
-            }
-
-            if (source.ItemId != target.ItemId)
-            {
-                return false;
-            }
-
-            if (!itemDatabase.TryGetById(source.ItemId, out var data) || data == null)
-            {
-                return false;
-            }
-
-            if (data.NextItemId == MergeItemIdUtility.NoNextItemId)
-            {
-                return false;
-            }
-
-            resultItemId = data.NextItemId;
-            return true;
+            return BoardProgressionRules.TryGetMergeResultItemId(_state, itemDatabase, fromIndex, toIndex, out resultItemId);
         }
 
         public bool CanUnlockCobweb(int fromIndex, int lockedTargetIndex)
@@ -845,36 +1039,7 @@ namespace SanIsland.Merge
 
         public bool TryValidateUnlock(int fromIndex, int lockedTargetIndex, out int itemId)
         {
-            itemId = BoardCellState.EmptyItemId;
-            if (_state == null || fromIndex == lockedTargetIndex)
-            {
-                return false;
-            }
-
-            if (!_state.IsValidIndex(fromIndex) || !_state.IsValidIndex(lockedTargetIndex))
-            {
-                return false;
-            }
-
-            var source = _state.GetCell(fromIndex);
-            var target = _state.GetCell(lockedTargetIndex);
-            if (source == null || target == null || !source.HasItem || !target.HasItem)
-            {
-                return false;
-            }
-
-            if (source.IsBox || target.IsBox || source.ItemLocked || !target.ItemLocked)
-            {
-                return false;
-            }
-
-            if (source.ItemId != target.ItemId)
-            {
-                return false;
-            }
-
-            itemId = source.ItemId;
-            return true;
+            return BoardProgressionRules.TryValidateCobwebUnlock(_state, fromIndex, lockedTargetIndex, out itemId);
         }
 
         public int FindUnlockDestination(int sourceIndex, int lockedTargetIndex)
@@ -1124,44 +1289,28 @@ namespace SanIsland.Merge
 
         public IReadOnlyList<BoxRevealResult> RevealAdjacentBoxes(int mergeResultIndex)
         {
-            _boxRevealScratch.Clear();
-            if (_state == null || !_state.IsValidIndex(mergeResultIndex))
+            BoardProgressionRules.RevealOrthogonalBoxes(_state, mergeResultIndex, _orthogonalScratch, _boxRevealScratch);
+            for (var i = 0; i < _boxRevealScratch.Count; i++)
             {
-                return _boxRevealScratch;
-            }
-
-            _state.GetOrthogonalNeighborIndices(mergeResultIndex, _orthogonalScratch);
-            for (var i = 0; i < _orthogonalScratch.Count; i++)
-            {
-                var index = _orthogonalScratch[i];
-                var cell = _state.GetCell(index);
-                if (cell == null || !cell.IsBox)
+                var revealedId = _boxRevealScratch[i].RevealedItemId;
+                if (revealedId == BoardCellState.EmptyItemId)
                 {
                     continue;
                 }
 
-                var revealedId = cell.RevealBox();
-                if (revealedId != BoardCellState.EmptyItemId)
+                var cell = _state.GetCell(_boxRevealScratch[i].CellIndex);
+                if (itemDatabase != null &&
+                    itemDatabase.TryGetById(revealedId, out var revealedItem) &&
+                    revealedItem != null &&
+                    revealedItem.Kind == MergeItemKind.Generator)
                 {
-                    if (itemDatabase != null &&
-                        itemDatabase.TryGetById(revealedId, out var revealedItem) &&
-                        revealedItem != null &&
-                        revealedItem.Kind == MergeItemKind.Generator)
-                    {
-                        InitializeFullGeneratorOnCell(cell, revealedId);
-                    }
-
-                    if (_discovery != null && _discovery.Discover(revealedId))
-                    {
-                        ItemDiscovered?.Invoke(revealedId);
-                    }
+                    InitializeFullGeneratorOnCell(cell, revealedId);
                 }
 
-                _boxRevealScratch.Add(new BoxRevealResult
+                if (_discovery != null && _discovery.Discover(revealedId))
                 {
-                    CellIndex = index,
-                    RevealedItemId = revealedId
-                });
+                    ItemDiscovered?.Invoke(revealedId);
+                }
             }
 
             if (_boxRevealScratch.Count > 0)
@@ -2073,6 +2222,22 @@ namespace SanIsland.Merge
             EnsureGenerator();
             EnsureDisplace();
             EnsureMessagesReady();
+            EnsureInventoryRuntime();
+        }
+
+        void EnsureInventoryRuntime()
+        {
+            var inventory = GetComponent<InventoryController>();
+            if (inventory != null)
+            {
+                inventory.Configure(itemDatabase);
+            }
+
+            var flight = GetComponent<InventoryFlightPresenter>();
+            if (flight != null)
+            {
+                flight.Configure(this, dragView, generatorAnimationConfig, generatorPresenter);
+            }
         }
 
         void EnsureDisplace()

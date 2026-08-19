@@ -197,6 +197,11 @@ namespace SanIsland.Merge
             _occupied.Clear();
         }
 
+        public void Prewarm()
+        {
+            EnsureUnits();
+        }
+
         void Update()
         {
             if (_mode == PlayMode.None)
@@ -456,10 +461,10 @@ namespace SanIsland.Merge
 
             if (unit.IsBackground)
             {
-                return UIWindowChoreographyConfig.CreateEaseOut();
+                return UIWindowChoreographyConfig.CachedEaseOut;
             }
 
-            return opening ? Config.CenterCurve : UIWindowChoreographyConfig.CreateEaseIn();
+            return opening ? Config.CenterCurve : UIWindowChoreographyConfig.CachedEaseIn;
         }
 
         void FitTotal(float cap)
@@ -530,10 +535,12 @@ namespace SanIsland.Merge
                 CollectFallback(root);
             }
 
-            if (!IsFullscreen() && !_occupied.Contains(root))
+            if (!IsStretchFill(root) && !_occupied.Contains(root))
             {
                 AddUnit(root, UIAnimationRole.FadeScale, PhaseBackground, 0, false, true, true);
             }
+
+            CollectOverlay();
 
             _units.Sort(CompareUnits);
             _unitsBuilt = true;
@@ -572,11 +579,6 @@ namespace SanIsland.Merge
                 }
 
                 if (element.transform == root)
-                {
-                    continue;
-                }
-
-                if (HasBlockingAncestor(element.transform, root))
                 {
                     continue;
                 }
@@ -624,7 +626,7 @@ namespace SanIsland.Merge
             for (var i = 0; i < itemsRoot.childCount; i++)
             {
                 var child = itemsRoot.GetChild(i) as RectTransform;
-                if (child == null || !child.gameObject.activeSelf || ShouldSkipListItem(child))
+                if (child == null || ShouldSkipListItem(child))
                 {
                     continue;
                 }
@@ -700,6 +702,11 @@ namespace SanIsland.Merge
                     continue;
                 }
 
+                if (IsWindowOverlay(child))
+                {
+                    continue;
+                }
+
                 var marked = child.GetComponent<UIAnimatedElement>();
                 if (marked != null && marked.Role != UIAnimationRole.Ignore && marked.Role != UIAnimationRole.Auto)
                 {
@@ -718,6 +725,18 @@ namespace SanIsland.Merge
 
                 AddUnit(child, UIAnimationRole.FadeScale, PhaseBackground, child.GetSiblingIndex(), false, false, true);
             }
+        }
+
+        void CollectOverlay()
+        {
+            var window = GetComponent<UIWindow>();
+            var overlay = window != null ? window.OverlayRoot : null;
+            if (overlay == null)
+            {
+                return;
+            }
+
+            AddUnit(overlay, UIAnimationRole.FadeScale, PhaseBackground, -10, false, false, true);
         }
 
         void AddUnit(
@@ -861,6 +880,16 @@ namespace SanIsland.Merge
             for (var i = 0; i < _units.Count; i++)
             {
                 var unit = _units[i];
+                if (unit.Rect != null && WindowRoot != null && !unit.Rect.IsChildOf(WindowRoot) && unit.Rect != WindowRoot)
+                {
+                    if (unit.Group != null)
+                    {
+                        unit.Group.alpha = 0f;
+                    }
+
+                    continue;
+                }
+
                 ApplyRest(unit);
                 Write(unit);
             }
@@ -986,7 +1015,39 @@ namespace SanIsland.Merge
 
         bool IsFullscreen()
         {
-            return WindowRoot != null && IsStretchFill(WindowRoot);
+            return WindowRoot != null && IsStretchFill(WindowRoot) && !HasExplicitEdge(WindowRoot);
+        }
+
+        static bool HasExplicitEdge(RectTransform root)
+        {
+            if (root == null)
+            {
+                return false;
+            }
+
+            var elements = root.GetComponentsInChildren<UIAnimatedElement>(true);
+            for (var i = 0; i < elements.Length; i++)
+            {
+                var element = elements[i];
+                if (element == null || element.transform == root)
+                {
+                    continue;
+                }
+
+                var role = element.ResolveRole();
+                if (IsEdge(role))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        bool IsWindowOverlay(RectTransform rect)
+        {
+            var window = GetComponent<UIWindow>();
+            return window != null && window.OverlayRoot != null && window.OverlayRoot == rect;
         }
 
         static bool IsPositionDrivenByLayout(RectTransform rect)

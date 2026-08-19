@@ -20,6 +20,10 @@ namespace SanIsland.Merge
         [SerializeField] BoardController boardController;
         [SerializeField] BoardDragAnimationConfig config;
         [SerializeField] BoardDragView dragView;
+        [SerializeField] UIDropTargetFeedback sellDropTarget;
+        [SerializeField] UIDropTargetFeedback[] inventoryDropTargets;
+        [SerializeField] OrdersHudView ordersHud;
+        UiHoverScaleFeedback _bagBounce;
 
         BoardDragPhase _phase = BoardDragPhase.Idle;
         int _pointerId = int.MinValue;
@@ -42,6 +46,8 @@ namespace SanIsland.Merge
         int _velocityCount;
         int _velocityWrite;
         bool _waitingDisplaceADrop;
+        UIDropTargetFeedback _activeOrderDrop;
+        bool _catchingInventory;
 
         public BoardDragPhase Phase => _phase;
         public int ActivePointerId => _pointerId;
@@ -52,6 +58,13 @@ namespace SanIsland.Merge
         public bool IsBusyWithCell(int index) =>
             index != BoardController.NoSelectionIndex && IsBusy && _sourceIndex == index;
         public bool IsDragInteractionActive => IsBusy;
+
+        public void ConfigureDropTargets(UIDropTargetFeedback sell, UIDropTargetFeedback[] inventory, OrdersHudView orders)
+        {
+            sellDropTarget = sell;
+            inventoryDropTargets = inventory;
+            ordersHud = orders;
+        }
 
         public void Configure(BoardController controller, BoardDragAnimationConfig animationConfig, BoardDragView view)
         {
@@ -265,7 +278,7 @@ namespace SanIsland.Merge
 
         bool TryCompleteReadyOrderAtPointer()
         {
-            if (_itemId == BoardCellState.EmptyItemId || !IsPointerRightOfBoard())
+            if (_itemId == BoardCellState.EmptyItemId)
             {
                 return false;
             }
@@ -276,7 +289,186 @@ namespace SanIsland.Merge
                 return false;
             }
 
+            if (!IsPointerOverOrders(orderId))
+            {
+                return false;
+            }
+
             return orders.TryCompleteOrder(orderId);
+        }
+
+        bool IsPointerOverOrders(int preferredOrderId)
+        {
+            if (ordersHud != null && ordersHud.TryGetCard(preferredOrderId, out var card) && card != null && ContainsPointer(card.Rect))
+            {
+                return true;
+            }
+
+            if (ordersHud != null && ContainsPointer(ordersHud.transform as RectTransform))
+            {
+                return true;
+            }
+
+            return IsPointerRightOfBoard();
+        }
+
+        bool TryDropOnSell()
+        {
+            if (sellDropTarget == null || !ContainsPointer(sellDropTarget.Rect))
+            {
+                return false;
+            }
+
+            var sell = SellSystem.Current;
+            var source = _sourceIndex;
+            if (sell == null || !sell.CanSellCell(source, ignoreDragBusy: true))
+            {
+                return false;
+            }
+
+            var popupPos = dragView != null ? dragView.ScreenToLayer(_pointerScreen) : (Vector2?)null;
+            CompleteDropAsConsumed();
+            return sell.TrySellCell(source, ignoreDragBusy: true, popupPos);
+        }
+
+        bool TryDropOnInventory()
+        {
+            if (!IsPointerOverInventory())
+            {
+                return false;
+            }
+
+            var inventory = InventoryController.Current;
+            if (inventory == null || !inventory.IsAcceptedItem(_itemId))
+            {
+                return false;
+            }
+
+            if (inventory.IsFull)
+            {
+                if (boardController != null)
+                {
+                    boardController.EnsureMessagesReady();
+                    boardController.MessagePresenter?.ShowInventoryFull(_pointerScreen);
+                }
+
+                BeginMoveOrReturn(_sourceIndex);
+                return true;
+            }
+
+            if (boardController == null || !boardController.TryExtractItem(_sourceIndex, out var extracted, out var instanceId) || extracted != _itemId)
+            {
+                BeginMoveOrReturn(_sourceIndex);
+                return true;
+            }
+
+            if (!inventory.TryAdd(extracted, instanceId))
+            {
+                boardController.TryPlaceInventoryItem(extracted, _sourceIndex, out var token, instanceId);
+                boardController.ReleaseGeneratorSpawnLock(token);
+                if (boardController.BoardView != null)
+                {
+                    boardController.BoardView.RefreshCell(_sourceIndex);
+                }
+
+                boardController.EnsureMessagesReady();
+                boardController.MessagePresenter?.ShowInventoryFull(_pointerScreen);
+                CompleteDropAsConsumed();
+                return true;
+            }
+
+            BeginInventoryCatch();
+            return true;
+        }
+
+        void BeginInventoryCatch()
+        {
+            _catchingInventory = true;
+            _dropIndex = BoardController.NoSelectionIndex;
+            _phase = BoardDragPhase.Dropping;
+            if (dragView == null)
+            {
+                PlayInventoryBagBounce();
+                FinishDrop();
+                return;
+            }
+
+            var bag = ResolveInventoryBagRect();
+            var land = bag != null
+                ? dragView.WorldToLayer(bag.TransformPoint(bag.rect.center))
+                : dragView.CurrentPlanarPosition;
+            dragView.BeginDrop(land, false);
+            PlayInventoryBagBounce();
+        }
+
+        RectTransform ResolveInventoryBagRect()
+        {
+            if (inventoryDropTargets == null)
+            {
+                return null;
+            }
+
+            for (var i = 0; i < inventoryDropTargets.Length; i++)
+            {
+                if (inventoryDropTargets[i] != null)
+                {
+                    return inventoryDropTargets[i].Rect;
+                }
+            }
+
+            return null;
+        }
+
+        void PlayInventoryBagBounce()
+        {
+            var bag = ResolveInventoryBagRect();
+            if (bag == null)
+            {
+                return;
+            }
+
+            if (_bagBounce == null)
+            {
+                _bagBounce = bag.GetComponent<UiHoverScaleFeedback>();
+                if (_bagBounce == null)
+                {
+                    _bagBounce = bag.GetComponentInChildren<UiHoverScaleFeedback>();
+                }
+            }
+
+            _bagBounce?.PlayBounce();
+        }
+
+        bool IsPointerOverInventory()
+        {
+            if (inventoryDropTargets == null)
+            {
+                return false;
+            }
+
+            for (var i = 0; i < inventoryDropTargets.Length; i++)
+            {
+                if (inventoryDropTargets[i] != null && ContainsPointer(inventoryDropTargets[i].Rect))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        bool ContainsPointer(RectTransform rect)
+        {
+            if (rect == null)
+            {
+                return false;
+            }
+
+            var canvas = rect.GetComponentInParent<Canvas>();
+            var camera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay
+                ? canvas.worldCamera
+                : null;
+            return RectTransformUtility.RectangleContainsScreenPoint(rect, _pointerScreen, camera);
         }
 
         bool IsPointerRightOfBoard()
@@ -521,9 +713,18 @@ namespace SanIsland.Merge
                 return;
             }
 
-            // 3) Drop to the right of the board onto a ready order that needs this item.
-            if (underIndex == BoardController.NoSelectionIndex &&
-                TryCompleteReadyOrderAtPointer())
+            if (TryDropOnSell())
+            {
+                return;
+            }
+
+            if (TryDropOnInventory())
+            {
+                return;
+            }
+
+            // 3) Drop onto a ready order that needs this item.
+            if (TryCompleteReadyOrderAtPointer())
             {
                 return;
             }
@@ -608,6 +809,17 @@ namespace SanIsland.Merge
 
         void FinishDrop()
         {
+            if (_catchingInventory)
+            {
+                if (dragView != null)
+                {
+                    dragView.HideImmediate();
+                }
+
+                ResetToIdle();
+                return;
+            }
+
             var landingIndex = _dropIndex != BoardController.NoSelectionIndex ? _dropIndex : _sourceIndex;
             if (dragView != null)
             {
@@ -640,6 +852,7 @@ namespace SanIsland.Merge
 
         void UpdateDropTarget()
         {
+            UpdateUiDropTargets();
             var index = FindCellIndexUnderPointer();
             if (index == BoardController.NoSelectionIndex)
             {
@@ -963,7 +1176,91 @@ namespace SanIsland.Merge
             _previewCobwebIndex = BoardController.NoSelectionIndex;
             _magnetBlend = 0f;
             _waitingDisplaceADrop = false;
+            _catchingInventory = false;
             ClearVelocitySamples();
+            ClearUiDropTargets();
+        }
+
+        void UpdateUiDropTargets()
+        {
+            var sellActive = sellDropTarget != null &&
+                             ContainsPointer(sellDropTarget.Rect) &&
+                             SellSystem.Current != null &&
+                             SellSystem.Current.CanSellCell(_sourceIndex, ignoreDragBusy: true);
+            if (sellDropTarget != null)
+            {
+                sellDropTarget.SetHighlighted(sellActive);
+            }
+
+            if (inventoryDropTargets != null)
+            {
+                var accepted = InventoryController.Current != null && InventoryController.Current.IsAcceptedItem(_itemId);
+                for (var i = 0; i < inventoryDropTargets.Length; i++)
+                {
+                    var target = inventoryDropTargets[i];
+                    if (target == null)
+                    {
+                        continue;
+                    }
+
+                    target.SetHighlighted(accepted && ContainsPointer(target.Rect));
+                }
+            }
+
+            OrderCardView highlightCard = null;
+            var orders = OrderSystem.Current;
+            if (ordersHud != null &&
+                orders != null &&
+                orders.TryGetReadyOrderIdForItem(_itemId, out var orderId) &&
+                ordersHud.TryGetCard(orderId, out var card) &&
+                card != null)
+            {
+                if (ContainsPointer(card.Rect))
+                {
+                    highlightCard = card;
+                }
+            }
+
+            var orderFeedback = highlightCard != null ? highlightCard.GetComponent<UIDropTargetFeedback>() : null;
+            if (_activeOrderDrop != orderFeedback)
+            {
+                if (_activeOrderDrop != null)
+                {
+                    _activeOrderDrop.SetHighlighted(false, true);
+                }
+
+                _activeOrderDrop = orderFeedback;
+            }
+
+            if (_activeOrderDrop != null)
+            {
+                _activeOrderDrop.SetHighlighted(true);
+            }
+        }
+
+        void ClearUiDropTargets()
+        {
+            if (sellDropTarget != null)
+            {
+                sellDropTarget.SetHighlighted(false, true);
+            }
+
+            if (inventoryDropTargets != null)
+            {
+                for (var i = 0; i < inventoryDropTargets.Length; i++)
+                {
+                    if (inventoryDropTargets[i] != null)
+                    {
+                        inventoryDropTargets[i].SetHighlighted(false, true);
+                    }
+                }
+            }
+
+            if (_activeOrderDrop != null)
+            {
+                _activeOrderDrop.SetHighlighted(false, true);
+                _activeOrderDrop = null;
+            }
         }
 
         void ClearVelocitySamples()
@@ -1569,6 +1866,7 @@ namespace SanIsland.Merge
         {
             ClearMergePreviewImmediate();
             ClearCobwebPreviewImmediate();
+            ClearUiDropTargets();
         }
 
         void ClearInteractionPreviewsSoft()

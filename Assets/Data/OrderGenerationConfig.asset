@@ -12,10 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c53f8ea40b126f9cc6e3daf27f48b512, type: 3}
   m_Name: OrderGenerationConfig
   m_EditorClassIdentifier: SanIsland.Merge::SanIsland.Merge.OrderGenerationConfig
-  slotDifficulties:
-  - 0
-  - 1
-  - 1
+  slotDifficulties: 000000000100000001000000
   families:
   - family: 1
     enabledForOrders: 1

@@ -98,8 +98,26 @@ namespace SanIsland.Merge
         void Refresh()
         {
             var system = SellSystem.Current;
-            var canSell = system != null && system.CanSellSelected();
-            var price = canSell && system != null ? system.GetSelectedSellPrice() : 0L;
+            var canSell = false;
+            var price = 0L;
+            if (system != null)
+            {
+                var board = system.GetComponent<BoardController>();
+                var drag = board != null ? board.DragController : null;
+                if (drag != null && drag.IsBusy)
+                {
+                    canSell = system.CanSellCell(drag.ActiveSourceIndex, ignoreDragBusy: true);
+                    price = canSell && board != null
+                        ? board.GetSellPriceForCell(drag.ActiveSourceIndex, system.Config, true)
+                        : 0L;
+                }
+                else
+                {
+                    canSell = system.CanSellSelected();
+                    price = canSell ? system.GetSelectedSellPrice() : 0L;
+                }
+            }
+
             if (button != null && button.interactable != canSell)
             {
                 button.interactable = canSell;
