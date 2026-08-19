@@ -22,6 +22,8 @@ namespace SanIsland.Merge
         public const string RankXpProgressKey = "ui.rank.xp_progress";
         public const string RankMaxKey = "ui.rank.max";
         public const string RankBattlePassDevKey = "ui.rank.battle_pass.dev";
+        public const string TimeMinutesSecondsKey = "ui.time.minutes_seconds";
+        public const string TimeSecondsKey = "ui.time.seconds";
 
         public static string GetLevelLabel(int level)
         {
@@ -30,6 +32,25 @@ namespace SanIsland.Merge
                 Arguments = new object[] { level }
             };
             return localized.GetLocalizedString();
+        }
+
+        public static string FormatDuration(int totalSeconds)
+        {
+            var clamped = totalSeconds < 1 ? 1 : totalSeconds;
+            var minutes = clamped / 60;
+            var seconds = clamped % 60;
+            if (minutes > 0)
+            {
+                var format = Get(TimeMinutesSecondsKey);
+                return string.IsNullOrEmpty(format)
+                    ? $"{minutes}m {seconds}s"
+                    : string.Format(format, minutes, seconds);
+            }
+
+            var secondsFormat = Get(TimeSecondsKey);
+            return string.IsNullOrEmpty(secondsFormat)
+                ? $"{seconds}s"
+                : string.Format(secondsFormat, seconds);
         }
 
         public static string Get(string key)

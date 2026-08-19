@@ -17,7 +17,363 @@ MonoBehaviour:
   m_SharedData: {fileID: 11400000, guid: 35d77b881f98c4982b8f591b0cca154a, type: 2}
   m_Metadata:
     m_Items: []
-  m_TableData: []
+  m_TableData:
+  - m_Id: 3249528832
+    m_Localized: Cubo viejo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3278888960
+    m_Localized: Caddy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083264
+    m_Localized: Carro de conserje
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083265
+    m_Localized: "Estaci\u00F3n de limpieza"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083266
+    m_Localized: "Pa\u00F1o"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083267
+    m_Localized: Esponja
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083268
+    m_Localized: Cepillo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083269
+    m_Localized: Spray limpiador
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083270
+    m_Localized: Rasqueta
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083271
+    m_Localized: Fregona
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083272
+    m_Localized: Aspiradora
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083273
+    m_Localized: Limpiasuelos
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083274
+    m_Localized: Cafetera moka vieja
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083275
+    m_Localized: Cafetera de casa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083276
+    m_Localized: "M\u00E1quina de espresso de caf\u00E9"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083277
+    m_Localized: "Estaci\u00F3n de caf\u00E9 San Island"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083278
+    m_Localized: Espresso
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083279
+    m_Localized: Americano
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083280
+    m_Localized: Capuchino
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083281
+    m_Localized: Latte
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083282
+    m_Localized: "Caf\u00E9 helado"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083283
+    m_Localized: "Frapp\u00E9 de caramelo"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083284
+    m_Localized: Mocha
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083285
+    m_Localized: "Caf\u00E9 boba"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083286
+    m_Localized: "Caf\u00E9 helado de menta"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083287
+    m_Localized: Latte boba
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083288
+    m_Localized: "Frapp\u00E9 tropical de caf\u00E9"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083289
+    m_Localized: Especialidad San Island
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083290
+    m_Localized: Caja de herramientas de madera
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083291
+    m_Localized: "Caja met\u00E1lica de pap\u00E1"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083292
+    m_Localized: Caja profesional
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083293
+    m_Localized: Armario de herramientas con ruedas
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083294
+    m_Localized: Banco de trabajo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083295
+    m_Localized: Destornillador
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083296
+    m_Localized: Alicates
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083297
+    m_Localized: Martillo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083298
+    m_Localized: Llave inglesa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083299
+    m_Localized: Sierra de mano
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083300
+    m_Localized: "Destornillador inal\u00E1mbrico"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083301
+    m_Localized: Taladro
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083302
+    m_Localized: Sierra circular
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083303
+    m_Localized: "S\u00E1ndwich de jam\u00F3n"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083304
+    m_Localized: "S\u00E1ndwich de jam\u00F3n y queso"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083305
+    m_Localized: "Club s\u00E1ndwich"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083306
+    m_Localized: "Cruas\u00E1n relleno"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083307
+    m_Localized: Pain au chocolat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083308
+    m_Localized: Rol de canela
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083309
+    m_Localized: Eclair de chocolate
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083310
+    m_Localized: Tarta de fresa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083311
+    m_Localized: "Porci\u00F3n de cheesecake"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083312
+    m_Localized: "Porci\u00F3n de red velvet"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083313
+    m_Localized: "Petit g\u00E2teau"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083314
+    m_Localized: Entremet de lujo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083315
+    m_Localized: Cesta de pan vieja
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083316
+    m_Localized: Batidora de pie
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083317
+    m_Localized: Horno de encimera
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083318
+    m_Localized: "Horno profesional de pasteler\u00EDa"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083319
+    m_Localized: Protector solar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083320
+    m_Localized: Chanclas
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083321
+    m_Localized: Gafas de sol
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083322
+    m_Localized: Sombrero de sol
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083323
+    m_Localized: Toalla de playa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083324
+    m_Localized: Pelota de playa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083325
+    m_Localized: Set de snorkel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083326
+    m_Localized: Flotador
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083327
+    m_Localized: Sombrilla de playa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083328
+    m_Localized: Silla de playa plegable
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083329
+    m_Localized: Tumbona premium
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083330
+    m_Localized: Paddle surf
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083331
+    m_Localized: Cesta de playa vieja
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083332
+    m_Localized: Caja de equipo de playa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083333
+    m_Localized: Carrito de tienda de playa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083334
+    m_Localized: Expositor premium de playa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083335
+    m_Localized: Agua helada
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083336
+    m_Localized: "Limonada cl\u00E1sica"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083337
+    m_Localized: "T\u00E9 helado"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083338
+    m_Localized: Zumo de naranja natural
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083339
+    m_Localized: Batido de frutos rojos
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083340
+    m_Localized: Lassi de mango
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083341
+    m_Localized: Coco fresco
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083342
+    m_Localized: "Granizado de sand\u00EDa"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083343
+    m_Localized: Mojito sin alcohol
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083344
+    m_Localized: "Pi\u00F1a colada sin alcohol"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083345
+    m_Localized: Mocktail puesta de sol tropical
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083346
+    m_Localized: Cooler firma San Island
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083347
+    m_Localized: Nevera de hielo vieja
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083348
+    m_Localized: Exprimidor profesional
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083349
+    m_Localized: Dispensador profesional
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3283083350
+    m_Localized: "Fuente de bebidas fr\u00EDas San Island"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

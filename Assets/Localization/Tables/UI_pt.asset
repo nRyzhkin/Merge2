@@ -53,19 +53,19 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1030742024
-    m_Localized: Cleaning
+    m_Localized: Limpeza
     m_Metadata:
       m_Items: []
   - m_Id: 1030742025
-    m_Localized: Unlocks the Cleaning merge family
+    m_Localized: "Desbloqueia a linha de fus\u00E3o Limpeza"
     m_Metadata:
       m_Items: []
   - m_Id: 1030742026
-    m_Localized: Tools
+    m_Localized: Ferramentas
     m_Metadata:
       m_Items: []
   - m_Id: 1030742027
-    m_Localized: Unlocks the Tools merge family
+    m_Localized: "Desbloqueia a linha de fus\u00E3o Ferramentas"
     m_Metadata:
       m_Items: []
   - m_Id: 1030742028
@@ -73,31 +73,31 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1030742029
-    m_Localized: Unlocks the seasonal Battle Pass
+    m_Localized: Desbloqueia o Battle Pass da temporada
     m_Metadata:
       m_Items: []
   - m_Id: 1030742030
-    m_Localized: Unlocked
+    m_Localized: Desbloqueado
     m_Metadata:
       m_Items: []
   - m_Id: 1030742031
-    m_Localized: Locked
+    m_Localized: Bloqueado
     m_Metadata:
       m_Items: []
   - m_Id: 1030742032
-    m_Localized: Claim
+    m_Localized: Coletar
     m_Metadata:
       m_Items: []
   - m_Id: 1030742033
-    m_Localized: "Energy +{0}"
+    m_Localized: Energia +{0}
     m_Metadata:
       m_Items: []
   - m_Id: 1030742034
-    m_Localized: "Coins +{0}"
+    m_Localized: Moedas +{0}
     m_Metadata:
       m_Items: []
   - m_Id: 1030742035
-    m_Localized: Gift
+    m_Localized: Presente
     m_Metadata:
       m_Items: []
   - m_Id: 1030742036
@@ -105,11 +105,19 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1030742037
-    m_Localized: MAX
+    m_Localized: "M\u00C1X"
     m_Metadata:
       m_Items: []
   - m_Id: 1030742038
-    m_Localized: Battle Pass is coming soon
+    m_Localized: O Battle Pass chega em breve
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742039
+    m_Localized: "{0} min {1} s"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1030742040
+    m_Localized: "{0} s"
     m_Metadata:
       m_Items: []
   references:
