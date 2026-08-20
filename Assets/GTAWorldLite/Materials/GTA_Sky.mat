@@ -25,21 +25,21 @@ Material:
     m_TexEnvs: []
     m_Ints: []
     m_Floats:
-    - _Exposure: 0.92567194
-    - _HaloIntensity: 0.65
+    - _Exposure: 0.92527765
+    - _HaloIntensity: 0.63793546
     - _HaloSize: 0.07
     - _HaloVisibility: 1
-    - _HorizonHaze: 0.3710209
+    - _HorizonHaze: 0.44499636
     - _SunSize: 0.02
     - _SunVisibility: 1
-    - _WeatherGrey: -0.0055408566
+    - _WeatherGrey: 0.026810003
     m_Colors:
-    - _GroundColor: {r: 0.021076713, g: 0.0258353, b: 0.036667634, a: 0.29099852}
-    - _HaloColor: {r: 0.7653486, g: 0.41756734, b: 0.18356796, a: 0.69814837}
-    - _HazeColor: {r: 0.9030968, g: 0.6547203, b: 0.5864945, a: 1.1258346}
-    - _HorizonColor: {r: 0.3224331, g: 0.6732204, b: 1.1387813, a: 1.12114}
-    - _SunColor: {r: 1.2359298, g: 1.0788682, b: 0.87091607, a: 1.2067679}
-    - _SunDirection: {r: 0.4140392, g: 0.6347581, b: -0.6524215, a: 0}
-    - _ZenithColor: {r: 0.08280373, g: 0.48660332, b: 1.218629, a: 1.1603999}
+    - _GroundColor: {r: 0.022681562, g: 0.0265544, b: 0.03589246, a: 0.28801185}
+    - _HaloColor: {r: 0.43357688, g: 0.3552207, b: 0.28296158, a: 0.42262727}
+    - _HazeColor: {r: 0.7561469, g: 0.64301866, b: 0.6521733, a: 1.0461253}
+    - _HorizonColor: {r: 0.3457734, g: 0.6762861, b: 1.0935507, a: 1.1218961}
+    - _SunColor: {r: 1.2043529, g: 1.0933119, b: 0.95917624, a: 1.1912864}
+    - _SunDirection: {r: 0.47818518, g: 0.71556866, b: -0.50921553, a: 0}
+    - _ZenithColor: {r: 0.115110114, g: 0.5002214, b: 1.1641983, a: 1.1702012}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

@@ -1,12 +1,5 @@
 fileFormatVersion: 2
-guid: 1d7660df5467e3f408ccd80b1612feb8
-AssetOrigin:
-  serializedVersion: 1
-  productId: 178553
-  packageName: Kamome Town Beach Resort Pack
-  packageVersion: 1.11
-  assetPath: Assets/FUNSET/BeachResortModelSet/Texture/Tile g.png
-  uploadId: 409928
+guid: a0ec2e371486f473ba0ac5c8bd243243
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -70,9 +63,9 @@ TextureImporter:
   compressionQualitySet: 0
   textureFormatSet: 0
   ignorePngGamma: 0
-  applyGammaDecoding: 1
+  applyGammaDecoding: 0
   swizzle: 50462976
-  cookieLightType: 1
+  cookieLightType: 0
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
