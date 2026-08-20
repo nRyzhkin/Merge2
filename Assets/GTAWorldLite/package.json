@@ -1,0 +1,8 @@
+{
+  "name": "com.gta.worldlite",
+  "version": "1.0.0",
+  "displayName": "GTA World Lite",
+  "description": "Lightweight procedural sky, transparent water, fog, and world lighting controller for URP. No surface-shader family required.",
+  "unity": "6000.0",
+  "unityRelease": "0f1"
+}

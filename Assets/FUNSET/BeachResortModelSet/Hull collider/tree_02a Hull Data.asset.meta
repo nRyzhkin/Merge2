@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 75ca1d086d63cf24cb5b5cef9a94aa37
+timeCreated: 1596538596
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178553
+  packageName: Kamome Town Beach Resort Pack
+  packageVersion: 1.11
+  assetPath: Assets/FUNSET/BeachResortModelSet/Hull collider/tree_02a Hull Data.asset
+  uploadId: 409928

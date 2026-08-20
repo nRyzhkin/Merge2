@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 7801e3a9dee3a5449b53c1e748bf7c64
+timeCreated: 1599709992
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178553
+  packageName: Kamome Town Beach Resort Pack
+  packageVersion: 1.11
+  assetPath: Assets/FUNSET/BeachResortModelSet/br_prefab/PartsAndProp/flowerpot_01_ds.prefab
+  uploadId: 409928

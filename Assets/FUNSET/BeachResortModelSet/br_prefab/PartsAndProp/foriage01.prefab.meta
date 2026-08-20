@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: ba4130a2bac44a44084a4636f1fed8b5
+timeCreated: 1599202624
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178553
+  packageName: Kamome Town Beach Resort Pack
+  packageVersion: 1.11
+  assetPath: Assets/FUNSET/BeachResortModelSet/br_prefab/PartsAndProp/foriage01.prefab
+  uploadId: 409928

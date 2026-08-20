@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 359e1d598b0be514d9ca805e1afa9530
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 36300000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178553
+  packageName: Kamome Town Beach Resort Pack
+  packageVersion: 1.11
+  assetPath: Assets/FUNSET/BeachResortModelSet/br_scene/samplescene/OcclusionCullingData.asset
+  uploadId: 409928

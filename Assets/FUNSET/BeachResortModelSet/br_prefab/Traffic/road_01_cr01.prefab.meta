@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 835de321d50ebd7488802d2fe303c7a6
+timeCreated: 1595160034
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178553
+  packageName: Kamome Town Beach Resort Pack
+  packageVersion: 1.11
+  assetPath: Assets/FUNSET/BeachResortModelSet/br_prefab/Traffic/road_01_cr01.prefab
+  uploadId: 409928

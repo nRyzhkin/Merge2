@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 8140226e75c54fb488ff2de85065c653
+timeCreated: 1599120322
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178553
+  packageName: Kamome Town Beach Resort Pack
+  packageVersion: 1.11
+  assetPath: Assets/FUNSET/BeachResortModelSet/br_prefab/PartsAndProp/parts_stair_05bp.prefab
+  uploadId: 409928

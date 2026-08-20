@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 3c152586d3eebe748a029b6866d6a4ae
+timeCreated: 1599710097
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178553
+  packageName: Kamome Town Beach Resort Pack
+  packageVersion: 1.11
+  assetPath: Assets/FUNSET/BeachResortModelSet/br_prefab/PartsAndProp/parts_woodpole01.prefab
+  uploadId: 409928

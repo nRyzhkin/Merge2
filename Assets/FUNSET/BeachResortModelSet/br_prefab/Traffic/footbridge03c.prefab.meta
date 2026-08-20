@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: cdfe77556c2d556419621b2a18a88866
+timeCreated: 1598519118
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178553
+  packageName: Kamome Town Beach Resort Pack
+  packageVersion: 1.11
+  assetPath: Assets/FUNSET/BeachResortModelSet/br_prefab/Traffic/footbridge03c.prefab
+  uploadId: 409928

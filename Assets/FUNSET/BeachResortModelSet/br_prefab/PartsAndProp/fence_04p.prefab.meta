@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 7e7736e8226b60c448f6e92b2f903534
+timeCreated: 1598524277
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178553
+  packageName: Kamome Town Beach Resort Pack
+  packageVersion: 1.11
+  assetPath: Assets/FUNSET/BeachResortModelSet/br_prefab/PartsAndProp/fence_04p.prefab
+  uploadId: 409928

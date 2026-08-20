@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 41d4aafc898b2f343a1d87386d0dd821
+timeCreated: 1595158429
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178553
+  packageName: Kamome Town Beach Resort Pack
+  packageVersion: 1.11
+  assetPath: Assets/FUNSET/BeachResortModelSet/br_prefab/Building/apart_poor_07b.prefab
+  uploadId: 409928

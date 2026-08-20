@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 61b0c2847f6a7bd46815c03a2b657942
+timeCreated: 1598523928
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178553
+  packageName: Kamome Town Beach Resort Pack
+  packageVersion: 1.11
+  assetPath: Assets/FUNSET/BeachResortModelSet/br_prefab/ShopAndOutfit/shop_grill01b.prefab
+  uploadId: 409928

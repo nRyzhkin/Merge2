@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: e4d38f1957e16ca4dae9a856cf00e635
+timeCreated: 1599705961
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178553
+  packageName: Kamome Town Beach Resort Pack
+  packageVersion: 1.11
+  assetPath: Assets/FUNSET/BeachResortModelSet/br_materials/Nightver/planttex_berk_night.mat
+  uploadId: 409928

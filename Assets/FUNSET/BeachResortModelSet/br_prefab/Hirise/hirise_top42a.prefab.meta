@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 22c429f1c2adf424d82278f1cc4f233c
+timeCreated: 1595159687
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178553
+  packageName: Kamome Town Beach Resort Pack
+  packageVersion: 1.11
+  assetPath: Assets/FUNSET/BeachResortModelSet/br_prefab/Hirise/hirise_top42a.prefab
+  uploadId: 409928

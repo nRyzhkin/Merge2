@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 9e820ae1c1dd9af4ab6bbd041c870998
+timeCreated: 1597374501
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178553
+  packageName: Kamome Town Beach Resort Pack
+  packageVersion: 1.11
+  assetPath: Assets/FUNSET/BeachResortModelSet/br_materials/sand_dry01.mat
+  uploadId: 409928

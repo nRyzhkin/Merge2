@@ -1,0 +1,42 @@
+OK UnlitClip BeachResortModelSet/br_materials/Nightver/giftgoods_hp 1.mat
+OK Lit BeachResortModelSet/br_materials/Nightver/land_beach01_n.mat
+OK Lit BeachResortModelSet/br_materials/Nightver/lmtex_n_night.mat
+OK Lit BeachResortModelSet/br_materials/Nightver/mado08_AlbedoTransparency_Night.mat
+OK Lit BeachResortModelSet/br_materials/Nightver/planttex_berk_night.mat
+OK Lit BeachResortModelSet/br_materials/Nightver/planttex_night.mat
+OK Lit BeachResortModelSet/br_materials/Nightver/setex01_night.mat
+OK Lit BeachResortModelSet/br_materials/Nightver/setex02_night.mat
+OK Lit BeachResortModelSet/br_materials/Nightver/signboard_hp night.mat
+OK Lit BeachResortModelSet/br_materials/Tile f.mat
+OK Lit BeachResortModelSet/br_materials/Tile g.mat
+OK Lit BeachResortModelSet/br_materials/asphalt_01.mat
+OK Unlit BeachResortModelSet/br_materials/dark.mat
+OK Lit BeachResortModelSet/br_materials/forest_2_hp.mat
+OK Lit BeachResortModelSet/br_materials/giftgoods_hp.mat
+OK LitGlass BeachResortModelSet/br_materials/glass_1g.mat
+OK Lit BeachResortModelSet/br_materials/gravel_hp_02.mat
+OK Lit BeachResortModelSet/br_materials/land_beach00.mat
+OK Lit BeachResortModelSet/br_materials/land_cliff01_color.mat
+OK Lit BeachResortModelSet/br_materials/land_cliff02_Albedo.mat
+OK Lit BeachResortModelSet/br_materials/land_rock01.mat
+OK Lit BeachResortModelSet/br_materials/land_rock01b.mat
+OK Lit BeachResortModelSet/br_materials/lmtex_n.mat
+OK Lit BeachResortModelSet/br_materials/mado08_AlbedoTransparency_day.mat
+OK Lit BeachResortModelSet/br_materials/planttex.mat
+OK Lit BeachResortModelSet/br_materials/planttex_berk.mat
+OK Lit BeachResortModelSet/br_materials/rock_hp_04.mat
+OK Lit BeachResortModelSet/br_materials/sand_dry01.mat
+OK Lit BeachResortModelSet/br_materials/setex01.mat
+OK Lit BeachResortModelSet/br_materials/setex02.mat
+OK Lit BeachResortModelSet/br_materials/signboard_hp.mat
+SKIP skybox BeachResortModelSet/br_materials/sky_Dark_Day 1.mat
+SKIP skybox BeachResortModelSet/br_materials/sky_blue_Day.mat
+OK Lit BeachResortModelSet/br_materials/tile d.mat
+OK Lit BeachResortModelSet/br_materials/tile e.mat
+OK Lit BeachResortModelSet/br_materials/water_00.mat
+OK Lit BeachResortModelSet/br_model/Building/Materials/setex01_n.mat
+OK Lit BeachResortModelSet/br_model/PartsAndProp/Materials/planttex_emmision.mat
+OK Lit BeachResortModelSet/br_model/PartsAndProp/Materials/setex02_n.mat
+OK Lit BeachResortModelSet/br_model/PartsAndProp/Materials/signboard_hp.mat
+
+converted=38 skipped=2 failed=0

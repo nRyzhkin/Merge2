@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 14a91827599d6e24f825eff8c7425c24
+timeCreated: 1597374880
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178553
+  packageName: Kamome Town Beach Resort Pack
+  packageVersion: 1.11
+  assetPath: Assets/FUNSET/BeachResortModelSet/br_prefab/Land/land_rock_01.prefab
+  uploadId: 409928
